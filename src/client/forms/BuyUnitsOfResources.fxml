@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane prefHeight="265.0" prefWidth="437.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="client.controllers.BuyFormController">
+    <children>
+        <Text layoutX="145.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Покупка ЕСМ">
+            <font>
+                <Font size="24.0"/>
+            </font>
+        </Text>
+        <Text layoutX="63.0" layoutY="88.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Количество:">
+            <font>
+                <Font size="18.0"/>
+            </font>
+        </Text>
+        <Text layoutX="63.0" layoutY="118.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Цена:">
+            <font>
+                <Font size="18.0"/>
+            </font>
+        </Text>
+        <Button layoutX="86.0" layoutY="189.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="110.0" text="ОК">
+            <font>
+                <Font size="18.0"/>
+            </font>
+        </Button>
+        <Button layoutX="247.0" layoutY="189.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="116.0"
+                text="Отмена">
+            <font>
+                <Font size="18.0"/>
+            </font>
+        </Button>
+    </children>
+</AnchorPane>

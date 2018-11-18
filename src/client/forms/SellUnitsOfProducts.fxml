@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="264.0" prefWidth="447.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="client.controllers.SellFormController">
+    <children>
+        <Button layoutX="257.0" layoutY="199.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="116.0"
+                text="Отмена">
+            <font>
+                <Font size="18.0"/>
+            </font>
+        </Button>
+        <Button layoutX="96.0" layoutY="199.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="110.0" text="ОК">
+            <font>
+                <Font size="18.0"/>
+            </font>
+        </Button>
+        <Text layoutX="73.0" layoutY="128.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Цена:">
+            <font>
+                <Font size="18.0"/>
+            </font>
+        </Text>
+        <Text layoutX="73.0" layoutY="98.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Количество:">
+            <font>
+                <Font size="18.0"/>
+            </font>
+        </Text>
+        <Text layoutX="155.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Продажа ЕГП">
+            <font>
+                <Font size="24.0"/>
+            </font>
+        </Text>
+    </children>
+</AnchorPane>

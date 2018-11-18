@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane prefHeight="190.0" prefWidth="368.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="client.controllers.GameOverFormController">
+    <children>
+        <Text layoutX="184.0" layoutY="87.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Банкрот">
+            <font>
+                <Font size="24.0"/>
+            </font>
+        </Text>
+        <Text layoutX="111.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Вы -">
+            <font>
+                <Font size="24.0"/>
+            </font>
+        </Text>
+        <Button layoutX="16.0" layoutY="120.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="182.0"
+                text="Вернуться к игре">
+            <font>
+                <Font size="18.0"/>
+            </font>
+        </Button>
+        <Button layoutX="238.0" layoutY="120.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="116.0"
+                text="Выход">
+            <font>
+                <Font size="18.0"/>
+            </font>
+        </Button>
+    </children>
+</AnchorPane>
