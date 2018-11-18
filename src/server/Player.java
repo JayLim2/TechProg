@@ -1,5 +1,7 @@
 package server;
 
+import java.util.Objects;
+
 /**
  * Класс, описывающий игрока
  * <p>
@@ -9,7 +11,7 @@ public class Player {
     private String name;
     private Avatar avatar;
 
-    private int unitsOfProduct;     //ЕГП
+    private int unitsOfProducts;     //ЕГП
     private int unitsOfResources;   //ЕСМ
     private int money;              //деньги
     private int workingFactories;                       //работающие обычные фабрики
@@ -23,12 +25,12 @@ public class Player {
         this.avatar = avatar;
     }
 
-    public int getUnitsOfProduct() {
-        return unitsOfProduct;
+    public int getUnitsOfProducts() {
+        return unitsOfProducts;
     }
 
-    public void setUnitsOfProduct(int unitsOfProduct) {
-        this.unitsOfProduct = unitsOfProduct;
+    public void setUnitsOfProducts(int unitsOfProducts) {
+        this.unitsOfProducts = unitsOfProducts;
     }
 
     public int getUnitsOfResources() {
@@ -85,5 +87,27 @@ public class Player {
 
     public void setInAutomationNowFactories(int inAutomationNowFactories) {
         this.inAutomationNowFactories = inAutomationNowFactories;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Player player = (Player) o;
+        return unitsOfProducts == player.unitsOfProducts &&
+                unitsOfResources == player.unitsOfResources &&
+                money == player.money &&
+                workingFactories == player.workingFactories &&
+                workingAutomatedFactories == player.workingAutomatedFactories &&
+                underConstructionFactories == player.underConstructionFactories &&
+                underConstructionAutomatedFactories == player.underConstructionAutomatedFactories &&
+                inAutomationNowFactories == player.inAutomationNowFactories &&
+                Objects.equals(name, player.name) &&
+                Objects.equals(avatar, player.avatar);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, avatar, unitsOfProducts, unitsOfResources, money, workingFactories, workingAutomatedFactories, underConstructionFactories, underConstructionAutomatedFactories, inAutomationNowFactories);
     }
 }
