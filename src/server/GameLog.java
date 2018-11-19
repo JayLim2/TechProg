@@ -16,4 +16,15 @@ public class GameLog {
     public void log(Turn.Action action) {
         actions.add(action);
     }
+
+    /**
+     * Генерация файла с журналом игры
+     */
+    public void export() {
+        StringBuilder builder = new StringBuilder();
+
+        for (Turn.Action action : actions) {
+            builder.append(action);
+        }
+    }
 }

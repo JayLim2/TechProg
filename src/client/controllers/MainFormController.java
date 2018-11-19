@@ -2,21 +2,32 @@ package client.controllers;
 
 import client.utils.Forms;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.stage.Stage;
+import javafx.scene.control.Alert;
 
 public class MainFormController {
-    @FXML
-    private Button startGameButton;
-
-    @FXML
+    /**
+     * Обработка нажатия на кнопку "Старт"
+     *
+     * @param event события нажатия на кнопку
+     */
     public void startGameAction(ActionEvent event) {
         Forms.openForm("Login");
         Forms.closeForm("Main");
     }
 
-    @FXML
+    /**
+     * Обработка нажатия на кнопку "Справка"
+     *
+     * @param event события нажатия на кнопку
+     */
+    public void helpAction(ActionEvent event) {
+        new Alert(Alert.AlertType.INFORMATION, "Справка будет добавлена позднее.").show();
+    }
+
+    /**
+     * Обработка нажатия на кнопку "Выход"
+     * @param event события нажатия на кнопку
+     */
     public void exitApplicationAction(ActionEvent event) {
         System.exit(0);
     }

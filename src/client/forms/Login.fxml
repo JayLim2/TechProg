@@ -8,11 +8,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="client.controllers.LoginFormController">
     <children>
-        <Button layoutX="39.0" layoutY="303.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="181.0" text="Старт">
+        <Button layoutX="39.0" layoutY="303.0" mnemonicParsing="false" onAction="#startSearchAction" prefHeight="51.0"
+                prefWidth="181.0" text="Старт">
             <font>
                 <Font size="24.0"/>
             </font>
@@ -87,7 +87,7 @@
                 <Font size="24.0"/>
             </font>
         </Text>
-        <TextField layoutX="32.0" layoutY="141.0"/>
+        <TextField fx:id="loginInput" layoutX="32.0" layoutY="141.0"/>
         <ImageView fitHeight="32.0" fitWidth="15.0" layoutX="294.0" layoutY="134.0" pickOnBounds="true"
                    preserveRatio="true">
             <image>
@@ -148,10 +148,11 @@
                 <Image url="@../../2.png"/>
             </image>
         </ImageView>
-        <Button layoutX="553.0" layoutY="351.0" mnemonicParsing="false" text="↺">
+        <Button layoutX="553.0" layoutY="351.0" mnemonicParsing="false" onAction="#goBackAction" text="↺">
             <font>
                 <Font size="18.0"/>
             </font>
         </Button>
+        <Label fx:id="errorMsgLabel" layoutX="32.0" layoutY="177.0" text="-" textFill="RED" visible="false"/>
     </children>
 </AnchorPane>

@@ -15,14 +15,14 @@
                 <Font size="40.0"/>
             </font>
         </Text>
-        <Button fx:id="startGameButton" layoutX="214.0" layoutY="200.0" mnemonicParsing="false"
-                onAction="#startGameAction" prefHeight="51.0" prefWidth="173.0" text="Старт">
+        <Button layoutX="214.0" layoutY="200.0" mnemonicParsing="false" onAction="#startGameAction" prefHeight="51.0"
+                prefWidth="173.0" text="Старт">
             <font>
                 <Font size="24.0"/>
             </font>
         </Button>
-        <Button layoutX="214.0" layoutY="261.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="173.0"
-                text="Справка">
+        <Button layoutX="214.0" layoutY="261.0" mnemonicParsing="false" onAction="#helpAction" prefHeight="51.0"
+                prefWidth="173.0" text="Справка">
             <font>
                 <Font size="24.0"/>
             </font>

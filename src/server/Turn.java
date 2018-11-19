@@ -56,6 +56,10 @@ public class Turn {
         Т.е. если у него было 5 фабрик, а 1 новую он начал строить, в данном объекте
         будет храниться значение 1, а не 6!
          */
+        private String playerName;
+
+        private int currentMonth;
+        private int currentPhase;
 
         private int unitsOfProducts;    //ЕГП
         private int unitsOfResources;   //ЕСМ
@@ -91,11 +95,6 @@ public class Turn {
             this.inAutomationNowFactories = inAutomationNowFactories;
         }
 
-        // FIXME: 18.11.2018 сделать столько методов, сколько фаз, с соответствующими аргумнтами
-        private void runPhase1() {
-
-        }
-
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -114,6 +113,46 @@ public class Turn {
         @Override
         public int hashCode() {
             return Objects.hash(unitsOfProducts, unitsOfResources, money, workingFactories, workingAutomatedFactories, underConstructionFactories, underConstructionAutomatedFactories, inAutomationNowFactories);
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append("[").append(playerName).append("] ");
+            builder.append("Ход ").append(currentMonth);
+            builder.append(", ");
+            builder.append("фаза ").append(currentPhase);
+            builder.append(": ");
+            switch (currentPhase) {
+                case 1: //Постоянные издержки
+                    builder.append("");
+                    break;
+                case 2: //Банк предлагает количество и мин.цену ЕСМ
+
+                    break;
+                case 3: //Банк принимает заявки на ЕСМ
+
+                    break;
+                case 4: //Игроки производят ЕГП
+
+                    break;
+                case 5: //Игроки продают продукцию
+
+                    break;
+                case 6: //Выплата ссудного процента
+
+                    break;
+                case 7: //Погашение ссуд
+
+                    break;
+                case 8: //Получение ссуд
+
+                    break;
+                case 9: //Заявки на строительство
+
+                    break;
+            }
+            return builder.toString();
         }
     }
 }

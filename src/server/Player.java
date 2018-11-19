@@ -25,6 +25,35 @@ public class Player {
         this.avatar = avatar;
     }
 
+    /**
+     * Получение суммы постоянных издержек
+     * (удерживаются в начале каждого хода)
+     *
+     * @return сумма издержек
+     */
+    public int getCosts() {
+        return 300 * unitsOfResources +
+                500 * unitsOfProducts +
+                1000 * workingFactories +
+                1500 * workingAutomatedFactories;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Avatar getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(Avatar avatar) {
+        this.avatar = avatar;
+    }
+
     public int getUnitsOfProducts() {
         return unitsOfProducts;
     }
