@@ -20,12 +20,12 @@
                 <Font size="18.0"/>
             </font>
         </Button>
-        <Text layoutX="14.0" layoutY="47.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Вы уверены, что хотите">
+        <Text layoutX="84.0" layoutY="44.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Вы уверены, что хотите">
             <font>
                 <Font size="24.0"/>
             </font>
         </Text>
-        <Text layoutX="183.0" layoutY="79.0" strokeType="OUTSIDE" strokeWidth="0.0" text="закончить игру?">
+        <Text layoutX="125.0" layoutY="77.0" strokeType="OUTSIDE" strokeWidth="0.0" text="закончить игру?">
             <font>
                 <Font size="24.0"/>
             </font>
