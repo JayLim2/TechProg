@@ -1,0 +1,14 @@
+.avatar {
+    -fx-border-width: 0;
+}
+
+.avatar:hover {
+    -fx-background-color: #054C66;
+    -fx-cursor: hand;
+    -fx-border-width: 5;
+}
+
+.avatar:focused {
+    -fx-background-color: #0E81AF;
+    -fx-border-width: 5;
+}
