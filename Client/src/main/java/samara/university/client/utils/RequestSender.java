@@ -49,7 +49,7 @@ public class RequestSender {
             socket = new Socket(InetAddress.getLocalHost(), SERVER_PORT);
             inputStream = new DataInputStream(socket.getInputStream());
             outputStream = new DataOutputStream(socket.getOutputStream());
-            objectInputStream = new ObjectInputStream(inputStream);
+            objectInputStream = new ObjectInputStream(socket.getInputStream());
 
             isConnected = true;
         } catch (UnknownHostException e) {
@@ -81,21 +81,13 @@ public class RequestSender {
             connect();
         }
         System.out.println();
-
         sendCommand(Command.UPDATE_SEARCH_PLAYERS_INFO);
         SessionPackage sessionPackage = (SessionPackage) objectInputStream.readObject();
 
         System.out.println("READ INFO REQUEST SENDER");
+        System.out.println("-- seed " + sessionPackage.getSeed());
+        System.out.println("-- " + sessionPackage.getPlayers().size());
 
-        /*LocalDateTime startTime = (LocalDateTime)objectInputStream.readObject();
-        int countPlayers = inputStream.readInt();
-        List<Player> players = new ArrayList<>();
-        System.out.println("date: " + startTime);
-        for (int i = 0; i < countPlayers; i++) {
-            players.add((Player) objectInputStream.readObject());
-            System.out.println("player: " + players.get(i));
-        }
-        System.out.println();*/
         return sessionPackage;
     }
 

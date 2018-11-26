@@ -21,7 +21,7 @@ import samara.university.common.entities.Player;
 import samara.university.common.packages.SessionPackage;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 public class WaitingPlayersFormController {
     @FXML
@@ -140,7 +140,7 @@ public class WaitingPlayersFormController {
                     LocalDateTime.now()
             ).getSeconds();
             totalSeconds = WAIT_TIME_LIMIT_SECONDS - (int) seconds;
-            Set<Player> players = sessionPackage.getPlayers();
+            List<Player> players = sessionPackage.getPlayers();
             int i = 0;
             for (Player player : players) {
                 System.out.println("PLAYER: " + player);

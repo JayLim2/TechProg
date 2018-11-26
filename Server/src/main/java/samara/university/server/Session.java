@@ -3,10 +3,11 @@ package samara.university.server;
 import samara.university.common.entities.Player;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Подсистема игровой сессии
@@ -23,7 +24,8 @@ public class Session {
     private GameLog gameLog;
 
     private Session() {
-        players = new HashSet<>();
+        //players = new HashSet<>();
+        players = ConcurrentHashMap.newKeySet();
         gameLog = new GameLog();
         turn = new Turn(gameLog);
         startTime = LocalDateTime.now();
@@ -67,8 +69,10 @@ public class Session {
         }
     }
 
-    public Set<Player> getPlayers() {
-        return Collections.unmodifiableSet(players);
+    public List<Player> getPlayers() {
+        ArrayList<Player> players = new ArrayList<>(this.players);
+        return players;
+        //return Collections.unmodifiableSet(players);
     }
 
     public LocalDateTime getStartTime() {

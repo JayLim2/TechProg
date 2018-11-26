@@ -4,7 +4,8 @@ import samara.university.common.entities.Player;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Вспомогательный класс пакета данных о сессии
@@ -12,10 +13,11 @@ import java.util.Set;
  * Требуется для передачи информаации о сессии клиенту
  */
 public class SessionPackage implements Serializable {
+    private int seed;
     private LocalDateTime startTime;
-    private Set<Player> players;
+    private List<Player> players;
 
-    public SessionPackage(LocalDateTime startTime, Set<Player> players) {
+    public SessionPackage(LocalDateTime startTime, List<Player> players) {
         this.startTime = startTime;
         this.players = players;
     }
@@ -24,7 +26,31 @@ public class SessionPackage implements Serializable {
         return startTime;
     }
 
-    public Set<Player> getPlayers() {
+    public List<Player> getPlayers() {
         return players;
+    }
+
+    public SessionPackage setSeed(int seed) {
+        this.seed = seed;
+        return this;
+    }
+
+    public int getSeed() {
+        return seed;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SessionPackage that = (SessionPackage) o;
+        return seed == that.seed &&
+                Objects.equals(startTime, that.startTime) &&
+                Objects.equals(players, that.players);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(seed, startTime, players);
     }
 }

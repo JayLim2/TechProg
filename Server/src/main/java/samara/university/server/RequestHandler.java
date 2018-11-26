@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Random;
 
 /**
  * Обработчик запросов к серверу
@@ -32,10 +33,13 @@ public class RequestHandler {
         private DataOutputStream outputStream;
         private ObjectOutputStream objectOutputStream;
 
+        private int id;
+
         private Session session;
 
         public ClientThread(Socket socket) {
             this.socket = socket;
+            id = new Random().nextInt(10);
         }
 
         @Override
@@ -102,20 +106,22 @@ public class RequestHandler {
             System.out.println("PLAYERS COUNT: " + session.playersCount());
         }
 
+        Random random = new Random();
         public void updateSearchPlayersInfo() throws IOException {
             if (session == null || !session.isAvailable()) {
-
+                return;
             }
 
-            objectOutputStream.writeObject(new SessionPackage(session.getStartTime(), session.getPlayers()));
+            int seed = random.nextInt(1000);
+            System.out.println("=== SEED " + seed);
+            System.out.println(session.getPlayers().size());
+
+            SessionPackage sessionPackage = new SessionPackage(session.getStartTime(), session.getPlayers()).setSeed(seed);
+            System.out.println(sessionPackage.getPlayers().size());
+            System.out.println("====================\n");
+            objectOutputStream.writeObject(sessionPackage);
 
             System.out.println("UPDATE INFO REQUEST HANDLER");
-            /*objectOutputStream.writeObject(session.getStartTime());
-            outputStream.writeInt(session.playersCount());
-            Set<Player> players = session.getPlayers();
-            for (Player player : players) {
-                objectOutputStream.writeObject(player);
-            }*/
             objectOutputStream.flush();
         }
 
