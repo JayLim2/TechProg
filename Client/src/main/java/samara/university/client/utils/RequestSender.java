@@ -80,15 +80,9 @@ public class RequestSender {
         if (!isConnected) {
             connect();
         }
-        System.out.println();
-        sendCommand(Command.UPDATE_SEARCH_PLAYERS_INFO);
-        SessionPackage sessionPackage = (SessionPackage) objectInputStream.readObject();
 
-        System.out.println("READ INFO REQUEST SENDER");
-        System.out.println("-- seed " + sessionPackage.getSeed());
-        System.out.println("-- " + sessionPackage.getPlayers().size());
-
-        return sessionPackage;
+        sendCommand(Command.UPDATE_SESSION_INFO);
+        return (SessionPackage) objectInputStream.readObject();
     }
 
     /**

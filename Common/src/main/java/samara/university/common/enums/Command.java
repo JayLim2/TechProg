@@ -21,7 +21,7 @@ public enum Command implements Serializable {
     AUTH,
 
     /**
-     * UPDATE_SEARCH_PLAYERS_INFO
+     * UPDATE_SESSION_INFO
      * <p>
      * Получает актуальную информацию о текущей сессии.
      * <p>
@@ -31,7 +31,7 @@ public enum Command implements Serializable {
      * write:
      * - Возвращает Session с достаточно актуальными сведениями
      */
-    UPDATE_SEARCH_PLAYERS_INFO,
+    UPDATE_SESSION_INFO,
 
     /**
      * BANK_ACTION

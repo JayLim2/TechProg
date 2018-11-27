@@ -13,7 +13,6 @@ import java.util.Objects;
  * Требуется для передачи информаации о сессии клиенту
  */
 public class SessionPackage implements Serializable {
-    private int seed;
     private LocalDateTime startTime;
     private List<Player> players;
 
@@ -30,27 +29,17 @@ public class SessionPackage implements Serializable {
         return players;
     }
 
-    public SessionPackage setSeed(int seed) {
-        this.seed = seed;
-        return this;
-    }
-
-    public int getSeed() {
-        return seed;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SessionPackage that = (SessionPackage) o;
-        return seed == that.seed &&
-                Objects.equals(startTime, that.startTime) &&
+        return Objects.equals(startTime, that.startTime) &&
                 Objects.equals(players, that.players);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(seed, startTime, players);
+        return Objects.hash(startTime, players);
     }
 }

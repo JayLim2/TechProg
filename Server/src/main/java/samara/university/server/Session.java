@@ -1,5 +1,6 @@
 package samara.university.server;
 
+import samara.university.common.constants.Restrictions;
 import samara.university.common.entities.Player;
 
 import java.time.LocalDateTime;
@@ -15,7 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Session {
     private static Session session;
     private static final int PHASE_LENGTH_IN_SECONDS = 120; //длительность фазы 120 сек
-    private static final int MAX_COUNT_PLAYERS = 4;
 
     private LocalDateTime startTime;
     private Set<Player> players;
@@ -24,8 +24,8 @@ public class Session {
     private GameLog gameLog;
 
     private Session() {
-        //players = new HashSet<>();
         players = ConcurrentHashMap.newKeySet();
+        //players = new ArrayList<>();
         gameLog = new GameLog();
         turn = new Turn(gameLog);
         startTime = LocalDateTime.now();
@@ -56,7 +56,7 @@ public class Session {
     }
 
     public boolean isAvailable() {
-        return playersCount() < MAX_COUNT_PLAYERS;
+        return playersCount() <= Restrictions.MAX_PLAYERS_COUNT;
     }
 
     public void register(Player player) {
@@ -72,7 +72,6 @@ public class Session {
     public List<Player> getPlayers() {
         ArrayList<Player> players = new ArrayList<>(this.players);
         return players;
-        //return Collections.unmodifiableSet(players);
     }
 
     public LocalDateTime getStartTime() {

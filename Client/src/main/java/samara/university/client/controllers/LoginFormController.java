@@ -67,6 +67,7 @@ public class LoginFormController {
             int index = boxes.indexOf(hBox);
             if (index != -1) {
                 this.avatarId = index;
+                boxes.get(index).requestFocus();
             }
         }
     }

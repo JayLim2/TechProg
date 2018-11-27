@@ -17,6 +17,7 @@ import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import samara.university.client.utils.Forms;
 import samara.university.client.utils.RequestSender;
+import samara.university.common.constants.Restrictions;
 import samara.university.common.entities.Player;
 import samara.university.common.packages.SessionPackage;
 
@@ -32,14 +33,12 @@ public class WaitingPlayersFormController {
     @FXML
     private GridPane sessionPlayersPane;
 
-    private static final int WAIT_TIME_LIMIT_SECONDS = 150;
     private ImageView[] avatarBlocks;
     private Text[] labelBlocks;
 
     final byte size = 4;
     public void initialize() {
         updateTimeFields();
-        sessionPlayersPane.setAlignment(Pos.CENTER);
         avatarBlocks = new ImageView[size];
         labelBlocks = new Text[size];
     }
@@ -63,7 +62,7 @@ public class WaitingPlayersFormController {
 
     private static final Duration ONE_SECOND_DURATION = Duration.seconds(1);
     private static final Duration UPDATE_INFO_INTERVAL = Duration.seconds(5);
-    private Integer totalSeconds = WAIT_TIME_LIMIT_SECONDS;
+    private Integer totalSeconds = Restrictions.WAIT_TIME_LIMIT_SECONDS;
 
     private void playCountdown() {
         Timeline timeline = new Timeline();
@@ -75,9 +74,9 @@ public class WaitingPlayersFormController {
                 updateTimeFields();
 
                 if (totalSeconds <= 0) {
-                    playGame();
                     timeline.stop();
                     timeline.getKeyFrames().clear();
+                    playGame();
                 }
             }
         });
@@ -117,7 +116,7 @@ public class WaitingPlayersFormController {
     }
 
     private void resetTime() {
-        totalSeconds = WAIT_TIME_LIMIT_SECONDS;
+        totalSeconds = Restrictions.WAIT_TIME_LIMIT_SECONDS;
     }
 
     private void resetTime(int actualValue) {
@@ -132,21 +131,25 @@ public class WaitingPlayersFormController {
     }
 
     private void updateInfo() {
-        // TODO: 24.11.2018 реализовать
         try {
             SessionPackage sessionPackage = RequestSender.getRequestSender().updateInfo();
             long seconds = java.time.Duration.between(
                     sessionPackage.getStartTime(),
                     LocalDateTime.now()
             ).getSeconds();
-            totalSeconds = WAIT_TIME_LIMIT_SECONDS - (int) seconds;
             List<Player> players = sessionPackage.getPlayers();
-            int i = 0;
-            for (Player player : players) {
-                System.out.println("PLAYER: " + player);
-                avatarBlocks[i].setImage(new Image(player.getAvatar().getPath()));
-                labelBlocks[i].setText(player.getName());
-                i++;
+
+            if (players.size() == Restrictions.MAX_PLAYERS_COUNT) {
+                totalSeconds = 0;
+            } else {
+                totalSeconds = Restrictions.WAIT_TIME_LIMIT_SECONDS - (int) seconds;
+                int i = 0;
+                for (Player player : players) {
+                    System.out.println("PLAYER: " + player);
+                    avatarBlocks[i].setImage(new Image(player.getAvatar().getPath()));
+                    labelBlocks[i].setText(player.getName());
+                    i++;
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

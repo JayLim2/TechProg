@@ -73,8 +73,8 @@ public class RequestHandler {
                         case AUTH:
                             authPlayer();
                             break;
-                        case UPDATE_SEARCH_PLAYERS_INFO:
-                            updateSearchPlayersInfo();
+                        case UPDATE_SESSION_INFO:
+                            updateSessionInfo();
                             break;
                         case BANK_ACTION:
                             bankAction(inputStream);
@@ -103,25 +103,15 @@ public class RequestHandler {
             String name = inputStream.readUTF();
             int defaultAvatarId = inputStream.readInt();
             session.register(new Player(name, Avatar.getDefaultAvatar(defaultAvatarId)));
-            System.out.println("PLAYERS COUNT: " + session.playersCount());
         }
 
-        Random random = new Random();
-        public void updateSearchPlayersInfo() throws IOException {
+        public void updateSessionInfo() throws IOException {
             if (session == null || !session.isAvailable()) {
                 return;
             }
 
-            int seed = random.nextInt(1000);
-            System.out.println("=== SEED " + seed);
-            System.out.println(session.getPlayers().size());
-
-            SessionPackage sessionPackage = new SessionPackage(session.getStartTime(), session.getPlayers()).setSeed(seed);
-            System.out.println(sessionPackage.getPlayers().size());
-            System.out.println("====================\n");
+            SessionPackage sessionPackage = new SessionPackage(session.getStartTime(), session.getPlayers());
             objectOutputStream.writeObject(sessionPackage);
-
-            System.out.println("UPDATE INFO REQUEST HANDLER");
             objectOutputStream.flush();
         }
 
