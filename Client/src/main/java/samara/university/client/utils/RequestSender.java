@@ -1,5 +1,6 @@
 package samara.university.client.utils;
 
+import samara.university.common.entities.Player;
 import samara.university.common.enums.Command;
 import samara.university.common.packages.SessionPackage;
 
@@ -45,17 +46,19 @@ public class RequestSender {
      * Установить соединение с сервером и открыть потоки ввода-вывода
      */
     public void connect() {
-        try {
-            socket = new Socket(InetAddress.getLocalHost(), SERVER_PORT);
-            inputStream = new DataInputStream(socket.getInputStream());
-            outputStream = new DataOutputStream(socket.getOutputStream());
-            objectInputStream = new ObjectInputStream(socket.getInputStream());
+        if (!isConnected) {
+            try {
+                socket = new Socket(InetAddress.getLocalHost(), SERVER_PORT);
+                inputStream = new DataInputStream(socket.getInputStream());
+                outputStream = new DataOutputStream(socket.getOutputStream());
+                objectInputStream = new ObjectInputStream(socket.getInputStream());
 
-            isConnected = true;
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+                isConnected = true;
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -67,20 +70,35 @@ public class RequestSender {
      * @throws IOException исключение ввода-вывода
      */
     public void authPlayer(String name, int avatarId) throws IOException {
-        if (!isConnected) {
-            connect();
-        }
+        connect();
         sendCommand(Command.AUTH);
         outputStream.writeUTF(name);
         outputStream.writeInt(avatarId);
         outputStream.flush();
     }
 
-    public SessionPackage updateInfo() throws IOException, ClassNotFoundException {
-        if (!isConnected) {
-            connect();
-        }
+    /**
+     * Отправка запроса на получение ссылки на игрока текущего клиента
+     *
+     * @return ссылка на объект "Игрок"
+     * @throws IOException            исключение ввода-вывода
+     * @throws ClassNotFoundException исключение "класс не найден"
+     */
+    public Player me() throws IOException, ClassNotFoundException {
+        connect();
+        sendCommand(Command.ME);
+        return (Player) objectInputStream.readObject();
+    }
 
+    /**
+     * Получает пакет-оболочку данных сессии
+     *
+     * @return пакет с данными сессии (дата создания и список игроков)
+     * @throws IOException            исключение ввода-вывода
+     * @throws ClassNotFoundException исключение "класс не найден"
+     */
+    public SessionPackage sessionInfo() throws IOException, ClassNotFoundException {
+        connect();
         sendCommand(Command.UPDATE_SESSION_INFO);
         return (SessionPackage) objectInputStream.readObject();
     }

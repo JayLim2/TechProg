@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Random;
 
 /**
  * Обработчик запросов к серверу
@@ -33,13 +32,12 @@ public class RequestHandler {
         private DataOutputStream outputStream;
         private ObjectOutputStream objectOutputStream;
 
-        private int id;
-
         private Session session;
+
+        private Player me;
 
         public ClientThread(Socket socket) {
             this.socket = socket;
-            id = new Random().nextInt(10);
         }
 
         @Override
@@ -73,6 +71,9 @@ public class RequestHandler {
                         case AUTH:
                             authPlayer();
                             break;
+                        case ME:
+                            me();
+                            break;
                         case UPDATE_SESSION_INFO:
                             updateSessionInfo();
                             break;
@@ -102,14 +103,15 @@ public class RequestHandler {
 
             String name = inputStream.readUTF();
             int defaultAvatarId = inputStream.readInt();
-            session.register(new Player(name, Avatar.getDefaultAvatar(defaultAvatarId)));
+            this.me = new Player(name, Avatar.getDefaultAvatar(defaultAvatarId));
+            session.register(this.me);
+        }
+
+        public void me() throws IOException {
+            objectOutputStream.writeObject(me);
         }
 
         public void updateSessionInfo() throws IOException {
-            if (session == null || !session.isAvailable()) {
-                return;
-            }
-
             SessionPackage sessionPackage = new SessionPackage(session.getStartTime(), session.getPlayers());
             objectOutputStream.writeObject(sessionPackage);
             objectOutputStream.flush();
