@@ -1,6 +1,8 @@
 package samara.university.common.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -21,9 +23,32 @@ public class Player implements Serializable {
     private int underConstructionAutomatedFactories;    //строящиеся авто-фабрики
     private int inAutomationNowFactories;               //автоматизируемые сейчас фабрики
 
+    private List<Factory> factories;
+    private List<Factory> autoFactories;
+
     public Player(String name, Avatar avatar) {
         this.name = name;
         this.avatar = avatar;
+        factories = new ArrayList<>();
+        autoFactories = new ArrayList<>();
+    }
+
+    private void newFactory(boolean isAutomated) {
+        Factory factory = new Factory(0, isAutomated);
+        if (!isAutomated) {
+            factories.add(factory);
+        } else {
+            autoFactories.add(factory);
+        }
+    }
+
+    private void automateExistingFactory() {
+        if (factories.size() > 0) {
+            Factory factory = factories.get(0);
+            factory.startAutomation(0);
+            factories.remove(0);
+            autoFactories.add(factory);
+        }
     }
 
     /**
