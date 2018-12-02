@@ -17,9 +17,11 @@ import javafx.util.Duration;
 import samara.university.client.utils.Forms;
 import samara.university.client.utils.RequestSender;
 import samara.university.common.constants.Restrictions;
+import samara.university.common.entities.Avatar;
 import samara.university.common.entities.Player;
 import samara.university.common.packages.SessionPackage;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -57,6 +59,16 @@ public class WaitingPlayersFormController {
 
     public void hideAction(WindowEvent event) {
         //resetTime();
+    }
+
+    public void interruptAction(ActionEvent event) {
+        try {
+            RequestSender.getRequestSender().exit();
+            Forms.openForm("Main");
+            Forms.closeForm("WaitingPlayers");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static final Duration ONE_SECOND_DURATION = Duration.seconds(1);
@@ -141,12 +153,15 @@ public class WaitingPlayersFormController {
                 totalSeconds = 0;
             } else {
                 totalSeconds = Restrictions.WAIT_TIME_LIMIT_SECONDS - (int) seconds;
-                int i = 0;
-                for (Player player : players) {
-                    //System.out.println("PLAYER: " + player);
-                    avatarBlocks[i].setImage(new Image(player.getAvatar().getPath()));
-                    labelBlocks[i].setText(player.getName());
-                    i++;
+                for (int i = 0; i < avatarBlocks.length; i++) {
+                    if (i < players.size()) {
+                        Player player = players.get(i);
+                        avatarBlocks[i].setImage(new Image(player.getAvatar().getPath()));
+                        labelBlocks[i].setText(player.getName());
+                    } else {
+                        avatarBlocks[i].setImage(new Image(Avatar.getEmptyAvatar().getPath()));
+                        labelBlocks[i].setText("Логин");
+                    }
                 }
             }
         } catch (Exception e) {

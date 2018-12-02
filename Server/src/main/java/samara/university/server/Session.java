@@ -23,11 +23,12 @@ public class Session {
     private GameLog gameLog;
     private Bank bank;
 
+    private Player winner;
+
     private int countPlayersReadyForNextPhase;
 
     private Session() {
         players = ConcurrentHashMap.newKeySet();
-        //players = new ArrayList<>();
         gameLog = new GameLog();
         turn = new Turn(gameLog);
         startTime = LocalDateTime.now();
@@ -84,6 +85,22 @@ public class Session {
         }
     }
 
+    /**
+     * Удаление игрока из игры
+     *
+     * @param player игрок
+     * @return признак того, закончилась ли игра
+     */
+    public boolean unregister(Player player) {
+        players.remove(player);
+        //Если остался один игрок - он объявляется победителем
+        if (players.size() == 1) {
+            winner = players.iterator().next();
+            return true;
+        }
+        return false;
+    }
+
     public List<Player> getPlayers() {
         ArrayList<Player> players = new ArrayList<>(this.players);
         return players;
@@ -106,6 +123,9 @@ public class Session {
     }
 
     public Bank getBank() {
+        if (bank == null) {
+            bank = new Bank();
+        }
         return bank;
     }
 

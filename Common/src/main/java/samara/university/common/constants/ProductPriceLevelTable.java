@@ -21,7 +21,7 @@ public class ProductPriceLevelTable {
     }
 
     @SuppressWarnings("Duplicates")
-    public int getMaxPrice(int level) {
+    public static int getMaxPrice(int level) {
         if (playersCount == 0) return 0;
 
         switch (level) {
@@ -40,10 +40,10 @@ public class ProductPriceLevelTable {
         }
     }
 
-    public int getUnitsCount() {
+    public static int getUnitsCount(int level) {
         if (playersCount == 0) return 0;
 
-        switch (playersCount) {
+        switch (level) {
             case 1:
                 return 3 * playersCount;
             case 2:

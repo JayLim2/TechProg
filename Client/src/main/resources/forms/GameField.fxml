@@ -124,10 +124,14 @@
         <Text layoutX="17.0" layoutY="153.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Продажа банком ЕСМ:"/>
         <Text layoutX="21.0" layoutY="167.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Минимальная цена:"/>
         <Text layoutX="21.0" layoutY="178.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Количество:"/>
-        <Text layoutX="152.0" layoutY="168.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0"/>
-        <Text layoutX="152.0" layoutY="179.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0"/>
-        <Text layoutX="152.0" layoutY="228.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0"/>
-        <Text layoutX="152.0" layoutY="217.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0"/>
+        <Text fx:id="labelBankResourcesMinPrice" layoutX="152.0" layoutY="168.0" strokeType="OUTSIDE" strokeWidth="0.0"
+              text="0"/>
+        <Text fx:id="labelBankResourcesCount" layoutX="152.0" layoutY="179.0" strokeType="OUTSIDE" strokeWidth="0.0"
+              text="0"/>
+        <Text fx:id="labelBankProductsCount" layoutX="152.0" layoutY="228.0" strokeType="OUTSIDE" strokeWidth="0.0"
+              text="0"/>
+        <Text fx:id="labelBankProductsMaxPrice" layoutX="152.0" layoutY="217.0" strokeType="OUTSIDE" strokeWidth="0.0"
+              text="0"/>
         <Text layoutX="21.0" layoutY="227.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Количество:"/>
         <Text layoutX="21.0" layoutY="216.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Минимальная цена:"/>
         <Text layoutX="17.0" layoutY="202.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Покупка банком ЕГП:"/>

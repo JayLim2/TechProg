@@ -21,7 +21,7 @@ public class ResourcePriceLevelTable {
     }
 
     @SuppressWarnings("Duplicates")
-    public int getMinPrice(int level) {
+    public static int getMinPrice(int level) {
         if (playersCount == 0) return 0;
 
         switch (level) {
@@ -40,10 +40,10 @@ public class ResourcePriceLevelTable {
         }
     }
 
-    public int getUnitsCount() {
+    public static int getUnitsCount(int level) {
         if (playersCount == 0) return 0;
 
-        switch (playersCount) {
+        switch (level) {
             case 1:
                 return playersCount;
             case 2:

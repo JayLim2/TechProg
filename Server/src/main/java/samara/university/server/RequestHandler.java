@@ -4,6 +4,7 @@ import samara.university.common.entities.Avatar;
 import samara.university.common.entities.Player;
 import samara.university.common.enums.BankAction;
 import samara.university.common.enums.Command;
+import samara.university.common.packages.BankPackage;
 import samara.university.common.packages.SessionPackage;
 
 import java.io.DataInputStream;
@@ -118,6 +119,9 @@ public class RequestHandler {
             int cmdCode = in.readInt();
             BankAction bankAction = BankAction.values()[cmdCode];
             switch (bankAction) {
+                case RESERVES:
+                    reserves();
+                    break;
                 case BUY_RESOURCE:
                     break;
                 case SELL_PRODUCT:
@@ -133,6 +137,11 @@ public class RequestHandler {
                 case PAY_REGULAR_COSTS:
                     break;
             }
+        }
+
+        public void reserves() throws IOException {
+            objectOutputStream.writeObject(createBankPackage());
+            objectOutputStream.flush();
         }
 
         /**
@@ -153,14 +162,30 @@ public class RequestHandler {
             objectOutputStream.flush();
         }
 
-        public void exit() {
+        public void exit() throws IOException {
+            outputStream.writeBoolean(Session.getSession().unregister(me));
+            outputStream.flush();
+        }
 
+        /**
+         * Создание пакета с информацией о банке
+         *
+         * @return BankPackage
+         */
+        private BankPackage createBankPackage() {
+            Bank bank = Session.getSession().getBank();
+            return new BankPackage(
+                    bank.getResourcesCount(),
+                    bank.getMinResourcePrice(),
+                    bank.getProductsCount(),
+                    bank.getMaxProductPrice()
+            );
         }
 
         /**
          * Создание пакета с информацией о сессии
          *
-         * @return пакет с информацией о сессии
+         * @return SessionPackage
          */
         private SessionPackage createSessionPackage() {
             return new SessionPackage(

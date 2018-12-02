@@ -6,6 +6,8 @@ import java.io.Serializable;
  * Спецификация дополнительных уточняющих команд, связанных с действиями банка
  */
 public enum BankAction implements Serializable {
+    RESERVES,
+
     BUY_RESOURCE,
 
     SELL_PRODUCT,

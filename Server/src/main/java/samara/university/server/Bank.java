@@ -1,5 +1,6 @@
 package samara.university.server;
 
+import samara.university.common.constants.ProbabilityTable;
 import samara.university.common.constants.ProductPriceLevelTable;
 import samara.university.common.constants.ResourcePriceLevelTable;
 import samara.university.common.entities.Factory;
@@ -24,6 +25,7 @@ public class Bank {
 
     public Bank() {
         bids = new ArrayList<>();
+        calculateReserves();
     }
 
     /**
@@ -128,17 +130,51 @@ public class Bank {
 
     public void calculateReserves() {
         int playersCount = Session.getSession().playersCount();
-        //Рассчитать количество ЕСМ
+        int nextLevel = ProbabilityTable.nextLevel();
+        System.out.println("players count: " + playersCount);
+        System.out.println("next level: " + nextLevel);
         ResourcePriceLevelTable.setPlayersCount(playersCount);
-
-        //Рассчитать минимальную цену ЕСМ
-
-        //Рассчитать количество ЕГП
         ProductPriceLevelTable.setPlayersCount(playersCount);
 
+        //Рассчитать количество ЕСМ
+        reserveUnitsOfResources = ResourcePriceLevelTable.getUnitsCount(nextLevel);
+
+        //Рассчитать минимальную цену ЕСМ
+        minResourcePrice = ResourcePriceLevelTable.getMinPrice(nextLevel);
+
+        //Рассчитать количество ЕГП
+        reserveUnitsOfProducts = ProductPriceLevelTable.getUnitsCount(nextLevel);
 
         //Рассчитать максимальную цену ЕГП
+        maxProductPrice = ProductPriceLevelTable.getMaxPrice(nextLevel);
+    }
 
+    /**
+     * @return количество ЕСМ
+     */
+    public int getResourcesCount() {
+        return reserveUnitsOfResources;
+    }
+
+    /**
+     * @return количество ЕГП
+     */
+    public int getProductsCount() {
+        return reserveUnitsOfProducts;
+    }
+
+    /**
+     * @return минимальная цена продажи банком ЕСМ
+     */
+    public int getMinResourcePrice() {
+        return minResourcePrice;
+    }
+
+    /**
+     * @return максимальная цена скупки банком ЕГП
+     */
+    public int getMaxProductPrice() {
+        return maxProductPrice;
     }
 
     /**
@@ -192,7 +228,7 @@ public class Bank {
         return null;
     }
 
-    private static class Bid {
+    private class Bid {
         private Player player;
         private boolean type; //FALSE - покупка ЕСМ, TRUE - продажа ЕГП
         private int count;
@@ -205,7 +241,7 @@ public class Bank {
             this.price = price;
         }
 
-        public static Bid createBid(Player player, boolean type, int count, int price) {
+        public Bid createBid(Player player, boolean type, int count, int price) {
             if (count != 0) {
                 return new Bid(player, type, count, price);
             }

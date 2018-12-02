@@ -1,7 +1,9 @@
 package samara.university.client.utils;
 
 import samara.university.common.entities.Player;
+import samara.university.common.enums.BankAction;
 import samara.university.common.enums.Command;
+import samara.university.common.packages.BankPackage;
 import samara.university.common.packages.SessionPackage;
 
 import java.io.DataInputStream;
@@ -119,14 +121,41 @@ public class RequestSender {
         return (SessionPackage) objectInputStream.readObject();
     }
 
+    public BankPackage bankInfo() throws IOException, ClassNotFoundException {
+        connect();
+        sendCommand(Command.BANK_ACTION);
+        sendBankAction(BankAction.RESERVES);
+        return (BankPackage) objectInputStream.readObject();
+    }
+
+    public void exit() throws IOException {
+        connect();
+        sendCommand(Command.EXIT);
+        boolean gameOver = inputStream.readBoolean();
+        if (gameOver) {
+            //do something
+        }
+    }
+
     /**
      * Вспомогательный метод отправки команды на сервер
      *
-     * @param command команда
-     * @throws IOException исключение ввода-вывода
+     * @param command       команда
+     * @throws IOException  исключение ввода-вывода
      */
     private void sendCommand(Command command) throws IOException {
         outputStream.writeInt(command.ordinal());
+        outputStream.flush();
+    }
+
+    /**
+     * Вспомогательный метод отправки банковского действия на сервер
+     *
+     * @param bankAction банковское действие
+     * @throws IOException исключение ввода-вывода
+     */
+    private void sendBankAction(BankAction bankAction) throws IOException {
+        outputStream.writeInt(bankAction.ordinal());
         outputStream.flush();
     }
 }

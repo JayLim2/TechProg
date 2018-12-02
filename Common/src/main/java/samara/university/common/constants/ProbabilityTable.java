@@ -5,6 +5,7 @@ import java.util.Random;
 public class ProbabilityTable {
     private static float[][] probabilities;
     private static Random random = new Random();
+    private static int currentLevel = 1;
 
     static {
         float oneTwelfth = 1f / 12;
@@ -25,18 +26,15 @@ public class ProbabilityTable {
         return probabilities.clone();
     }
 
-    public static int nextLevel(int prevLevel) {
-        if (prevLevel <= 0 || prevLevel >= probabilities.length) {
-            return 0;
-        }
-
-        float[] oldLevelRow = probabilities[prevLevel - 1];
+    public static int nextLevel() {
+        float[] oldLevelRow = probabilities[currentLevel - 1];
         float nextFloat = random.nextFloat();
         float current = 0;
         int i;
         for (i = 0; i < oldLevelRow.length && Float.compare(nextFloat, current) < 0; i++) {
             current += oldLevelRow[i];
+            System.out.println("current: " + current);
         }
-        return i;
+        return i + 1;
     }
 }

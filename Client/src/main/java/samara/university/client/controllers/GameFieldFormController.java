@@ -16,6 +16,7 @@ import samara.university.client.utils.Forms;
 import samara.university.client.utils.RequestSender;
 import samara.university.common.constants.Restrictions;
 import samara.university.common.entities.Player;
+import samara.university.common.packages.BankPackage;
 import samara.university.common.packages.SessionPackage;
 
 import java.io.IOException;
@@ -26,6 +27,16 @@ import java.util.Objects;
 public class GameFieldFormController {
     @FXML
     private AnchorPane mainPane;
+
+    //bank
+    @FXML
+    private Text labelBankResourcesCount;
+    @FXML
+    private Text labelBankResourcesMinPrice;
+    @FXML
+    private Text labelBankProductsCount;
+    @FXML
+    private Text labelBankProductsMaxPrice;
 
     //others
     @FXML
@@ -102,6 +113,9 @@ public class GameFieldFormController {
             //Информация о ходе
             fillTurn(sessionPackage.getCurrentPhase(), sessionPackage.getCurrentMonth(), Restrictions.PHASE_LENGTH_IN_SECONDS);
 
+            //Информация о банковских резервах
+            fillBankReserves();
+
             //Запустить обратный отсчёт хода
             playCountdown();
         } catch (IOException e) {
@@ -156,6 +170,26 @@ public class GameFieldFormController {
     public void fillTurn(int phase, int month, int timeLeftInSeconds) {
         labelPhase.setText(Integer.toString(phase));
         labelMonth.setText(Integer.toString(month));
+    }
+
+    public void fillBankReserves() {
+        try {
+            BankPackage bankPackage = RequestSender.getRequestSender().bankInfo();
+
+            System.out.println(bankPackage.getMaxProductPrice());
+            System.out.println(bankPackage.getMinResourcePrice());
+            System.out.println(bankPackage.getReserveUnitsOfProducts());
+            System.out.println(bankPackage.getReserveUnitsOfResources());
+
+            labelBankResourcesCount.setText(Integer.toString(bankPackage.getReserveUnitsOfResources()));
+            labelBankResourcesMinPrice.setText(Integer.toString(bankPackage.getMinResourcePrice()));
+            labelBankProductsCount.setText(Integer.toString(bankPackage.getReserveUnitsOfProducts()));
+            labelBankProductsMaxPrice.setText(Integer.toString(bankPackage.getMaxProductPrice()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private static final Duration ONE_SECOND_DURATION = Duration.seconds(1);
