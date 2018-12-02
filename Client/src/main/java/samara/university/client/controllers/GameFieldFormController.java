@@ -12,6 +12,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
+import samara.university.client.utils.Forms;
 import samara.university.client.utils.RequestSender;
 import samara.university.common.constants.Restrictions;
 import samara.university.common.entities.Player;
@@ -188,22 +189,26 @@ public class GameFieldFormController {
     }
 
     public void showBuyResourcesForm(ActionEvent event) {
-
+        Forms.openFormAsModal("BuyUnitsOfResources");
     }
 
     public void showSellProductsForm(ActionEvent event) {
-
+        Forms.openFormAsModal("SellUnitsOfProducts");
     }
 
     public void showStartProductionForm(ActionEvent event) {
-
+        Forms.openFormAsModal("Production");
     }
 
     public void showStartConstructionForm(ActionEvent event) {
-
+        Forms.openFormAsModal("Build");
     }
 
     public void showGetLoanForm(ActionEvent event) {
+        Forms.openFormAsModal("Loan");
+    }
+
+    public void showHelpForm(ActionEvent event) {
 
     }
 

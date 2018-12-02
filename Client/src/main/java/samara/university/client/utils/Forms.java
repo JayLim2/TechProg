@@ -4,6 +4,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import samara.university.client.Main;
@@ -156,17 +157,35 @@ public class Forms {
                 formStages.putIfAbsent(formName, stage);
 
                 stage.show();
-
-                //System.out.println("FORM NAME: " + formName);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
-        /*Stage stage = formStages.get(formName);
+    public static void openFormAsModal(String formName) {
+        Stage stage = formStages.get(formName);
         if (stage != null) {
             stage.show();
-        }*/
+            return;
+        }
+
+        try {
+            if (formName != null) {
+                URL resourceURL = Main.class.getResource("/forms/" + formName + ".fxml");
+                stage = new Stage();
+                Parent root = FXMLLoader.load(resourceURL);
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                stage.initModality(Modality.APPLICATION_MODAL);
+                addStyle(stage);
+                formStages.putIfAbsent(formName, stage);
+
+                stage.showAndWait();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void closeForm(String formName) {

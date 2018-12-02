@@ -114,7 +114,7 @@
                 <Font size="14.0"/>
             </font>
         </Text>
-        <Button layoutX="730.0" layoutY="117.0" mnemonicParsing="false" text="i"/>
+        <Button layoutX="730.0" layoutY="117.0" mnemonicParsing="false" onAction="#showHelpForm" text="i"/>
         <Button layoutX="717.0" layoutY="261.0" mnemonicParsing="false" onAction="#interruptGameForMe" text="⟾"/>
         <Text layoutX="15.0" layoutY="132.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Банк">
             <font>
