@@ -15,7 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Session {
     private static Session session;
-    private static final int PHASE_LENGTH_IN_SECONDS = 120; //длительность фазы 120 сек
 
     private LocalDateTime startTime;
     private Set<Player> players;
@@ -47,7 +46,7 @@ public class Session {
     /**
      * Закрытие сессии
      */
-    public static void terminate() {
+    public static void terminateSession() {
         session = null;
     }
 
@@ -61,7 +60,6 @@ public class Session {
 
     public void register(Player player) {
         if (player != null && isAvailable()) {
-            //System.out.println("REGISTRATION PLAYER");
             players.add(player);
             if (seniorPlayer == null) {
                 seniorPlayer = player;
@@ -80,6 +78,10 @@ public class Session {
 
     public Player getSeniorPlayer() {
         return seniorPlayer;
+    }
+
+    public Turn getTurn() {
+        return turn;
     }
 
     public boolean isSeniorPlayer(Player player) {

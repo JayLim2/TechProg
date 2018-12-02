@@ -112,7 +112,13 @@ public class RequestHandler {
         }
 
         public void updateSessionInfo() throws IOException {
-            SessionPackage sessionPackage = new SessionPackage(session.getStartTime(), session.getPlayers(), session.getSeniorPlayer());
+            SessionPackage sessionPackage = new SessionPackage(
+                    session.getStartTime(),
+                    session.getPlayers(),
+                    session.getSeniorPlayer(),
+                    session.getTurn().getCurrentPhase(),
+                    session.getTurn().getCurrentMonth());
+
             objectOutputStream.writeObject(sessionPackage);
             objectOutputStream.flush();
         }

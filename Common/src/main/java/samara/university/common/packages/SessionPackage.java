@@ -16,11 +16,15 @@ public class SessionPackage implements Serializable {
     private LocalDateTime startTime;
     private List<Player> players;
     private Player currentSeniorPlayer;
+    private int currentPhase;
+    private int currentMonth;
 
-    public SessionPackage(LocalDateTime startTime, List<Player> players, Player currentSeniorPlayer) {
+    public SessionPackage(LocalDateTime startTime, List<Player> players, Player currentSeniorPlayer, int currentPhase, int currentMonth) {
         this.startTime = startTime;
         this.players = players;
         this.currentSeniorPlayer = currentSeniorPlayer;
+        this.currentPhase = currentPhase;
+        this.currentMonth = currentMonth;
     }
 
     public LocalDateTime getStartTime() {
@@ -33,6 +37,14 @@ public class SessionPackage implements Serializable {
 
     public Player getCurrentSeniorPlayer() {
         return currentSeniorPlayer;
+    }
+
+    public int getCurrentPhase() {
+        return currentPhase;
+    }
+
+    public int getCurrentMonth() {
+        return currentMonth;
     }
 
     @Override

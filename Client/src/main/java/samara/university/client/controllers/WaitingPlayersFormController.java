@@ -124,9 +124,8 @@ public class WaitingPlayersFormController {
 
     private void updateTimeFields() {
         int minutes = totalSeconds / 60;
-        int seconds = totalSeconds - minutes * 60;
         minutesField.setText(Integer.toString(minutes));
-        secondsField.setText(Integer.toString(seconds));
+        secondsField.setText(Integer.toString(totalSeconds - minutes * 60));
     }
 
     private void updateInfo() {

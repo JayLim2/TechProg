@@ -1,5 +1,9 @@
 package samara.university.client.controllers;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.image.Image;
@@ -7,7 +11,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 import samara.university.client.utils.RequestSender;
+import samara.university.common.constants.Restrictions;
 import samara.university.common.entities.Player;
 import samara.university.common.packages.SessionPackage;
 
@@ -21,9 +27,14 @@ public class GameFieldFormController {
     private AnchorPane mainPane;
 
     //others
+    @FXML
     private Text labelMonth;
+    @FXML
     private Text labelPhase;
-    private Text labelTimeLeft;
+    @FXML
+    private Text labelMinutesLeft;
+    @FXML
+    private Text labelSecondsLeft;
 
     private Player me;
     private Player senior;
@@ -86,6 +97,12 @@ public class GameFieldFormController {
             for (int i = 0; i < players.size(); i++) {
                 fillProfile(players.get(i), i + 1);
             }
+
+            //Информация о ходе
+            fillTurn(sessionPackage.getCurrentPhase(), sessionPackage.getCurrentMonth(), Restrictions.PHASE_LENGTH_IN_SECONDS);
+
+            //Запустить обратный отсчёт хода
+            playCountdown();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -135,6 +152,69 @@ public class GameFieldFormController {
         text.setText(Integer.toString(player.getUnderConstructionAutomatedFactories()));
     }
 
+    public void fillTurn(int phase, int month, int timeLeftInSeconds) {
+        labelPhase.setText(Integer.toString(phase));
+        labelMonth.setText(Integer.toString(month));
+    }
+
+    private static final Duration ONE_SECOND_DURATION = Duration.seconds(1);
+    private Integer totalSeconds = Restrictions.PHASE_LENGTH_IN_SECONDS;
+
+    private void playCountdown() {
+        Timeline timeline = new Timeline();
+
+        KeyFrame frame = new KeyFrame(ONE_SECOND_DURATION, new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                totalSeconds--;
+                updateTimeFields();
+
+                if (totalSeconds <= 0) {
+                    timeline.stop();
+                    timeline.getKeyFrames().clear();
+                }
+            }
+        });
+
+        timeline.getKeyFrames().add(frame);
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+    }
+
+    private void updateTimeFields() {
+        int minutes = totalSeconds / 60;
+        labelMinutesLeft.setText(Integer.toString(minutes));
+        labelSecondsLeft.setText(Integer.toString(totalSeconds - minutes * 60));
+    }
+
+    public void showBuyResourcesForm(ActionEvent event) {
+
+    }
+
+    public void showSellProductsForm(ActionEvent event) {
+
+    }
+
+    public void showStartProductionForm(ActionEvent event) {
+
+    }
+
+    public void showStartConstructionForm(ActionEvent event) {
+
+    }
+
+    public void showGetLoanForm(ActionEvent event) {
+
+    }
+
+    public void nextPhase(ActionEvent event) {
+
+    }
+
+    public void interruptGameForMe(ActionEvent event) {
+        //Прерывает игру и выводит игрока из сессии
+    }
+
     /**
      * Возвращает элемент по его fxId, формируемому автоматически по следующему соглашению:
      * <br>
@@ -144,10 +224,11 @@ public class GameFieldFormController {
      * <br>entityName - любое название сущности, которую описывает объект на форме
      * <br>number - номер на форме (1...MAX_INT), либо 0 (означает объект в области текущего игрока)
      *
-     * @param type
-     * @param entityName
-     * @param number
-     * @return
+     * @param type          тип поля (text, image_view)
+     * @param entityName    сущность, описываемая полем (например, money)
+     * @param number        порядковый номер (0 - текущий игрок, 1...N - оставшиеся)
+     * @param descr         дополнительная характеристика (amount, avatar, ...)
+     * @return объект узла на форма
      */
     private Object getElementById(String type, String entityName, String descr, int number) {
         String fxId = type + '_' + entityName + '_' + descr + '_' + number;

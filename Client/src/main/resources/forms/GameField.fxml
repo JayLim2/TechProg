@@ -57,53 +57,54 @@
                 <Font size="14.0"/>
             </font>
         </Text>
-        <Text layoutX="164.0" layoutY="387.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+        <Text fx:id="labelMonth" layoutX="164.0" layoutY="387.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
             <font>
                 <Font size="14.0"/>
             </font>
         </Text>
-        <Text layoutX="233.0" layoutY="387.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+        <Text fx:id="labelPhase" layoutX="233.0" layoutY="387.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
             <font>
                 <Font size="14.0"/>
             </font>
         </Text>
-        <Text layoutX="336.0" layoutY="386.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+        <Text fx:id="labelMinutesLeft" layoutX="321.0" layoutY="386.0" strokeType="OUTSIDE" strokeWidth="0.0" text="00"
+              wrappingWidth="21.999994933605194">
             <font>
                 <Font size="14.0"/>
             </font>
         </Text>
-        <Button layoutX="464.0" layoutY="293.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="133.0"
-                text="Купить ЕСМ">
+        <Button layoutX="464.0" layoutY="293.0" mnemonicParsing="false" onAction="#showBuyResourcesForm"
+                prefHeight="30.0" prefWidth="133.0" text="Купить ЕСМ">
             <font>
                 <Font size="14.0"/>
             </font>
         </Button>
-        <Button layoutX="608.0" layoutY="293.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="133.0"
-                text="Продать ЕГП">
+        <Button layoutX="608.0" layoutY="293.0" mnemonicParsing="false" onAction="#showSellProductsForm"
+                prefHeight="30.0" prefWidth="133.0" text="Продать ЕГП">
             <font>
                 <Font size="14.0"/>
             </font>
         </Button>
-        <Button layoutX="607.0" layoutY="327.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="133.0"
-                text="Строительство">
+        <Button layoutX="607.0" layoutY="327.0" mnemonicParsing="false" onAction="#showStartConstructionForm"
+                prefHeight="30.0" prefWidth="133.0" text="Строительство">
             <font>
                 <Font size="14.0"/>
             </font>
         </Button>
-        <Button layoutX="464.0" layoutY="329.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="133.0"
-                text="Производство">
+        <Button layoutX="464.0" layoutY="329.0" mnemonicParsing="false" onAction="#showStartProductionForm"
+                prefHeight="30.0" prefWidth="133.0" text="Производство">
             <font>
                 <Font size="14.0"/>
             </font>
         </Button>
-        <Button layoutX="608.0" layoutY="366.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="133.0"
-                text="Следующая фаза">
+        <Button layoutX="608.0" layoutY="366.0" mnemonicParsing="false" onAction="#nextPhase" prefHeight="30.0"
+                prefWidth="133.0" text="Следующая фаза">
             <font>
                 <Font size="14.0"/>
             </font>
         </Button>
-        <Button layoutX="464.0" layoutY="366.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="133.0"
-                text="Ссуда">
+        <Button layoutX="464.0" layoutY="366.0" mnemonicParsing="false" onAction="#showGetLoanForm" prefHeight="30.0"
+                prefWidth="133.0" text="Ссуда">
             <font>
                 <Font size="14.0"/>
             </font>
@@ -114,7 +115,7 @@
             </font>
         </Text>
         <Button layoutX="730.0" layoutY="117.0" mnemonicParsing="false" text="i"/>
-        <Button layoutX="717.0" layoutY="261.0" mnemonicParsing="false" text="⟾"/>
+        <Button layoutX="717.0" layoutY="261.0" mnemonicParsing="false" onAction="#interruptGameForMe" text="⟾"/>
         <Text layoutX="15.0" layoutY="132.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Банк">
             <font>
                 <Font size="14.0"/>
@@ -259,5 +260,16 @@
         </ImageView>
         <Text fx:id="text_factories_amount_0" layoutX="417.0" layoutY="316.0" strokeType="OUTSIDE" strokeWidth="0.0"
               text="0"/>
+        <Text fx:id="labelSecondsLeft" layoutX="349.0" layoutY="386.0" strokeType="OUTSIDE" strokeWidth="0.0" text="00">
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </Text>
+        <Text layoutX="341.0" layoutY="386.0" strokeType="OUTSIDE" strokeWidth="0.0" text=":"
+              wrappingWidth="11.267575979232788">
+            <font>
+                <Font size="14.0"/>
+            </font>
+        </Text>
     </children>
 </AnchorPane>

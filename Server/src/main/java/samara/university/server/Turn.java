@@ -19,8 +19,18 @@ public class Turn {
     private int currentPhase;
 
     public Turn(GameLog log) {
+        currentPhase = 1;
+        currentMonth = 1;
         gameLog = log;
         playersActions = new HashMap<>();
+    }
+
+    public int getCurrentMonth() {
+        return currentMonth;
+    }
+
+    public int getCurrentPhase() {
+        return currentPhase;
     }
 
     public void toNextMonth() {
