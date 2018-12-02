@@ -97,6 +97,7 @@ public class WaitingPlayersFormController {
         timeline.play();
     }
 
+    // FIXME: 02.12.2018 баг с отрисовкой времени на форме
     /**
      * Ожидание игроков
      */

@@ -131,6 +131,7 @@ public class RequestSender {
     public void exit() throws IOException {
         connect();
         sendCommand(Command.EXIT);
+        // FIXME: 02.12.2018 блокирует поток
         boolean gameOver = inputStream.readBoolean();
         if (gameOver) {
             //do something

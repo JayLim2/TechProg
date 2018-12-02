@@ -86,7 +86,7 @@ public class RequestHandler {
                             break;
                         case EXIT:
                             exit();
-                            return;
+                            //return;
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
