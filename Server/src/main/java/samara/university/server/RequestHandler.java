@@ -80,9 +80,6 @@ public class RequestHandler {
                         case BANK_ACTION:
                             bankAction(inputStream);
                             break;
-                        case NEXT_TURN:
-                            nextTurn();
-                            break;
                         case NEXT_PHASE:
                             nextPhase();
                             break;
@@ -112,13 +109,7 @@ public class RequestHandler {
         }
 
         public void updateSessionInfo() throws IOException {
-            SessionPackage sessionPackage = new SessionPackage(
-                    session.getStartTime(),
-                    session.getPlayers(),
-                    session.getSeniorPlayer(),
-                    session.getTurn().getCurrentPhase(),
-                    session.getTurn().getCurrentMonth());
-
+            SessionPackage sessionPackage = createSessionPackage();
             objectOutputStream.writeObject(sessionPackage);
             objectOutputStream.flush();
         }
@@ -144,16 +135,41 @@ public class RequestHandler {
             }
         }
 
-        public void nextTurn() {
-
-        }
-
-        public void nextPhase() {
-
+        /**
+         * Переход на следующую фазу.
+         * Если текущая фаза последняя, то переход на следующий ход.
+         */
+        public void nextPhase() throws IOException {
+            if (session.isAllReady()) {
+                session.resetReady();
+                session.setSeniorPlayer(session.getBank().nextSeniorPlayer(session.getPlayers(), session.getSeniorPlayer()));
+                session.getTurn().toNextPhase();
+                session.getTurn().toNextMonth();
+            } else {
+                session.makeReady();
+            }
+            SessionPackage sessionPackage = createSessionPackage();
+            objectOutputStream.writeObject(sessionPackage);
+            objectOutputStream.flush();
         }
 
         public void exit() {
 
+        }
+
+        /**
+         * Создание пакета с информацией о сессии
+         *
+         * @return пакет с информацией о сессии
+         */
+        private SessionPackage createSessionPackage() {
+            return new SessionPackage(
+                    session.getStartTime(),
+                    session.getPlayers(),
+                    session.getSeniorPlayer(),
+                    session.getTurn().getCurrentPhase(),
+                    session.getTurn().getCurrentMonth()
+            );
         }
     }
 }

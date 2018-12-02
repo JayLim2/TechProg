@@ -33,24 +33,6 @@ public class Player implements Serializable {
         autoFactories = new ArrayList<>();
     }
 
-    private void newFactory(boolean isAutomated) {
-        Factory factory = new Factory(0, isAutomated);
-        if (!isAutomated) {
-            factories.add(factory);
-        } else {
-            autoFactories.add(factory);
-        }
-    }
-
-    private void automateExistingFactory() {
-        if (factories.size() > 0) {
-            Factory factory = factories.get(0);
-            factory.startAutomation(0);
-            factories.remove(0);
-            autoFactories.add(factory);
-        }
-    }
-
     /**
      * Получение суммы постоянных издержек
      * (удерживаются в начале каждого хода)
@@ -102,6 +84,14 @@ public class Player implements Serializable {
 
     public void setMoney(int money) {
         this.money = money;
+    }
+
+    public List<Factory> getFactories() {
+        return factories;
+    }
+
+    public List<Factory> getAutoFactories() {
+        return autoFactories;
     }
 
     public int getWorkingFactories() {

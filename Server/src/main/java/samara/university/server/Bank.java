@@ -2,6 +2,7 @@ package samara.university.server;
 
 import samara.university.common.constants.ProductPriceLevelTable;
 import samara.university.common.constants.ResourcePriceLevelTable;
+import samara.university.common.entities.Factory;
 import samara.university.common.entities.Player;
 
 import java.util.ArrayList;
@@ -138,6 +139,57 @@ public class Bank {
 
         //Рассчитать максимальную цену ЕГП
 
+    }
+
+    /**
+     * Построить фабрику для игрока player (автоматизированную или обычную)
+     *
+     * @param player      игрок
+     * @param isAutomated свойство "автоматизированная"
+     * @param month       месяц начала строительства
+     */
+    public void buildFactory(Player player, boolean isAutomated, int month) {
+        Factory factory = new Factory(month, isAutomated);
+        if (!isAutomated) {
+            player.getFactories().add(factory);
+        } else {
+            player.getAutoFactories().add(factory);
+        }
+    }
+
+    /**
+     * Автоматизировать одну обычную фабрику игроку player.
+     *
+     * @param player игрок
+     * @param month  месяц начала автоматизации
+     */
+    public void automateExistingFactory(Player player, int month) {
+        List<Factory> factories = player.getFactories();
+        if (factories.size() > 0) {
+            Factory factory = factories.get(0);
+            factory.startAutomation(month);
+            factories.remove(0);
+            player.getAutoFactories().add(factory);
+        }
+    }
+
+    /**
+     * Определение следующего старшего игрока
+     *
+     * @param allPlayers    список всех игроков
+     * @param currentSenior текущий старший игрок
+     * @return следующий старшик игрок
+     */
+    public Player nextSeniorPlayer(List<Player> allPlayers, Player currentSenior) {
+        int index = allPlayers.indexOf(currentSenior);
+        if (index >= 0 && index < allPlayers.size()) {
+            if (index == allPlayers.size() - 1) {
+                return allPlayers.get(0);
+            } else {
+                return allPlayers.get(++index);
+            }
+        }
+        return null;
     }
 
     private static class Bid {

@@ -72,19 +72,6 @@ public enum Command implements Serializable {
     BANK_ACTION,
 
     /**
-     * NEXT_TURN
-     * <p>
-     * Команда, объявляющая, что игрок готов к следующему ходу
-     * <p>
-     * read:
-     * - None
-     * <p>
-     * write:
-     * - Флаг готовности
-     */
-    NEXT_TURN,
-
-    /**
      * NEXT_PHASE
      * <p>
      * Команда, объявляющая, что игрок готов к следующей фазе

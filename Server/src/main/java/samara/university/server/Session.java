@@ -21,6 +21,9 @@ public class Session {
     private Player seniorPlayer;
     private Turn turn;
     private GameLog gameLog;
+    private Bank bank;
+
+    private int countPlayersReadyForNextPhase;
 
     private Session() {
         players = ConcurrentHashMap.newKeySet();
@@ -58,6 +61,20 @@ public class Session {
         return playersCount() <= Restrictions.MAX_PLAYERS_COUNT;
     }
 
+    //----------------------- Ready to next phase --------------------------
+    public boolean isAllReady() {
+        return countPlayersReadyForNextPhase == players.size() - 1;
+    }
+
+    public void makeReady() {
+        countPlayersReadyForNextPhase++;
+    }
+
+    public void resetReady() {
+        countPlayersReadyForNextPhase = 0;
+    }
+    //---------------------------------------------------------------------
+
     public void register(Player player) {
         if (player != null && isAvailable()) {
             players.add(player);
@@ -80,8 +97,16 @@ public class Session {
         return seniorPlayer;
     }
 
+    public void setSeniorPlayer(Player nextSeniorPlayer) {
+        this.seniorPlayer = nextSeniorPlayer;
+    }
+
     public Turn getTurn() {
         return turn;
+    }
+
+    public Bank getBank() {
+        return bank;
     }
 
     public boolean isSeniorPlayer(Player player) {

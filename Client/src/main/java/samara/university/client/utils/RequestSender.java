@@ -91,15 +91,31 @@ public class RequestSender {
     }
 
     /**
-     * Получает пакет-оболочку данных сессии
+     * Безусловно получает пакет-оболочку данных сессии
      *
-     * @return пакет с данными сессии (дата создания и список игроков)
+     * @return пакет с данными сессии
      * @throws IOException            исключение ввода-вывода
      * @throws ClassNotFoundException исключение "класс не найден"
      */
     public SessionPackage sessionInfo() throws IOException, ClassNotFoundException {
         connect();
         sendCommand(Command.UPDATE_SESSION_INFO);
+        return (SessionPackage) objectInputStream.readObject();
+    }
+
+    /**
+     * Производит следующие изменения:
+     * - следующий по очереди игрок становится старшим
+     * - изменяется номер фазы
+     * - изменяется (в случае необходимости) номер хода
+     *
+     * @return пакет с данными о сессии
+     * @throws IOException            исключение ввода-вывода
+     * @throws ClassNotFoundException исключение "класс не найден"
+     */
+    public SessionPackage nextPhase() throws IOException, ClassNotFoundException {
+        connect();
+        sendCommand(Command.NEXT_PHASE);
         return (SessionPackage) objectInputStream.readObject();
     }
 
