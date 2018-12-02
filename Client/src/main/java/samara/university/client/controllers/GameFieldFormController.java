@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -116,6 +117,9 @@ public class GameFieldFormController {
             //Информация о банковских резервах
             fillBankReserves();
 
+            //Настройка отображения кнопок
+            updateMenuVisibility();
+
             //Запустить обратный отсчёт хода
             playCountdown();
         } catch (IOException e) {
@@ -222,6 +226,52 @@ public class GameFieldFormController {
         labelSecondsLeft.setText(Integer.toString(totalSeconds - minutes * 60));
     }
 
+    @FXML
+    private Button buttonBuyResources;
+    @FXML
+    private Button buttonSellProducts;
+    @FXML
+    private Button buttonStartProduction;
+    @FXML
+    private Button buttonStartConstruction;
+    @FXML
+    private Button buttonGetLoan;
+
+    private void updateMenuVisibility() {
+        try {
+            int phase = RequestSender.getRequestSender().sessionInfo().getCurrentPhase();
+            buttonBuyResources.setDisable(true);
+            buttonSellProducts.setDisable(true);
+            buttonStartProduction.setDisable(true);
+            buttonStartConstruction.setDisable(true);
+            buttonGetLoan.setDisable(true);
+            switch (phase) {
+                case 1: {
+                    buttonBuyResources.setDisable(false);
+                }
+                break;
+                case 2: {
+                    buttonStartProduction.setDisable(false);
+                }
+                break;
+                case 3: {
+                    buttonSellProducts.setDisable(false);
+                }
+                break;
+                case 4: {
+                    buttonGetLoan.setDisable(false);
+                }
+                break;
+                case 5: {
+                    buttonStartConstruction.setDisable(false);
+                }
+                break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void showBuyResourcesForm(ActionEvent event) {
         Forms.openFormAsModal("BuyUnitsOfResources");
     }
@@ -263,10 +313,10 @@ public class GameFieldFormController {
      * <br>entityName - любое название сущности, которую описывает объект на форме
      * <br>number - номер на форме (1...MAX_INT), либо 0 (означает объект в области текущего игрока)
      *
-     * @param type          тип поля (text, image_view)
-     * @param entityName    сущность, описываемая полем (например, money)
-     * @param number        порядковый номер (0 - текущий игрок, 1...N - оставшиеся)
-     * @param descr         дополнительная характеристика (amount, avatar, ...)
+     * @param type       тип поля (text, image_view)
+     * @param entityName сущность, описываемая полем (например, money)
+     * @param number     порядковый номер (0 - текущий игрок, 1...N - оставшиеся)
+     * @param descr      дополнительная характеристика (amount, avatar, ...)
      * @return объект узла на форма
      */
     private Object getElementById(String type, String entityName, String descr, int number) {

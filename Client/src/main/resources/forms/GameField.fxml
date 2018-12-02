@@ -73,26 +73,26 @@
                 <Font size="14.0"/>
             </font>
         </Text>
-        <Button layoutX="464.0" layoutY="293.0" mnemonicParsing="false" onAction="#showBuyResourcesForm"
-                prefHeight="30.0" prefWidth="133.0" text="Купить ЕСМ">
+        <Button fx:id="buttonBuyResources" layoutX="464.0" layoutY="293.0" mnemonicParsing="false"
+                onAction="#showBuyResourcesForm" prefHeight="30.0" prefWidth="133.0" text="Купить ЕСМ">
             <font>
                 <Font size="14.0"/>
             </font>
         </Button>
-        <Button layoutX="608.0" layoutY="293.0" mnemonicParsing="false" onAction="#showSellProductsForm"
-                prefHeight="30.0" prefWidth="133.0" text="Продать ЕГП">
+        <Button fx:id="buttonSellProducts" layoutX="608.0" layoutY="293.0" mnemonicParsing="false"
+                onAction="#showSellProductsForm" prefHeight="30.0" prefWidth="133.0" text="Продать ЕГП">
             <font>
                 <Font size="14.0"/>
             </font>
         </Button>
-        <Button layoutX="607.0" layoutY="327.0" mnemonicParsing="false" onAction="#showStartConstructionForm"
-                prefHeight="30.0" prefWidth="133.0" text="Строительство">
+        <Button fx:id="buttonStartConstruction" layoutX="607.0" layoutY="327.0" mnemonicParsing="false"
+                onAction="#showStartConstructionForm" prefHeight="30.0" prefWidth="133.0" text="Строительство">
             <font>
                 <Font size="14.0"/>
             </font>
         </Button>
-        <Button layoutX="464.0" layoutY="329.0" mnemonicParsing="false" onAction="#showStartProductionForm"
-                prefHeight="30.0" prefWidth="133.0" text="Производство">
+        <Button fx:id="buttonStartProduction" layoutX="464.0" layoutY="329.0" mnemonicParsing="false"
+                onAction="#showStartProductionForm" prefHeight="30.0" prefWidth="133.0" text="Производство">
             <font>
                 <Font size="14.0"/>
             </font>
@@ -103,8 +103,8 @@
                 <Font size="14.0"/>
             </font>
         </Button>
-        <Button layoutX="464.0" layoutY="366.0" mnemonicParsing="false" onAction="#showGetLoanForm" prefHeight="30.0"
-                prefWidth="133.0" text="Ссуда">
+        <Button fx:id="buttonGetLoan" layoutX="464.0" layoutY="366.0" mnemonicParsing="false"
+                onAction="#showGetLoanForm" prefHeight="30.0" prefWidth="133.0" text="Ссуда">
             <font>
                 <Font size="14.0"/>
             </font>

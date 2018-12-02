@@ -22,18 +22,19 @@
                 <Font size="18.0"/>
             </font>
         </Text>
-        <Button layoutX="86.0" layoutY="189.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="110.0" text="ОК">
+        <Button layoutX="86.0" layoutY="189.0" mnemonicParsing="false" onAction="#ok" prefHeight="39.0"
+                prefWidth="110.0" text="ОК">
             <font>
                 <Font size="18.0"/>
             </font>
         </Button>
-        <Button layoutX="247.0" layoutY="189.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="116.0"
-                text="Отмена">
+        <Button layoutX="247.0" layoutY="189.0" mnemonicParsing="false" onAction="#cancel" prefHeight="39.0"
+                prefWidth="116.0" text="Отмена">
             <font>
                 <Font size="18.0"/>
             </font>
         </Button>
-        <Spinner layoutX="271.0" layoutY="68.0" prefHeight="25.0" prefWidth="92.0"/>
-        <Spinner layoutX="271.0" layoutY="98.0" prefHeight="25.0" prefWidth="92.0"/>
+        <Spinner fx:id="spinnerResourcesCount" layoutX="271.0" layoutY="68.0" prefHeight="25.0" prefWidth="92.0"/>
+        <Spinner fx:id="spinnerResourcesPrice" layoutX="271.0" layoutY="98.0" prefHeight="25.0" prefWidth="92.0"/>
     </children>
 </AnchorPane>
