@@ -61,7 +61,7 @@ public class Session {
 
     public void register(Player player) {
         if (player != null && isAvailable()) {
-            System.out.println("REGISTRATION PLAYER");
+            //System.out.println("REGISTRATION PLAYER");
             players.add(player);
             if (seniorPlayer == null) {
                 seniorPlayer = player;
@@ -76,6 +76,10 @@ public class Session {
 
     public LocalDateTime getStartTime() {
         return startTime;
+    }
+
+    public Player getSeniorPlayer() {
+        return seniorPlayer;
     }
 
     public boolean isSeniorPlayer(Player player) {

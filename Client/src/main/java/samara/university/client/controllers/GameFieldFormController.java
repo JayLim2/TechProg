@@ -1,20 +1,23 @@
 package samara.university.client.controllers;
 
-import javafx.event.ActionEvent;
-import javafx.scene.Node;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
+import javafx.stage.WindowEvent;
 import samara.university.client.utils.RequestSender;
 import samara.university.common.entities.Player;
 import samara.university.common.packages.SessionPackage;
 
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class GameFieldFormController {
+    @FXML
     private AnchorPane mainPane;
 
     //others
@@ -23,8 +26,9 @@ public class GameFieldFormController {
     private Text labelTimeLeft;
 
     private Player me;
+    private Player senior;
 
-    private static final String IN_PROGRESS_SUFFIX = "in_progress";
+    private static final String IN_PROGRESS_SUFFIX = "_in_progress";
     private static final String[] TYPES = new String[]{
             "text", "image_view"
     };
@@ -51,20 +55,36 @@ public class GameFieldFormController {
             "senior"
     };
 
-    public void showAction(ActionEvent event) {
+    private FXMLLoader loader;
+    private Map<String, Object> formNamespace;
+
+    public void setLoader(FXMLLoader loader) {
+        this.loader = loader;
+    }
+
+    public Map<String, Object> getNamespace() {
+        if (formNamespace == null) {
+            if (loader != null) {
+                formNamespace = loader.getNamespace();
+            }
+        }
+        return formNamespace;
+    }
+
+    public void showAction(WindowEvent event) {
         try {
             SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
             me = RequestSender.getRequestSender().me();
-            List<Player> players = sessionPackage.getPlayers().sort(new Comparator<Player>() {
-                @Override
-                public int compare(Player o1, Player o2) {
-                    return o1.equals(me) ? 1 : -1;
-                }
-            });
+            senior = sessionPackage.getCurrentSeniorPlayer();
+            List<Player> players = sessionPackage.getPlayers();
+            players.remove(me);
 
-            //Считываем данные текущего игрока
-            for (int i = 0; i < players.size() - 1; i++) {
-                fillForm(players.get(i), i);
+            //Заполняем данные текущего игрока
+            fillProfile(me, 0);
+
+            //Заполняем данные остальных игроков
+            for (int i = 0; i < players.size(); i++) {
+                fillProfile(players.get(i), i + 1);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -73,32 +93,45 @@ public class GameFieldFormController {
         }
     }
 
-    private void fillForm(Player player, int i) {
+    public void hideAction(WindowEvent event) {
+
+    }
+
+    private void fillProfile(Player player, int i) {
         Text text;
         ImageView imageView;
 
-        imageView = (ImageView) getElementById("image_view", "player_profile", "avatar", (i + 1));
+        imageView = (ImageView) getElementById("image_view", "player_profile", "avatar", i);
         imageView.setImage(new Image(player.getAvatar().getPath()));
 
-        text = (Text) getElementById("text", "money", "amount", (i + 1));
+        imageView = (ImageView) getElementById("image_view", "player_profile", "senior", i);
+        imageView.setVisible(Objects.equals(player, senior));
+
+        text = (Text) getElementById("text", "player_profile", "login", i);
+        text.setText(player.getName());
+
+        text = (Text) getElementById("text", "money", "amount", i);
         text.setText(Integer.toString(player.getMoney()));
 
-        text = (Text) getElementById("text", "resources", "amount", (i + 1));
+        text = (Text) getElementById("text", "resources", "amount", i);
         text.setText(Integer.toString(player.getUnitsOfResources()));
 
-        text = (Text) getElementById("text", "products", "amount", (i + 1));
+        text = (Text) getElementById("text", "products", "amount", i);
         text.setText(Integer.toString(player.getUnitsOfProducts()));
 
-        text = (Text) getElementById("text", "factories", "amount", (i + 1));
+        text = (Text) getElementById("text", "products" + IN_PROGRESS_SUFFIX, "amount", i);
+        text.setText(Integer.toString(player.getUnitsOfProducts()));
+
+        text = (Text) getElementById("text", "factories", "amount", i);
         text.setText(Integer.toString(player.getWorkingFactories()));
 
-        text = (Text) getElementById("text", "auto_factories", "amount", (i + 1));
-        text.setText(Integer.toString(player.getWorkingAutomatedFactories()));
-
-        text = (Text) getElementById("text", "factories" + IN_PROGRESS_SUFFIX, "amount", (i + 1));
+        text = (Text) getElementById("text", "factories" + IN_PROGRESS_SUFFIX, "amount", i);
         text.setText(Integer.toString(player.getUnderConstructionFactories()));
 
-        text = (Text) getElementById("text", "auto_factories" + IN_PROGRESS_SUFFIX, "amount", (i + 1));
+        text = (Text) getElementById("text", "auto_factories", "amount", i);
+        text.setText(Integer.toString(player.getWorkingAutomatedFactories()));
+
+        text = (Text) getElementById("text", "auto_factories" + IN_PROGRESS_SUFFIX, "amount", i);
         text.setText(Integer.toString(player.getUnderConstructionAutomatedFactories()));
     }
 
@@ -116,11 +149,10 @@ public class GameFieldFormController {
      * @param number
      * @return
      */
-    private Node getElementById(String type, String entityName, String descr, int number) {
-        String fxId = type + '_' + entityName + '_' + descr + '_' + (number > 0 ? number : "my");
-        System.out.println(fxId);
+    private Object getElementById(String type, String entityName, String descr, int number) {
+        String fxId = type + '_' + entityName + '_' + descr + '_' + number;
         if (mainPane != null) {
-            return mainPane.lookup(fxId);
+            return getNamespace().get(fxId);
         }
         return null;
     }

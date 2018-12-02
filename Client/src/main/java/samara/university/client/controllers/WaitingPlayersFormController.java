@@ -44,7 +44,7 @@ public class WaitingPlayersFormController {
 
     public void showAction(WindowEvent event) {
         ObservableList<Node> nodes = sessionPlayersPane.getChildren();
-        nodes.forEach(System.out::println);
+        //nodes.forEach(System.out::println);
         for (int i = 0, k = 0; k < size; k++) {
             avatarBlocks[k] = (ImageView) nodes.get(i++);
             labelBlocks[k] = (Text) nodes.get(i++);
@@ -144,7 +144,7 @@ public class WaitingPlayersFormController {
                 totalSeconds = Restrictions.WAIT_TIME_LIMIT_SECONDS - (int) seconds;
                 int i = 0;
                 for (Player player : players) {
-                    System.out.println("PLAYER: " + player);
+                    //System.out.println("PLAYER: " + player);
                     avatarBlocks[i].setImage(new Image(player.getAvatar().getPath()));
                     labelBlocks[i].setText(player.getName());
                     i++;

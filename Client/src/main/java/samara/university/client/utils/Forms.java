@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import samara.university.client.Main;
+import samara.university.client.controllers.GameFieldFormController;
 import samara.university.client.controllers.WaitingPlayersFormController;
 
 import java.io.IOException;
@@ -114,7 +115,26 @@ public class Forms {
                 if (formName.equals("WaitingPlayers")) {
                     FXMLLoader fxmlLoader = new FXMLLoader(resourceURL);
                     root = fxmlLoader.load();
+
                     WaitingPlayersFormController controller = fxmlLoader.getController();
+                    stage.addEventHandler(WindowEvent.WINDOW_SHOWN, new EventHandler<WindowEvent>() {
+                        @Override
+                        public void handle(WindowEvent window) {
+                            controller.showAction(window);
+                        }
+                    });
+                    stage.addEventHandler(WindowEvent.WINDOW_HIDDEN, new EventHandler<WindowEvent>() {
+                        @Override
+                        public void handle(WindowEvent window) {
+                            controller.hideAction(window);
+                        }
+                    });
+                } else if (formName.equals("GameField")) {
+                    FXMLLoader fxmlLoader = new FXMLLoader(resourceURL);
+                    root = fxmlLoader.load();
+
+                    GameFieldFormController controller = fxmlLoader.getController();
+                    controller.setLoader(fxmlLoader);
                     stage.addEventHandler(WindowEvent.WINDOW_SHOWN, new EventHandler<WindowEvent>() {
                         @Override
                         public void handle(WindowEvent window) {
@@ -137,7 +157,7 @@ public class Forms {
 
                 stage.show();
 
-                System.out.println("FORM NAME: " + formName);
+                //System.out.println("FORM NAME: " + formName);
             }
         } catch (IOException e) {
             e.printStackTrace();

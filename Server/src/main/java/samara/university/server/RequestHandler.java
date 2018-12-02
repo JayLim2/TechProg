@@ -58,12 +58,12 @@ public class RequestHandler {
             }
 
             //Если сессия доступна - продолжаем
-            System.out.println("READY FOR COMMANDS");
+            //System.out.println("READY FOR COMMANDS");
             while (true) {
                 try {
                     while (inputStream.available() <= 0) ;
 
-                    System.out.println("GIVE ME COMMAND");
+                    //System.out.println("GIVE ME COMMAND");
 
                     int cmdCode = inputStream.readInt();
                     Command command = Command.values()[cmdCode];
@@ -112,7 +112,7 @@ public class RequestHandler {
         }
 
         public void updateSessionInfo() throws IOException {
-            SessionPackage sessionPackage = new SessionPackage(session.getStartTime(), session.getPlayers());
+            SessionPackage sessionPackage = new SessionPackage(session.getStartTime(), session.getPlayers(), session.getSeniorPlayer());
             objectOutputStream.writeObject(sessionPackage);
             objectOutputStream.flush();
         }

@@ -15,10 +15,12 @@ import java.util.Objects;
 public class SessionPackage implements Serializable {
     private LocalDateTime startTime;
     private List<Player> players;
+    private Player currentSeniorPlayer;
 
-    public SessionPackage(LocalDateTime startTime, List<Player> players) {
+    public SessionPackage(LocalDateTime startTime, List<Player> players, Player currentSeniorPlayer) {
         this.startTime = startTime;
         this.players = players;
+        this.currentSeniorPlayer = currentSeniorPlayer;
     }
 
     public LocalDateTime getStartTime() {
@@ -27,6 +29,10 @@ public class SessionPackage implements Serializable {
 
     public List<Player> getPlayers() {
         return players;
+    }
+
+    public Player getCurrentSeniorPlayer() {
+        return currentSeniorPlayer;
     }
 
     @Override
