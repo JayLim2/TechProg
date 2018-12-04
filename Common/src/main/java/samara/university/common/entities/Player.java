@@ -33,19 +33,6 @@ public class Player implements Serializable {
         autoFactories = new ArrayList<>();
     }
 
-    /**
-     * Получение суммы постоянных издержек
-     * (удерживаются в начале каждого хода)
-     *
-     * @return сумма издержек
-     */
-    public int getCosts() {
-        return 300 * unitsOfResources +
-                500 * unitsOfProducts +
-                1000 * workingFactories +
-                1500 * workingAutomatedFactories;
-    }
-
     public String getName() {
         return name;
     }

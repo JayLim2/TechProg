@@ -1,15 +1,13 @@
 package samara.university.client.utils;
 
+import samara.university.common.entities.Bid;
 import samara.university.common.entities.Player;
 import samara.university.common.enums.BankAction;
 import samara.university.common.enums.Command;
 import samara.university.common.packages.BankPackage;
 import samara.university.common.packages.SessionPackage;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -22,6 +20,7 @@ public class RequestSender {
     private DataInputStream inputStream;
     private DataOutputStream outputStream;
     private ObjectInputStream objectInputStream;
+    private ObjectOutputStream objectOutputStream;
 
     private boolean isConnected;
 
@@ -54,6 +53,7 @@ public class RequestSender {
                 inputStream = new DataInputStream(socket.getInputStream());
                 outputStream = new DataOutputStream(socket.getOutputStream());
                 objectInputStream = new ObjectInputStream(socket.getInputStream());
+                objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
 
                 isConnected = true;
             } catch (UnknownHostException e) {
@@ -126,6 +126,14 @@ public class RequestSender {
         sendCommand(Command.BANK_ACTION);
         sendBankAction(BankAction.RESERVES);
         return (BankPackage) objectInputStream.readObject();
+    }
+
+    public void buyResources(Bid bid) throws IOException {
+        connect();
+        sendCommand(Command.BANK_ACTION);
+        sendBankAction(BankAction.BUY_RESOURCE);
+        objectOutputStream.writeObject(bid);
+        objectOutputStream.flush();
     }
 
     public void exit() throws IOException {

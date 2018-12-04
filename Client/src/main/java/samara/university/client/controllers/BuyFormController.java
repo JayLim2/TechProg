@@ -5,6 +5,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import samara.university.client.utils.Forms;
+import samara.university.client.utils.RequestSender;
+import samara.university.common.entities.Bid;
+import samara.university.common.entities.Player;
+import samara.university.common.packages.SessionPackage;
+
+import java.io.IOException;
 
 public class BuyFormController {
     @FXML
@@ -24,7 +30,19 @@ public class BuyFormController {
     }
 
     public void ok(ActionEvent event) {
-        //сформировать заявку и отправить банку
+        try {
+            Player me = RequestSender.getRequestSender().me();
+            Bid bid = Bid.createBid(
+                    me,
+                    false,
+                    spinnerResourcesCount.getValue(),
+                    spinnerResourcesPrice.getValue()
+            );
+            //отправить банку
+            RequestSender.getRequestSender().buyResources(bid);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void cancel(ActionEvent event) {

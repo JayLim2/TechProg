@@ -3,6 +3,7 @@ package samara.university.server;
 import samara.university.common.constants.ProbabilityTable;
 import samara.university.common.constants.ProductPriceLevelTable;
 import samara.university.common.constants.ResourcePriceLevelTable;
+import samara.university.common.entities.Bid;
 import samara.university.common.entities.Factory;
 import samara.university.common.entities.Player;
 
@@ -28,6 +29,10 @@ public class Bank {
         calculateReserves();
     }
 
+    public void sendBid(Bid bid) {
+        bids.add(bid);
+    }
+
     /**
      * Подача заявки на покупку ЕСМ или продажу ЕГП
      *
@@ -37,7 +42,7 @@ public class Bank {
      * @param price  цена
      */
     public void sendBid(Player player, boolean type, int count, int price) {
-        Bid bid = new Bid(player, type, count, price);
+        Bid bid = Bid.createBid(player, type, count, price);
         bids.add(bid);
     }
 
@@ -51,6 +56,19 @@ public class Bank {
     }
 
     /**
+     * Получение суммы постоянных издержек
+     * (удерживаются в начале каждого хода)
+     *
+     * @return сумма издержек
+     */
+    public int getRegularCosts(Player player) {
+        return 300 * player.getUnitsOfResources() +
+                500 * player.getUnitsOfProducts() +
+                1000 * player.getWorkingFactories() +
+                1500 * player.getWorkingAutomatedFactories();
+    }
+
+    /**
      * Продажа ЕСМ (покупка - со стороны игрока)
      * <p>
      * Выполняется по алгоритму в соответствии с правилами.
@@ -59,10 +77,10 @@ public class Bank {
         bids.sort(new Comparator<Bid>() {
             @Override
             public int compare(Bid o1, Bid o2) {
-                int val = o1.price - o2.price;
+                int val = o1.getPrice() - o2.getPrice();
                 if (val == 0) {
-                    val = Session.getSession().isSeniorPlayer(o1.player) ? 1
-                            : Session.getSession().isSeniorPlayer(o2.player) ? -1
+                    val = Session.getSession().isSeniorPlayer(o1.getPlayer()) ? 1
+                            : Session.getSession().isSeniorPlayer(o2.getPlayer()) ? -1
                             : 0;
                 }
                 return val;
@@ -70,20 +88,20 @@ public class Bank {
         });
         for (int i = 0; i < bids.size() || reserveUnitsOfResources > 0; i++) {
             Bid bid = bids.get(i);
-            if (bid.count == 0 || bid.price < minResourcePrice) {
+            if (bid.getCount() == 0 || bid.getPrice() < minResourcePrice) {
                 continue;
             }
-            Player player = bid.player;
-            if (bid.count >= reserveUnitsOfResources) {
-                player.setMoney(reserveUnitsOfResources * bid.price);
+            Player player = bid.getPlayer();
+            if (bid.getCount() >= reserveUnitsOfResources) {
+                player.setMoney(reserveUnitsOfResources * bid.getPrice());
                 player.setUnitsOfResources(player.getUnitsOfResources() + reserveUnitsOfResources);
                 reserveUnitsOfResources = 0;
                 bids.clear();
                 return;
             } else {
-                player.setMoney(bid.count * bid.price);
-                player.setUnitsOfResources(player.getUnitsOfResources() + bid.count);
-                reserveUnitsOfResources -= bid.count;
+                player.setMoney(bid.getCount() * bid.getPrice());
+                player.setUnitsOfResources(player.getUnitsOfResources() + bid.getCount());
+                reserveUnitsOfResources -= bid.getCount();
             }
         }
         bids.clear();
@@ -98,10 +116,10 @@ public class Bank {
         bids.sort(new Comparator<Bid>() {
             @Override
             public int compare(Bid o1, Bid o2) {
-                int val = o2.price - o1.price;
+                int val = o2.getPrice() - o1.getPrice();
                 if (val == 0) {
-                    val = Session.getSession().isSeniorPlayer(o1.player) ? 1
-                            : Session.getSession().isSeniorPlayer(o2.player) ? -1
+                    val = Session.getSession().isSeniorPlayer(o1.getPlayer()) ? 1
+                            : Session.getSession().isSeniorPlayer(o2.getPlayer()) ? -1
                             : 0;
                 }
                 return val;
@@ -109,20 +127,20 @@ public class Bank {
         });
         for (int i = 0; i < bids.size() || reserveUnitsOfProducts > 0; i++) {
             Bid bid = bids.get(i);
-            if (bid.count == 0 || bid.price > maxProductPrice) {
+            if (bid.getCount() == 0 || bid.getPrice() > maxProductPrice) {
                 continue;
             }
-            Player player = bid.player;
-            if (bid.count >= reserveUnitsOfProducts) {
-                player.setMoney(reserveUnitsOfProducts * bid.price);
+            Player player = bid.getPlayer();
+            if (bid.getCount() >= reserveUnitsOfProducts) {
+                player.setMoney(reserveUnitsOfProducts * bid.getPrice());
                 player.setUnitsOfProducts(player.getUnitsOfProducts() + reserveUnitsOfProducts);
                 reserveUnitsOfProducts = 0;
                 bids.clear();
                 return;
             } else {
-                player.setMoney(bid.count * bid.price);
-                player.setUnitsOfProducts(player.getUnitsOfProducts() + bid.count);
-                reserveUnitsOfProducts -= bid.count;
+                player.setMoney(bid.getCount() * bid.getPrice());
+                player.setUnitsOfProducts(player.getUnitsOfProducts() + bid.getCount());
+                reserveUnitsOfProducts -= bid.getCount();
             }
         }
         bids.clear();
@@ -226,42 +244,5 @@ public class Bank {
             }
         }
         return null;
-    }
-
-    private class Bid {
-        private Player player;
-        private boolean type; //FALSE - покупка ЕСМ, TRUE - продажа ЕГП
-        private int count;
-        private int price;
-
-        private Bid(Player player, boolean type, int count, int price) {
-            this.player = player;
-            this.type = type;
-            this.count = count;
-            this.price = price;
-        }
-
-        public Bid createBid(Player player, boolean type, int count, int price) {
-            if (count != 0) {
-                return new Bid(player, type, count, price);
-            }
-            return null;
-        }
-
-        public Player getPlayer() {
-            return player;
-        }
-
-        public boolean isType() {
-            return type;
-        }
-
-        public int getCount() {
-            return count;
-        }
-
-        public int getPrice() {
-            return price;
-        }
     }
 }

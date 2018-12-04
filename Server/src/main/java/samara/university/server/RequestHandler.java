@@ -1,16 +1,14 @@
 package samara.university.server;
 
 import samara.university.common.entities.Avatar;
+import samara.university.common.entities.Bid;
 import samara.university.common.entities.Player;
 import samara.university.common.enums.BankAction;
 import samara.university.common.enums.Command;
 import samara.university.common.packages.BankPackage;
 import samara.university.common.packages.SessionPackage;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -31,6 +29,7 @@ public class RequestHandler {
         private Socket socket;
         private DataInputStream inputStream;
         private DataOutputStream outputStream;
+        private ObjectInputStream objectInputStream;
         private ObjectOutputStream objectOutputStream;
 
         private Session session;
@@ -46,6 +45,7 @@ public class RequestHandler {
             try {
                 inputStream = new DataInputStream(socket.getInputStream());
                 outputStream = new DataOutputStream(socket.getOutputStream());
+                objectInputStream = new ObjectInputStream(socket.getInputStream());
                 objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -123,6 +123,7 @@ public class RequestHandler {
                     reserves();
                     break;
                 case BUY_RESOURCE:
+                    buyResources();
                     break;
                 case SELL_PRODUCT:
                     break;
@@ -142,6 +143,11 @@ public class RequestHandler {
         public void reserves() throws IOException {
             objectOutputStream.writeObject(createBankPackage());
             objectOutputStream.flush();
+        }
+
+        public void buyResources() throws IOException, ClassNotFoundException {
+            Bid bid = (Bid) objectInputStream.readObject();
+            session.getBank().sendBid(bid);
         }
 
         /**
