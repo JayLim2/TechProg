@@ -1,14 +1,15 @@
 package samara.university.server;
 
 import samara.university.common.entities.Avatar;
-import samara.university.common.entities.Bid;
 import samara.university.common.entities.Player;
 import samara.university.common.enums.BankAction;
 import samara.university.common.enums.Command;
 import samara.university.common.packages.BankPackage;
 import samara.university.common.packages.SessionPackage;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -27,8 +28,6 @@ public class RequestHandler {
 
     private static class ClientThread implements Runnable {
         private Socket socket;
-        private DataInputStream inputStream;
-        private DataOutputStream outputStream;
         private ObjectInputStream objectInputStream;
         private ObjectOutputStream objectOutputStream;
 
@@ -43,10 +42,8 @@ public class RequestHandler {
         @Override
         public void run() {
             try {
-                inputStream = new DataInputStream(socket.getInputStream());
-                outputStream = new DataOutputStream(socket.getOutputStream());
-                objectInputStream = new ObjectInputStream(socket.getInputStream());
                 objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                objectInputStream = new ObjectInputStream(socket.getInputStream());
             } catch (IOException e) {
                 e.printStackTrace();
                 return;
@@ -62,11 +59,9 @@ public class RequestHandler {
             //System.out.println("READY FOR COMMANDS");
             while (true) {
                 try {
-                    while (inputStream.available() <= 0) ;
+                    while (objectInputStream.available() <= 0) ;
 
-                    //System.out.println("GIVE ME COMMAND");
-
-                    int cmdCode = inputStream.readInt();
+                    int cmdCode = objectInputStream.readInt();
                     Command command = Command.values()[cmdCode];
                     switch (command) {
                         case AUTH:
@@ -79,7 +74,7 @@ public class RequestHandler {
                             updateSessionInfo();
                             break;
                         case BANK_ACTION:
-                            bankAction(inputStream);
+                            bankAction(objectInputStream);
                             break;
                         case NEXT_PHASE:
                             nextPhase();
@@ -99,8 +94,8 @@ public class RequestHandler {
         public void authPlayer() throws IOException {
             if (session == null || !session.isAvailable()) return;
 
-            String name = inputStream.readUTF();
-            int defaultAvatarId = inputStream.readInt();
+            String name = objectInputStream.readUTF();
+            int defaultAvatarId = objectInputStream.readInt();
             this.me = new Player(name, Avatar.getDefaultAvatar(defaultAvatarId));
             session.register(this.me);
         }
@@ -115,17 +110,18 @@ public class RequestHandler {
             objectOutputStream.flush();
         }
 
-        public void bankAction(DataInputStream in) throws IOException, ClassNotFoundException {
+        public void bankAction(ObjectInputStream in) throws IOException, ClassNotFoundException {
             int cmdCode = in.readInt();
             BankAction bankAction = BankAction.values()[cmdCode];
             switch (bankAction) {
                 case RESERVES:
                     reserves();
                     break;
-                case BUY_RESOURCE:
-                    buyResources();
+                case SEND_BID:
+                    receiveBid();
                     break;
-                case SELL_PRODUCT:
+                case START_PRODUCTION:
+                    startProduction();
                     break;
                 case BUILD_FACTORY:
                     break;
@@ -145,9 +141,19 @@ public class RequestHandler {
             objectOutputStream.flush();
         }
 
-        public void buyResources() throws IOException, ClassNotFoundException {
-            Bid bid = (Bid) objectInputStream.readObject();
-            session.getBank().sendBid(bid);
+        public void receiveBid() throws IOException, ClassNotFoundException {
+            Player player = (Player) objectInputStream.readObject();
+            boolean type = objectInputStream.readBoolean();
+            int count = objectInputStream.readInt();
+            int price = objectInputStream.readInt();
+            session.getBank().sendBid(player, type, count, price);
+        }
+
+        public void startProduction() throws IOException, ClassNotFoundException {
+            Player player = (Player) objectInputStream.readObject();
+            int count = objectInputStream.readInt();
+            int totalCost = objectInputStream.readInt();
+            session.getBank().startProduction(player, count, totalCost);
         }
 
         /**
@@ -169,8 +175,8 @@ public class RequestHandler {
         }
 
         public void exit() throws IOException {
-            outputStream.writeBoolean(Session.getSession().unregister(me));
-            outputStream.flush();
+            objectOutputStream.writeBoolean(Session.getSession().unregister(me));
+            objectOutputStream.flush();
         }
 
         /**

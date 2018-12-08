@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class GameFieldFormController {
+public class GameFieldFormController implements DisplayingFormController {
     @FXML
     private AnchorPane mainPane;
 
@@ -95,6 +95,7 @@ public class GameFieldFormController {
         return formNamespace;
     }
 
+    @Override
     public void showAction(WindowEvent event) {
         try {
             SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
@@ -118,7 +119,7 @@ public class GameFieldFormController {
             fillBankReserves();
 
             //Настройка отображения кнопок
-            updateMenuVisibility();
+            //updateMenuVisibility();
 
             //Запустить обратный отсчёт хода
             playCountdown();
@@ -129,6 +130,7 @@ public class GameFieldFormController {
         }
     }
 
+    @Override
     public void hideAction(WindowEvent event) {
 
     }

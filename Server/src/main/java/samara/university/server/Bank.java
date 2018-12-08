@@ -29,10 +29,6 @@ public class Bank {
         calculateReserves();
     }
 
-    public void sendBid(Bid bid) {
-        bids.add(bid);
-    }
-
     /**
      * Подача заявки на покупку ЕСМ или продажу ЕГП
      *
@@ -53,6 +49,23 @@ public class Bank {
      */
     public void allBidsReceived() {
         allBidsReceived = true;
+    }
+
+
+    private static final int NORMAL_MODE_COUNT = 1;
+    private static final int NORMAL_MODE_PRICE = 2000;
+    private static final int OPTIMIZED_MODE_COUNT = 2;
+    private static final int OPTIMIZED_MODE_PRICE = 3000;
+
+    /**
+     * Подача заявки на начало производства ЕГП
+     *
+     * @param player игрок
+     * @param count  количество, введенное игроком
+     * @param price  общая стоимость производства
+     */
+    public void startProduction(Player player, int count, int price) {
+
     }
 
     /**

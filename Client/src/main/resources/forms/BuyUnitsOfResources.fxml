@@ -34,7 +34,7 @@
                 <Font size="18.0"/>
             </font>
         </Button>
-        <Spinner fx:id="spinnerResourcesCount" layoutX="271.0" layoutY="68.0" prefHeight="25.0" prefWidth="92.0"/>
-        <Spinner fx:id="spinnerResourcesPrice" layoutX="271.0" layoutY="98.0" prefHeight="25.0" prefWidth="92.0"/>
+        <Spinner fx:id="spinnerCount" layoutX="271.0" layoutY="68.0" prefHeight="25.0" prefWidth="92.0"/>
+        <Spinner fx:id="spinnerPrice" layoutX="271.0" layoutY="98.0" prefHeight="25.0" prefWidth="92.0"/>
     </children>
 </AnchorPane>

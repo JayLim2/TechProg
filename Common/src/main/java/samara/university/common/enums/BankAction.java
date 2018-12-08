@@ -8,9 +8,9 @@ import java.io.Serializable;
 public enum BankAction implements Serializable {
     RESERVES,
 
-    BUY_RESOURCE,
+    SEND_BID,
 
-    SELL_PRODUCT,
+    START_PRODUCTION,
 
     BUILD_FACTORY,
 

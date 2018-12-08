@@ -1,13 +1,14 @@
 package samara.university.client.utils;
 
-import samara.university.common.entities.Bid;
 import samara.university.common.entities.Player;
 import samara.university.common.enums.BankAction;
 import samara.university.common.enums.Command;
 import samara.university.common.packages.BankPackage;
 import samara.university.common.packages.SessionPackage;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -17,8 +18,6 @@ public class RequestSender {
     private static RequestSender requestSender;
 
     private Socket socket;
-    private DataInputStream inputStream;
-    private DataOutputStream outputStream;
     private ObjectInputStream objectInputStream;
     private ObjectOutputStream objectOutputStream;
 
@@ -50,11 +49,8 @@ public class RequestSender {
         if (!isConnected) {
             try {
                 socket = new Socket(InetAddress.getLocalHost(), SERVER_PORT);
-                inputStream = new DataInputStream(socket.getInputStream());
-                outputStream = new DataOutputStream(socket.getOutputStream());
-                objectInputStream = new ObjectInputStream(socket.getInputStream());
                 objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-
+                objectInputStream = new ObjectInputStream(socket.getInputStream());
                 isConnected = true;
             } catch (UnknownHostException e) {
                 e.printStackTrace();
@@ -74,9 +70,9 @@ public class RequestSender {
     public void authPlayer(String name, int avatarId) throws IOException {
         connect();
         sendCommand(Command.AUTH);
-        outputStream.writeUTF(name);
-        outputStream.writeInt(avatarId);
-        outputStream.flush();
+        objectOutputStream.writeUTF(name);
+        objectOutputStream.writeInt(avatarId);
+        objectOutputStream.flush();
     }
 
     /**
@@ -128,11 +124,23 @@ public class RequestSender {
         return (BankPackage) objectInputStream.readObject();
     }
 
-    public void buyResources(Bid bid) throws IOException {
+    public void sendBid(Player player, boolean type, int count, int price) throws IOException {
         connect();
         sendCommand(Command.BANK_ACTION);
-        sendBankAction(BankAction.BUY_RESOURCE);
-        objectOutputStream.writeObject(bid);
+        sendBankAction(BankAction.SEND_BID);
+        objectOutputStream.writeObject(player);
+        objectOutputStream.writeBoolean(type);
+        objectOutputStream.writeInt(count);
+        objectOutputStream.writeInt(price);
+        objectOutputStream.flush();
+    }
+
+    public void startProduction(Player player, int count, int totalCost) throws IOException {
+        connect();
+        sendCommand(Command.BANK_ACTION);
+        objectOutputStream.writeObject(player);
+        objectOutputStream.writeInt(count);
+        objectOutputStream.writeInt(totalCost);
         objectOutputStream.flush();
     }
 
@@ -140,7 +148,7 @@ public class RequestSender {
         connect();
         sendCommand(Command.EXIT);
         // FIXME: 02.12.2018 блокирует поток
-        boolean gameOver = inputStream.readBoolean();
+        boolean gameOver = objectInputStream.readBoolean();
         if (gameOver) {
             //do something
         }
@@ -153,8 +161,8 @@ public class RequestSender {
      * @throws IOException  исключение ввода-вывода
      */
     private void sendCommand(Command command) throws IOException {
-        outputStream.writeInt(command.ordinal());
-        outputStream.flush();
+        objectOutputStream.writeInt(command.ordinal());
+        objectOutputStream.flush();
     }
 
     /**
@@ -164,7 +172,7 @@ public class RequestSender {
      * @throws IOException исключение ввода-вывода
      */
     private void sendBankAction(BankAction bankAction) throws IOException {
-        outputStream.writeInt(bankAction.ordinal());
-        outputStream.flush();
+        objectOutputStream.writeInt(bankAction.ordinal());
+        objectOutputStream.flush();
     }
 }

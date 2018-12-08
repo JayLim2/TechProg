@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class WaitingPlayersFormController {
+public class WaitingPlayersFormController implements DisplayingFormController {
     @FXML
     private TextField minutesField;
     @FXML
@@ -44,6 +44,7 @@ public class WaitingPlayersFormController {
         labelBlocks = new Text[size];
     }
 
+    @Override
     public void showAction(WindowEvent event) {
         ObservableList<Node> nodes = sessionPlayersPane.getChildren();
         //nodes.forEach(System.out::println);
@@ -57,6 +58,7 @@ public class WaitingPlayersFormController {
         waitPlayers();
     }
 
+    @Override
     public void hideAction(WindowEvent event) {
         //resetTime();
     }
