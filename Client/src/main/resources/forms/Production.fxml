@@ -54,7 +54,7 @@
         <Spinner fx:id="spinnerProductionCount" layoutX="265.0" layoutY="88.0" onMouseClicked="#spin" prefHeight="25.0"
                  prefWidth="83.0"/>
         <CheckBox fx:id="productionMode" disable="true" layoutX="48.0" layoutY="190.0" mnemonicParsing="false"
-                  text="В режиме &quot;2 ЕГП за 3000 денег&quot; (автофабрика)">
+                  onAction="#setMode" text="В режиме &quot;2 ЕГП за 3000 денег&quot; (автофабрика)">
             <font>
                 <Font size="14.0"/>
             </font>

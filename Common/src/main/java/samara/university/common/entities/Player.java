@@ -31,6 +31,17 @@ public class Player implements Serializable {
         this.avatar = avatar;
         factories = new ArrayList<>();
         autoFactories = new ArrayList<>();
+        initializeCapital();
+    }
+
+    private void initializeCapital() {
+        for (int i = 0; i < 2; i++) {
+            factories.add(new Factory(0, false));
+            workingFactories++;
+        }
+        unitsOfResources += 4;
+        unitsOfProducts += 2;
+        money += 10000;
     }
 
     public String getName() {

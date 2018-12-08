@@ -10,6 +10,8 @@ import samara.university.client.utils.Forms;
 import samara.university.client.utils.RequestSender;
 import samara.university.common.entities.Player;
 
+import java.io.IOException;
+
 public class ProductionFormController implements DisplayingFormController {
     @FXML
     private Spinner<Integer> spinnerProductionCount;
@@ -24,37 +26,41 @@ public class ProductionFormController implements DisplayingFormController {
 
     private static final int NORMAL_MODE_COUNT = 1;
     private static final int NORMAL_MODE_PRICE = 2000;
-    private static final int OPTIMIZED_MODE_COUNT = 2;
-    private static final int OPTIMIZED_MODE_PRICE = 3000;
+    private static final int MODERNIZED_MODE_COUNT = 2;
+    private static final int MODERNIZED_MODE_PRICE = 3000;
 
     private int totalResources;
-    private int price;
 
-    private int countProduction;
+    private int totalProductsCost;
+    private int totalProductsCount;
+
+    private SpinnerValueFactory.IntegerSpinnerValueFactory countFactory;
 
     public void initialize() {
-        SpinnerValueFactory<Integer> countFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(
-                0, Integer.MAX_VALUE, 0, 1
+        me();
+        countFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(
+                0, getTotalCanBeProduced(false), 0, 1
         );
         spinnerProductionCount.setValueFactory(countFactory);
     }
 
-    public void ok(ActionEvent event) {
-        countProduction = spinnerProductionCount.getValue();
-        if (countProduction > totalResources) {
-            alert("Недостаточно ЕСМ.");
-            return;
-        }
+    private int getTotalCanBeProduced(boolean mode) {
+        return Math.min(
+                me.getUnitsOfResources(),
+                me.getWorkingFactories() + (!mode ? me.getWorkingAutomatedFactories() : me.getWorkingAutomatedFactories() * 2)
+        );
+    }
 
-        int countFactories = me.getWorkingFactories();
-        int countAutoFactories = me.getWorkingAutomatedFactories();
-        boolean mode = productionMode.isSelected();
-        int totalCanBeProduced = !mode ?
-                countFactories + countAutoFactories :
-                countFactories + countAutoFactories * 2;
-        if (countProduction > totalCanBeProduced) {
-            alert("Недостаточно фабрик.");
-            return;
+    public void ok(ActionEvent event) {
+        if (totalProductsCount == 0) {
+            alert("Количество ЕГП для производство должно быть > 0.");
+        } else {
+            try {
+                RequestSender.getRequestSender().startProduction(me, totalProductsCount, totalProductsCost);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            close();
         }
     }
 
@@ -63,27 +69,38 @@ public class ProductionFormController implements DisplayingFormController {
     }
 
     public void spin(MouseEvent event) {
-        countProduction = spinnerProductionCount.getValue();
-        int countFactories = me.getWorkingFactories();
+        //Получаем количество производимого ЕГП
+        totalProductsCount = spinnerProductionCount.getValue();
+
+        //Рассчитываем суммарную стоимость
         int countAutoFactories = me.getWorkingAutomatedFactories();
         boolean mode = productionMode.isSelected();
-        int totalCanBeProduced = !mode ?
-                countFactories + countAutoFactories :
-                countFactories + countAutoFactories * 2;
-        int totalCost = 0;
-        int totalCostOnAutoFactories = !mode ?
-                countAutoFactories * 2000 :
-                (countAutoFactories / 2) * 2000;
-        int totalCostOnFactories = 0;
-        System.out.println("SPINNED");
+
+        totalProductsCost = 0;
+        int factoriesInFastMode = mode ? Math.min(totalProductsCount / MODERNIZED_MODE_COUNT, countAutoFactories) : 0;
+        totalProductsCost += factoriesInFastMode * MODERNIZED_MODE_PRICE;
+        totalProductsCount -= factoriesInFastMode * MODERNIZED_MODE_COUNT;
+        totalProductsCost += totalProductsCount * NORMAL_MODE_PRICE;
+
+        labelPrice.setText(Integer.toString(totalProductsCost));
+    }
+
+    public void setMode(ActionEvent event) {
+        spin(null);
+        int total = getTotalCanBeProduced(productionMode.isSelected());
+        if (spinnerProductionCount.getValue() > total) {
+            spinnerProductionCount.decrement(spinnerProductionCount.getValue() - total);
+        }
+        countFactory.setMax(getTotalCanBeProduced(productionMode.isSelected()));
     }
 
     @Override
     public void showAction(WindowEvent event) {
-        me();
         totalResources = me.getUnitsOfResources();
         labelAvailable.setText(Integer.toString(totalResources));
-        labelPrice.setText(Integer.toString(100 * totalResources));
+        if (me.getWorkingAutomatedFactories() > 0) {
+            productionMode.setDisable(false);
+        }
     }
 
     @Override

@@ -6,10 +6,9 @@ import samara.university.common.constants.ResourcePriceLevelTable;
 import samara.university.common.entities.Bid;
 import samara.university.common.entities.Factory;
 import samara.university.common.entities.Player;
+import samara.university.common.entities.actions.PlannedAction;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Подсистема банка
@@ -24,9 +23,81 @@ public class Bank {
     private List<Bid> bids; //список заявок в банке
     private boolean allBidsReceived; //все заявки получены?
 
+    private List<PlannedAction> plannedActions; //отложенные действия
+
     public Bank() {
         bids = new ArrayList<>();
+        plannedActions = new LinkedList<>();
         calculateReserves();
+    }
+
+    /**
+     * Метод, который вызывается в начале каждой фазы.
+     * <p>
+     * Проверяется, существуют ли запланированные действия.
+     * Среди них ищутся действия, которые должны быть выполнены в текущую
+     * фазу и выполняются.
+     */
+    public void handlePlannedActions() {
+        int currentMonth = Session.getSession().getTurn().getCurrentMonth();
+        int currentPhase = Session.getSession().getTurn().getCurrentPhase();
+
+        //Regular costs
+        if (currentPhase == 1) {
+            List<Player> players = Session.getSession().getPlayers();
+            for (Player player : players) {
+                player.setMoney(player.getMoney() - getRegularCosts(player));
+            }
+        }
+
+        //Other planned actions
+        if (plannedActions.size() > 0) {
+            Player player;
+            PlannedAction.PlannedActionType type;
+            Iterator<PlannedAction> iterator = plannedActions.iterator();
+            while (iterator.hasNext()) {
+                PlannedAction action = iterator.next();
+                if (action.isActionDone(currentPhase, currentMonth)) {
+                    player = action.getPlayer();
+                    type = action.getType();
+                    switch (type) {
+                        case BUY_RESOURCES: {
+                            buy();
+                        }
+                        break;
+                        case SELL_PRODUCTS: {
+                            sell();
+                        }
+                        break;
+                        case COMPLETE_BUILDING_FACTORY: {
+                            player.setWorkingFactories(
+                                    player.getWorkingFactories() + action.getCount()
+                            );
+                        }
+                        break;
+                        case COMPLETE_AUTOMATION_FACTORY: {
+                            player.setWorkingAutomatedFactories(
+                                    player.getWorkingAutomatedFactories() + action.getCount()
+                            );
+                        }
+                        break;
+                        case COMPLETE_PRODUCTION: {
+                            player.setUnitsOfProducts(
+                                    player.getUnitsOfProducts() + action.getCount()
+                            );
+                        }
+                        break;
+                        case PAY_LOANS: {
+                            player.setMoney(
+                                    player.getMoney() - action.getMoney()
+                            );
+                        }
+                        break;
+                    }
+                    iterator.remove();
+                }
+            }
+        }
     }
 
     /**
@@ -50,12 +121,6 @@ public class Bank {
     public void allBidsReceived() {
         allBidsReceived = true;
     }
-
-
-    private static final int NORMAL_MODE_COUNT = 1;
-    private static final int NORMAL_MODE_PRICE = 2000;
-    private static final int OPTIMIZED_MODE_COUNT = 2;
-    private static final int OPTIMIZED_MODE_PRICE = 3000;
 
     /**
      * Подача заявки на начало производства ЕГП
@@ -87,18 +152,7 @@ public class Bank {
      * Выполняется по алгоритму в соответствии с правилами.
      */
     public void buy() {
-        bids.sort(new Comparator<Bid>() {
-            @Override
-            public int compare(Bid o1, Bid o2) {
-                int val = o1.getPrice() - o2.getPrice();
-                if (val == 0) {
-                    val = Session.getSession().isSeniorPlayer(o1.getPlayer()) ? 1
-                            : Session.getSession().isSeniorPlayer(o2.getPlayer()) ? -1
-                            : 0;
-                }
-                return val;
-            }
-        });
+        bids.sort(ascBidCmp);
         for (int i = 0; i < bids.size() || reserveUnitsOfResources > 0; i++) {
             Bid bid = bids.get(i);
             if (bid.getCount() == 0 || bid.getPrice() < minResourcePrice) {
@@ -126,18 +180,7 @@ public class Bank {
      * Выполняется по алгоритму в соответствии с правилами.
      */
     public void sell() {
-        bids.sort(new Comparator<Bid>() {
-            @Override
-            public int compare(Bid o1, Bid o2) {
-                int val = o2.getPrice() - o1.getPrice();
-                if (val == 0) {
-                    val = Session.getSession().isSeniorPlayer(o1.getPlayer()) ? 1
-                            : Session.getSession().isSeniorPlayer(o2.getPlayer()) ? -1
-                            : 0;
-                }
-                return val;
-            }
-        });
+        bids.sort(descBidCmp);
         for (int i = 0; i < bids.size() || reserveUnitsOfProducts > 0; i++) {
             Bid bid = bids.get(i);
             if (bid.getCount() == 0 || bid.getPrice() > maxProductPrice) {
@@ -157,6 +200,30 @@ public class Bank {
             }
         }
         bids.clear();
+    }
+
+    private BidComparator ascBidCmp = new BidComparator(false);
+    private BidComparator descBidCmp = new BidComparator(true);
+
+    private class BidComparator implements Comparator<Bid> {
+        private boolean isDescending;
+
+        public BidComparator(boolean isDescending) {
+            this.isDescending = isDescending;
+        }
+
+        @Override
+        public int compare(Bid o1, Bid o2) {
+            int val = isDescending ?
+                    o2.getPrice() - o1.getPrice() :
+                    o1.getPrice() - o2.getPrice();
+            if (val == 0) {
+                val = Session.getSession().isSeniorPlayer(o1.getPlayer()) ? 1
+                        : Session.getSession().isSeniorPlayer(o2.getPlayer()) ? -1
+                        : 0;
+            }
+            return val;
+        }
     }
 
     public void calculateReserves() {
