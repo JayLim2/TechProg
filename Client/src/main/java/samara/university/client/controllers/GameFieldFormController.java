@@ -237,35 +237,39 @@ public class GameFieldFormController implements DisplayingFormController {
     private void updateMenuVisibility() {
         try {
             int phase = RequestSender.getRequestSender().sessionInfo().getCurrentPhase();
-            buttonBuyResources.setDisable(true);
-            buttonSellProducts.setDisable(true);
-            buttonStartProduction.setDisable(true);
-            buttonStartConstruction.setDisable(true);
-            buttonGetLoan.setDisable(true);
-            switch (phase) {
-                case 1: {
-                    buttonBuyResources.setDisable(false);
-                }
-                break;
-                case 2: {
-                    buttonStartProduction.setDisable(false);
-                }
-                break;
-                case 3: {
-                    buttonSellProducts.setDisable(false);
-                }
-                break;
-                case 4: {
-                    buttonGetLoan.setDisable(false);
-                }
-                break;
-                case 5: {
-                    buttonStartConstruction.setDisable(false);
-                }
-                break;
-            }
+            updateMenuVisibility(phase);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void updateMenuVisibility(int phase) {
+        buttonBuyResources.setDisable(true);
+        buttonSellProducts.setDisable(true);
+        buttonStartProduction.setDisable(true);
+        buttonStartConstruction.setDisable(true);
+        buttonGetLoan.setDisable(true);
+        switch (phase) {
+            case 1: {
+                buttonBuyResources.setDisable(false);
+            }
+            break;
+            case 2: {
+                buttonStartProduction.setDisable(false);
+            }
+            break;
+            case 3: {
+                buttonSellProducts.setDisable(false);
+            }
+            break;
+            case 4: {
+                buttonGetLoan.setDisable(false);
+            }
+            break;
+            case 5: {
+                buttonStartConstruction.setDisable(false);
+            }
+            break;
         }
     }
 
@@ -295,8 +299,10 @@ public class GameFieldFormController implements DisplayingFormController {
 
     public void nextPhase(ActionEvent event) {
         try {
-            RequestSender.getRequestSender().nextPhase();
-            // TODO: 09.12.2018 изменения на форме 
+            SessionPackage sessionPackage = RequestSender.getRequestSender().nextPhase();
+            labelMonth.setText(Integer.toString(sessionPackage.getCurrentMonth()));
+            labelPhase.setText(Integer.toString(sessionPackage.getCurrentPhase()));
+            updateMenuVisibility(sessionPackage.getCurrentPhase());
         } catch (Exception e) {
             e.printStackTrace();
         }

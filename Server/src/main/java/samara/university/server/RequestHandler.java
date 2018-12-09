@@ -179,7 +179,6 @@ public class RequestHandler {
         public void nextPhase() throws IOException {
             if (session.isAllReady()) {
                 session.resetReady();
-                session.setSeniorPlayer(session.getBank().nextSeniorPlayer(session.getPlayers(), session.getSeniorPlayer()));
                 session.getTurn().toNextPhase();
                 session.getTurn().toNextMonth();
                 session.getBank().nextPhase();

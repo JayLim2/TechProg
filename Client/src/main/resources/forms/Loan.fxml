@@ -7,7 +7,7 @@
 <AnchorPane prefHeight="311.0" prefWidth="474.0" xmlns="http://javafx.com/javafx/8.0.171"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="samara.university.client.controllers.LoanFormController">
     <children>
-        <Text layoutX="358.0" layoutY="176.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+        <Text fx:id="labelTotalLoan" layoutX="358.0" layoutY="176.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
             <font>
                 <Font size="18.0"/>
             </font>
@@ -22,13 +22,14 @@
                 <Font size="18.0"/>
             </font>
         </Text>
-        <Button layoutX="260.0" layoutY="234.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="116.0"
-                text="Отмена">
+        <Button layoutX="260.0" layoutY="234.0" mnemonicParsing="false" onAction="#cancel" prefHeight="39.0"
+                prefWidth="116.0" text="Отмена">
             <font>
                 <Font size="18.0"/>
             </font>
         </Button>
-        <Button layoutX="99.0" layoutY="234.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="110.0" text="ОК">
+        <Button layoutX="99.0" layoutY="234.0" mnemonicParsing="false" onAction="#ok" prefHeight="39.0"
+                prefWidth="110.0" text="ОК">
             <font>
                 <Font size="18.0"/>
             </font>
@@ -49,12 +50,14 @@
                 <Font size="24.0"/>
             </font>
         </Text>
-        <Text layoutX="170.0" layoutY="212.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
+        <Text fx:id="labelMonth" layoutX="170.0" layoutY="212.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
             <font>
                 <Font size="18.0"/>
             </font>
         </Text>
-        <Spinner layoutX="358.0" layoutY="98.0" prefHeight="25.0" prefWidth="58.0"/>
-        <Spinner layoutX="358.0" layoutY="129.0" prefHeight="25.0" prefWidth="58.0"/>
+        <Spinner fx:id="spinnerAutoFactoriesCount" layoutX="358.0" layoutY="98.0" onMouseClicked="#spin"
+                 prefHeight="25.0" prefWidth="58.0"/>
+        <Spinner fx:id="spinnerFactoriesCount" layoutX="358.0" layoutY="129.0" onMouseClicked="#spin" prefHeight="25.0"
+                 prefWidth="58.0"/>
     </children>
 </AnchorPane>

@@ -37,7 +37,11 @@ public class ProductionFormController implements DisplayingFormController {
     private SpinnerValueFactory.IntegerSpinnerValueFactory countFactory;
 
     public void initialize() {
-        me();
+        try {
+            me = RequestSender.getRequestSender().me();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         countFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(
                 0, getTotalCanBeProduced(false), 0, 1
         );
@@ -112,16 +116,6 @@ public class ProductionFormController implements DisplayingFormController {
 
     private void close() {
         Forms.closeForm("Production");
-    }
-
-    private void me() {
-        if (me == null) {
-            try {
-                me = RequestSender.getRequestSender().me();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     private void alert(String message) {

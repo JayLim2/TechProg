@@ -7,7 +7,11 @@ public class Restrictions {
 
     public static final int PHASE_LENGTH_IN_SECONDS = 120; //длительность фазы 120 сек
 
-    public static final int PHASES_COUNT = 9;
+    //turn
+
+    public static final int MAX_MONTHS_COUNT = 36;
+
+    public static final int MAX_PHASES_COUNT = 9;
 
     //phases_id
 
@@ -21,7 +25,7 @@ public class Restrictions {
     public static final int NEW_LOAN_PHASE = 8;
     public static final int BUILDING_AND_AUTOMATION_PHASE = 9;
 
-    //------------- factories
+    //factories
 
     public static final int BUILDING_FACTORY_PRICE = 5000;
 
@@ -42,4 +46,9 @@ public class Restrictions {
     public static final int LOAN_MONTHS = 12;
 
     public static final float LOAN_PERCENT = 0.99f;
+
+    public static final int LOAN_AMOUNT_BY_FACTORY = 5000;
+
+    public static final int LOAN_AMOUNT_BY_AUTOMATED_FACTORY = 5000;
+
 }

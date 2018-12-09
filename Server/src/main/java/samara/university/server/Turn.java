@@ -1,5 +1,6 @@
 package samara.university.server;
 
+import samara.university.common.constants.Restrictions;
 import samara.university.common.entities.Player;
 
 import java.util.HashMap;
@@ -10,9 +11,6 @@ import java.util.Objects;
  * Подсистема хода
  */
 public class Turn {
-    private static final int MAX_COUNT_MONTHS = 36;
-    private static final int MAX_COUNT_PHASES = 6;
-
     private Map<Player, Action> playersActions;
     private GameLog gameLog;
     private int currentMonth;
@@ -34,16 +32,18 @@ public class Turn {
     }
 
     public void toNextMonth() {
-        if (currentMonth < MAX_COUNT_MONTHS && currentPhase == MAX_COUNT_PHASES) {
+        if (currentMonth < Restrictions.MAX_MONTHS_COUNT && currentPhase == Restrictions.MAX_PHASES_COUNT) {
             currentMonth++;
             currentPhase = 1;
+            Session session = Session.getSession();
+            session.setSeniorPlayer(session.getBank().nextSeniorPlayer(session.getPlayers(), session.getSeniorPlayer()));
         }
     }
 
     public void toNextPhase() {
-        if (currentPhase < MAX_COUNT_PHASES) {
+        if (currentPhase < Restrictions.MAX_PHASES_COUNT) {
             currentPhase++;
-        } else if (currentMonth < MAX_COUNT_MONTHS) {
+        } else if (currentMonth < Restrictions.MAX_MONTHS_COUNT) {
             currentPhase = 1;
         }
         /*

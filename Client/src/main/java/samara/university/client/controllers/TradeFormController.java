@@ -9,19 +9,16 @@ import samara.university.common.entities.Player;
 
 public class TradeFormController {
     @FXML
-    private Spinner<Integer> spinnerCount;
+    protected Spinner<Integer> spinnerCount;
     @FXML
-    private Spinner<Integer> spinnerPrice;
+    protected Spinner<Integer> spinnerPrice;
+
+    protected SpinnerValueFactory.IntegerSpinnerValueFactory countFactory;
+    protected SpinnerValueFactory.IntegerSpinnerValueFactory priceFactory;
 
     public void initialize() {
-        // TODO: 03.12.2018 проверить ограничения !!!
-        SpinnerValueFactory<Integer> countFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(
-                0, 10, 0, 5);
-        SpinnerValueFactory<Integer> priceFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(
-                0, 300, 0, 50);
-
-        spinnerCount.setValueFactory(countFactory);
-        spinnerPrice.setValueFactory(priceFactory);
+        countFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(
+                0, Integer.MAX_VALUE, 0, 1);
     }
 
     public void ok(ActionEvent event) {
