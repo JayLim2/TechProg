@@ -101,16 +101,9 @@ public class GameFieldFormController implements DisplayingFormController {
             SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
             me = RequestSender.getRequestSender().me();
             senior = sessionPackage.getCurrentSeniorPlayer();
-            List<Player> players = sessionPackage.getPlayers();
-            players.remove(me);
 
-            //Заполняем данные текущего игрока
-            fillProfile(me, 0);
-
-            //Заполняем данные остальных игроков
-            for (int i = 0; i < players.size(); i++) {
-                fillProfile(players.get(i), i + 1);
-            }
+            //Заполняем профили игроков
+            fillAllProfiles(sessionPackage);
 
             //Информация о ходе
             fillTurn(sessionPackage.getCurrentPhase(), sessionPackage.getCurrentMonth(), Restrictions.PHASE_LENGTH_IN_SECONDS);
@@ -119,7 +112,7 @@ public class GameFieldFormController implements DisplayingFormController {
             fillBankReserves();
 
             //Настройка отображения кнопок
-            //updateMenuVisibility();
+            updateMenuVisibility();
 
             //Запустить обратный отсчёт хода
             playCountdown();
@@ -133,6 +126,19 @@ public class GameFieldFormController implements DisplayingFormController {
     @Override
     public void hideAction(WindowEvent event) {
 
+    }
+
+    private void fillAllProfiles(SessionPackage sessionPackage) {
+        List<Player> players = sessionPackage.getPlayers();
+        players.remove(me);
+
+        //Заполняем данные текущего игрока
+        fillProfile(me, 0);
+
+        //Заполняем данные остальных игроков
+        for (int i = 0; i < players.size(); i++) {
+            fillProfile(players.get(i), i + 1);
+        }
     }
 
     private void fillProfile(Player player, int i) {
@@ -158,19 +164,19 @@ public class GameFieldFormController implements DisplayingFormController {
         text.setText(Integer.toString(player.getUnitsOfProducts()));
 
         text = (Text) getElementById("text", "products" + IN_PROGRESS_SUFFIX, "amount", i);
-        text.setText(Integer.toString(player.getUnitsOfProducts()));
+        text.setText(player.getInProduction() == 0 ? "" : "+" + player.getInProduction());
 
         text = (Text) getElementById("text", "factories", "amount", i);
         text.setText(Integer.toString(player.getWorkingFactories()));
 
         text = (Text) getElementById("text", "factories" + IN_PROGRESS_SUFFIX, "amount", i);
-        text.setText(Integer.toString(player.getUnderConstructionFactories()));
+        text.setText(player.getUnderConstructionFactories() == 0 ? "" : "+" + player.getUnderConstructionFactories());
 
         text = (Text) getElementById("text", "auto_factories", "amount", i);
         text.setText(Integer.toString(player.getWorkingAutomatedFactories()));
 
         text = (Text) getElementById("text", "auto_factories" + IN_PROGRESS_SUFFIX, "amount", i);
-        text.setText(Integer.toString(player.getUnderConstructionAutomatedFactories()));
+        text.setText(player.getUnderConstructionAutomatedFactories() == 0 ? "" : "+" + player.getUnderConstructionAutomatedFactories());
     }
 
     public void fillTurn(int phase, int month, int timeLeftInSeconds) {
@@ -303,6 +309,7 @@ public class GameFieldFormController implements DisplayingFormController {
             labelMonth.setText(Integer.toString(sessionPackage.getCurrentMonth()));
             labelPhase.setText(Integer.toString(sessionPackage.getCurrentPhase()));
             updateMenuVisibility(sessionPackage.getCurrentPhase());
+            fillAllProfiles(sessionPackage);
         } catch (Exception e) {
             e.printStackTrace();
         }

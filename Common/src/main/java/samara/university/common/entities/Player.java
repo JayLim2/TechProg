@@ -3,8 +3,6 @@ package samara.university.common.entities;
 import samara.university.common.constants.Restrictions;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -23,31 +21,20 @@ public class Player implements Serializable {
     private int workingAutomatedFactories;              //работающие авто-фабрики
     private int underConstructionFactories;             //строящиеся обычные фабрики
     private int underConstructionAutomatedFactories;    //строящиеся авто-фабрики
-    private int inAutomationNowFactories;               //автоматизируемые сейчас фабрики
-
-    private int totalLoans; //непогашенные ссуды
-
-    private List<Factory> factories;
-    private List<Factory> autoFactories;
-
-    private boolean readyToNextPhase;
+    private int inProduction;   //ЕГП в производстве
+    private int totalLoans;     //непогашенные ссуды
 
     public Player(String name, Avatar avatar) {
         this.name = name;
         this.avatar = avatar;
-        factories = new ArrayList<>();
-        autoFactories = new ArrayList<>();
         initializeCapital();
     }
 
     private void initializeCapital() {
-        for (int i = 0; i < 2; i++) {
-            factories.add(new Factory(0, false));
-            workingFactories++;
-        }
-        unitsOfResources += 4;
-        unitsOfProducts += 2;
-        money += 10000;
+        workingFactories = 2;
+        unitsOfResources = 4;
+        unitsOfProducts = 2;
+        money = 10000;
     }
 
     public int getCapital(int minResourcesPrice, int maxProductsPrice) {
@@ -106,14 +93,6 @@ public class Player implements Serializable {
         this.totalLoans = totalLoans;
     }
 
-    public List<Factory> getFactories() {
-        return factories;
-    }
-
-    public List<Factory> getAutoFactories() {
-        return autoFactories;
-    }
-
     public int getWorkingFactories() {
         return workingFactories;
     }
@@ -146,12 +125,12 @@ public class Player implements Serializable {
         this.underConstructionAutomatedFactories = underConstructionAutomatedFactories;
     }
 
-    public int getInAutomationNowFactories() {
-        return inAutomationNowFactories;
+    public int getInProduction() {
+        return inProduction;
     }
 
-    public void setInAutomationNowFactories(int inAutomationNowFactories) {
-        this.inAutomationNowFactories = inAutomationNowFactories;
+    public void setInProduction(int inProduction) {
+        this.inProduction = inProduction;
     }
 
     @Override
@@ -166,14 +145,13 @@ public class Player implements Serializable {
                 workingAutomatedFactories == player.workingAutomatedFactories &&
                 underConstructionFactories == player.underConstructionFactories &&
                 underConstructionAutomatedFactories == player.underConstructionAutomatedFactories &&
-                inAutomationNowFactories == player.inAutomationNowFactories &&
                 Objects.equals(name, player.name) &&
                 Objects.equals(avatar, player.avatar);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, avatar, unitsOfProducts, unitsOfResources, money, workingFactories, workingAutomatedFactories, underConstructionFactories, underConstructionAutomatedFactories, inAutomationNowFactories);
+        return Objects.hash(name, avatar, unitsOfProducts, unitsOfResources, money, workingFactories, workingAutomatedFactories, underConstructionFactories, underConstructionAutomatedFactories);
     }
 
     @Override

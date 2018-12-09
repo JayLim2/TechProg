@@ -301,17 +301,10 @@ public class Bank {
             if (bid.getCount() == 0 || bid.getPrice() < minResourcePrice) {
                 continue;
             }
-            Player player = bid.getPlayer();
+            handleBid(bid, Restrictions.BUY_RESOURCES_BID);
             if (bid.getCount() >= reserveUnitsOfResources) {
-                player.setMoney(reserveUnitsOfResources * bid.getPrice());
-                player.setUnitsOfResources(player.getUnitsOfResources() + reserveUnitsOfResources);
-                reserveUnitsOfResources = 0;
                 bids.clear();
                 return;
-            } else {
-                player.setMoney(bid.getCount() * bid.getPrice());
-                player.setUnitsOfResources(player.getUnitsOfResources() + bid.getCount());
-                reserveUnitsOfResources -= bid.getCount();
             }
         }
         bids.clear();
@@ -329,20 +322,29 @@ public class Bank {
             if (bid.getCount() == 0 || bid.getPrice() > maxProductPrice) {
                 continue;
             }
-            Player player = bid.getPlayer();
+            handleBid(bid, Restrictions.SELL_PRODUCTS_BID);
             if (bid.getCount() >= reserveUnitsOfProducts) {
-                player.setMoney(reserveUnitsOfProducts * bid.getPrice());
-                player.setUnitsOfProducts(player.getUnitsOfProducts() + reserveUnitsOfProducts);
-                reserveUnitsOfProducts = 0;
                 bids.clear();
                 return;
-            } else {
-                player.setMoney(bid.getCount() * bid.getPrice());
-                player.setUnitsOfProducts(player.getUnitsOfProducts() + bid.getCount());
-                reserveUnitsOfProducts -= bid.getCount();
             }
         }
         bids.clear();
+    }
+
+    private void handleBid(Bid bid, boolean type) {
+        Player player = bid.getPlayer();
+        int count;
+        if (!type) {
+            count = Math.min(bid.getCount(), reserveUnitsOfResources);
+            player.setMoney(player.getMoney() - count * bid.getPrice());
+            player.setUnitsOfResources(player.getUnitsOfResources() + count);
+            reserveUnitsOfResources -= count;
+        } else {
+            count = Math.min(bid.getCount(), reserveUnitsOfProducts);
+            player.setMoney(player.getMoney() - count * bid.getPrice());
+            player.setUnitsOfProducts(player.getUnitsOfProducts() + count);
+            reserveUnitsOfProducts -= count;
+        }
     }
 
     private BidComparator ascBidCmp = new BidComparator(false);

@@ -34,15 +34,6 @@ public class RequestSender {
     }
 
     /**
-     * Соединение установлено
-     *
-     * @return флаг
-     */
-    public boolean isConnected() {
-        return isConnected;
-    }
-
-    /**
      * Установить соединение с сервером и открыть потоки ввода-вывода
      */
     public void connect() {

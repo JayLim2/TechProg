@@ -7,6 +7,12 @@ public class Restrictions {
 
     public static final int PHASE_LENGTH_IN_SECONDS = 120; //длительность фазы 120 сек
 
+    //bid types
+
+    public static final boolean BUY_RESOURCES_BID = false;
+
+    public static final boolean SELL_PRODUCTS_BID = true;
+
     //turn
 
     public static final int MAX_MONTHS_COUNT = 36;
