@@ -115,7 +115,10 @@ public class GameFieldFormController implements DisplayingFormController {
             updateMenuVisibility();
 
             //Запустить обратный отсчёт хода
-            playCountdown();
+            phaseCountdown();
+
+            //Запустить циклическое обновление клиента
+            cyclicalUpdater();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -200,9 +203,9 @@ public class GameFieldFormController implements DisplayingFormController {
     }
 
     private static final Duration ONE_SECOND_DURATION = Duration.seconds(1);
-    private Integer totalSeconds = Restrictions.PHASE_LENGTH_IN_SECONDS;
+    private int totalSeconds = Restrictions.PHASE_LENGTH_IN_SECONDS;
 
-    private void playCountdown() {
+    private void phaseCountdown() {
         Timeline timeline = new Timeline();
 
         KeyFrame frame = new KeyFrame(ONE_SECOND_DURATION, new EventHandler<ActionEvent>() {
@@ -222,6 +225,40 @@ public class GameFieldFormController implements DisplayingFormController {
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
+
+    //-------------------- Циклическое обновление клиента раз в N секунд ---------------
+    private static final Duration CYCLE_PERIOD = Duration.seconds(3);
+    private boolean cyclicalUpdateStopped = false;
+
+    private void cyclicalUpdater() {
+        Timeline timeline = new Timeline();
+
+        KeyFrame frame = new KeyFrame(CYCLE_PERIOD, new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    fillAllProfiles(RequestSender.getRequestSender().sessionInfo());
+                    //здесь же обновление журнала на экране
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                if (cyclicalUpdateStopped) {
+                    timeline.stop();
+                    timeline.getKeyFrames().clear();
+                }
+            }
+        });
+
+        timeline.getKeyFrames().add(frame);
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+    }
+
+    private void stopCyclicUpdater() {
+        cyclicalUpdateStopped = true;
+    }
+    //-----------------------------------------------------------
 
     private void updateTimeFields() {
         int minutes = totalSeconds / 60;
