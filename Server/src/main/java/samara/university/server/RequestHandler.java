@@ -118,20 +118,19 @@ public class RequestHandler {
                     reserves();
                     break;
                 case SEND_BID:
-                    receiveBid();
+                    sendBid();
                     break;
                 case START_PRODUCTION:
                     startProduction();
                     break;
                 case BUILD_FACTORY:
+                    buildFactory();
                     break;
                 case AUTOMATE_FACTORY:
+                    automateFactory();
                     break;
-                case GET_LOAN:
-                    break;
-                case PAY_LOAN:
-                    break;
-                case PAY_REGULAR_COSTS:
+                case NEW_LOAN:
+                    newLoan();
                     break;
             }
         }
@@ -141,7 +140,7 @@ public class RequestHandler {
             objectOutputStream.flush();
         }
 
-        public void receiveBid() throws IOException, ClassNotFoundException {
+        public void sendBid() throws IOException, ClassNotFoundException {
             Player player = (Player) objectInputStream.readObject();
             boolean type = objectInputStream.readBoolean();
             int count = objectInputStream.readInt();
@@ -156,6 +155,23 @@ public class RequestHandler {
             session.getBank().startProduction(player, count, totalCost);
         }
 
+        public void buildFactory() throws IOException, ClassNotFoundException {
+            Player player = (Player) objectInputStream.readObject();
+            boolean isAutomated = objectInputStream.readBoolean();
+            session.getBank().buildFactory(player, isAutomated);
+        }
+
+        public void automateFactory() throws IOException, ClassNotFoundException {
+            Player player = (Player) objectInputStream.readObject();
+            session.getBank().automateExistingFactory(player);
+        }
+
+        public void newLoan() throws IOException, ClassNotFoundException {
+            Player player = (Player) objectInputStream.readObject();
+            int amount = objectInputStream.readInt();
+            session.getBank().newLoan(player, amount);
+        }
+
         /**
          * Переход на следующую фазу.
          * Если текущая фаза последняя, то переход на следующий ход.
@@ -166,6 +182,7 @@ public class RequestHandler {
                 session.setSeniorPlayer(session.getBank().nextSeniorPlayer(session.getPlayers(), session.getSeniorPlayer()));
                 session.getTurn().toNextPhase();
                 session.getTurn().toNextMonth();
+                session.getBank().nextPhase();
             } else {
                 session.makeReady();
             }

@@ -138,9 +138,36 @@ public class RequestSender {
     public void startProduction(Player player, int count, int totalCost) throws IOException {
         connect();
         sendCommand(Command.BANK_ACTION);
+        sendBankAction(BankAction.START_PRODUCTION);
         objectOutputStream.writeObject(player);
         objectOutputStream.writeInt(count);
         objectOutputStream.writeInt(totalCost);
+        objectOutputStream.flush();
+    }
+
+    public void buildFactory(Player player, boolean isAutomated) throws IOException {
+        connect();
+        sendCommand(Command.BANK_ACTION);
+        sendBankAction(BankAction.BUILD_FACTORY);
+        objectOutputStream.writeObject(player);
+        objectOutputStream.writeBoolean(isAutomated);
+        objectOutputStream.flush();
+    }
+
+    public void automateFactory(Player player) throws IOException {
+        connect();
+        sendCommand(Command.BANK_ACTION);
+        sendBankAction(BankAction.AUTOMATE_FACTORY);
+        objectOutputStream.writeObject(player);
+        objectOutputStream.flush();
+    }
+
+    public void newLoan(Player player, int amount) throws IOException {
+        connect();
+        sendCommand(Command.BANK_ACTION);
+        sendBankAction(BankAction.NEW_LOAN);
+        objectOutputStream.writeObject(player);
+        objectOutputStream.writeInt(amount);
         objectOutputStream.flush();
     }
 

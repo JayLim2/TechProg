@@ -1,5 +1,7 @@
 package samara.university.common.entities;
 
+import samara.university.common.constants.Restrictions;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +25,12 @@ public class Player implements Serializable {
     private int underConstructionAutomatedFactories;    //строящиеся авто-фабрики
     private int inAutomationNowFactories;               //автоматизируемые сейчас фабрики
 
+    private int totalLoans; //непогашенные ссуды
+
     private List<Factory> factories;
     private List<Factory> autoFactories;
+
+    private boolean readyToNextPhase;
 
     public Player(String name, Avatar avatar) {
         this.name = name;
@@ -42,6 +48,14 @@ public class Player implements Serializable {
         unitsOfResources += 4;
         unitsOfProducts += 2;
         money += 10000;
+    }
+
+    public int getCapital(int minResourcesPrice, int maxProductsPrice) {
+        return (workingFactories + underConstructionFactories) * Restrictions.BUILDING_FACTORY_PRICE
+                + (workingAutomatedFactories + underConstructionAutomatedFactories) * Restrictions.BUILDING_AUTOMATED_FACTORY_PRICE
+                + unitsOfResources * minResourcesPrice
+                + unitsOfProducts + maxProductsPrice
+                + money;
     }
 
     public String getName() {
@@ -82,6 +96,14 @@ public class Player implements Serializable {
 
     public void setMoney(int money) {
         this.money = money;
+    }
+
+    public int getTotalLoans() {
+        return totalLoans;
+    }
+
+    public void setTotalLoans(int totalLoans) {
+        this.totalLoans = totalLoans;
     }
 
     public List<Factory> getFactories() {

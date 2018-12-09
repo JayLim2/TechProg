@@ -12,12 +12,24 @@ public class PlannedAction {
     private int money;
     private boolean sign;
 
+    public void setCount(int count) {
+        this.count = count;
+    }
+
     public int getCount() {
         return count;
     }
 
+    public void setMoney(int money) {
+        this.money = money;
+    }
+
     public int getMoney() {
         return money;
+    }
+
+    public void setSign(boolean sign) {
+        this.sign = sign;
     }
 
     public boolean isSign() {
@@ -25,19 +37,18 @@ public class PlannedAction {
     }
 
     /**
-     * Создание отложенного действия
+     * Создание запланированного действия
      *
-     * @param type          тип отложенного действия
-     * @param delayingMonth месяц, в которое создано действие
-     * @param delayingPhase фаза, в которую создано действие
-     * @param countMonths   количество месяцев до исполнения действия
-     * @param countPhases   количество фаз до исполнения действия
+     * @param type              тип действия
+     * @param player            игрок
+     * @param executionMonth    месяц, в который действие завершится
+     * @param executionPhase    фаза месяца, в которой действие завершится
      */
-    public PlannedAction(PlannedActionType type, Player player, int delayingMonth, int delayingPhase, int countMonths, int countPhases) {
+    public PlannedAction(PlannedActionType type, Player player, int executionMonth, int executionPhase) {
         this.type = type;
         this.player = player;
-        this.executionMonth = delayingMonth + countMonths;
-        this.executionPhase = delayingPhase + countPhases;
+        this.executionMonth = executionMonth;
+        this.executionPhase = executionPhase;
     }
 
     /**
@@ -70,7 +81,9 @@ public class PlannedAction {
         SELL_PRODUCTS,
         COMPLETE_BUILDING_FACTORY,
         COMPLETE_AUTOMATION_FACTORY,
+        PAY_SECOND_PART_FOR_AUTOMATION,
         COMPLETE_PRODUCTION,
-        PAY_LOANS
+        PAY_LOAN,
+        PAY_LOAN_PERCENT
     }
 }

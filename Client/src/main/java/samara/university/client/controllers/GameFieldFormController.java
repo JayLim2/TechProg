@@ -182,11 +182,6 @@ public class GameFieldFormController implements DisplayingFormController {
         try {
             BankPackage bankPackage = RequestSender.getRequestSender().bankInfo();
 
-            System.out.println(bankPackage.getMaxProductPrice());
-            System.out.println(bankPackage.getMinResourcePrice());
-            System.out.println(bankPackage.getReserveUnitsOfProducts());
-            System.out.println(bankPackage.getReserveUnitsOfResources());
-
             labelBankResourcesCount.setText(Integer.toString(bankPackage.getReserveUnitsOfResources()));
             labelBankResourcesMinPrice.setText(Integer.toString(bankPackage.getMinResourcePrice()));
             labelBankProductsCount.setText(Integer.toString(bankPackage.getReserveUnitsOfProducts()));
@@ -299,7 +294,12 @@ public class GameFieldFormController implements DisplayingFormController {
     }
 
     public void nextPhase(ActionEvent event) {
-
+        try {
+            RequestSender.getRequestSender().nextPhase();
+            // TODO: 09.12.2018 изменения на форме 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void interruptGameForMe(ActionEvent event) {

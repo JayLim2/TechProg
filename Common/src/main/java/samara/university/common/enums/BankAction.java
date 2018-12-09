@@ -16,8 +16,9 @@ public enum BankAction implements Serializable {
 
     AUTOMATE_FACTORY,
 
-    GET_LOAN,
+    NEW_LOAN,
 
+    //-------- unused
     PAY_LOAN,
 
     PAY_REGULAR_COSTS

@@ -3,8 +3,8 @@ package samara.university.server;
 import samara.university.common.constants.ProbabilityTable;
 import samara.university.common.constants.ProductPriceLevelTable;
 import samara.university.common.constants.ResourcePriceLevelTable;
+import samara.university.common.constants.Restrictions;
 import samara.university.common.entities.Bid;
-import samara.university.common.entities.Factory;
 import samara.university.common.entities.Player;
 import samara.university.common.entities.actions.PlannedAction;
 
@@ -70,14 +70,29 @@ public class Bank {
                         }
                         break;
                         case COMPLETE_BUILDING_FACTORY: {
-                            player.setWorkingFactories(
-                                    player.getWorkingFactories() + action.getCount()
-                            );
+                            if (action.isSign()) {
+                                player.setWorkingAutomatedFactories(
+                                        player.getWorkingAutomatedFactories() + action.getCount()
+                                );
+                            } else {
+                                player.setWorkingFactories(
+                                        player.getWorkingFactories() + action.getCount()
+                                );
+                            }
                         }
                         break;
                         case COMPLETE_AUTOMATION_FACTORY: {
+                            player.setWorkingFactories(
+                                    player.getWorkingFactories() - action.getCount()
+                            );
                             player.setWorkingAutomatedFactories(
                                     player.getWorkingAutomatedFactories() + action.getCount()
+                            );
+                        }
+                        break;
+                        case PAY_SECOND_PART_FOR_AUTOMATION: {
+                            player.setMoney(
+                                    player.getMoney() - action.getMoney()
                             );
                         }
                         break;
@@ -87,9 +102,18 @@ public class Bank {
                             );
                         }
                         break;
-                        case PAY_LOANS: {
+                        case PAY_LOAN: {
                             player.setMoney(
                                     player.getMoney() - action.getMoney()
+                            );
+                            player.setTotalLoans(
+                                    player.getTotalLoans() - action.getMoney()
+                            );
+                        }
+                        break;
+                        case PAY_LOAN_PERCENT: {
+                            player.setMoney(
+                                    player.getMoney() - Math.round(player.getTotalLoans() * Restrictions.LOAN_PERCENT)
                             );
                         }
                         break;
@@ -98,6 +122,17 @@ public class Bank {
                 }
             }
         }
+    }
+
+    /**
+     * Переход на следующую фазу
+     * <p>
+     * Банк в начале каждой фазы пересчитывает свои резервы, выставляет цены
+     * и обрабатывает запланированные действия.
+     */
+    public void nextPhase() {
+        calculateReserves();
+        handlePlannedActions();
     }
 
     /**
@@ -111,15 +146,17 @@ public class Bank {
     public void sendBid(Player player, boolean type, int count, int price) {
         Bid bid = Bid.createBid(player, type, count, price);
         bids.add(bid);
-    }
-
-    /**
-     * [Вспомогательный метод]
-     * Объявляет банку, что все заявки получены
-     * Предполагается, что банку сообщать об этом будет игровая сессия (samara.university.server.Session)
-     */
-    public void allBidsReceived() {
-        allBidsReceived = true;
+        if (bids.size() == Session.getSession().playersCount()) {
+            plannedActions.add(
+                    new PlannedAction(
+                            !type ? PlannedAction.PlannedActionType.BUY_RESOURCES
+                                    : PlannedAction.PlannedActionType.SELL_PRODUCTS,
+                            null,
+                            Session.getSession().getTurn().getCurrentMonth(),
+                            Session.getSession().getTurn().getCurrentPhase() + 1
+                    )
+            );
+        }
     }
 
     /**
@@ -130,7 +167,113 @@ public class Bank {
      * @param price  общая стоимость производства
      */
     public void startProduction(Player player, int count, int price) {
+        player.setMoney(
+                player.getMoney() - price
+        );
+        PlannedAction plannedAction = new PlannedAction(
+                PlannedAction.PlannedActionType.COMPLETE_PRODUCTION,
+                player,
+                Session.getSession().getTurn().getCurrentMonth(),
+                Session.getSession().getTurn().getCurrentPhase() + 1
+        );
+        plannedAction.setCount(count);
+        plannedActions.add(plannedAction);
+    }
 
+    /**
+     * Построить фабрику для игрока player (автоматизированную или обычную)
+     *
+     * @param player      игрок
+     * @param isAutomated свойство "автоматизированная"
+     */
+    public void buildFactory(Player player, boolean isAutomated) {
+        int totalFactories = player.getWorkingFactories()
+                + player.getWorkingAutomatedFactories()
+                + player.getUnderConstructionFactories()
+                + player.getUnderConstructionAutomatedFactories();
+        if (totalFactories < Restrictions.MAX_FACTORIES_COUNT) {
+            if (isAutomated) {
+                player.setUnderConstructionAutomatedFactories(
+                        player.getUnderConstructionAutomatedFactories() + 1
+                );
+            } else {
+                player.setUnderConstructionFactories(
+                        player.getUnderConstructionFactories() + 1
+                );
+            }
+            player.setMoney(
+                    player.getMoney() - (isAutomated ? Restrictions.BUILDING_AUTOMATED_FACTORY_PRICE : Restrictions.BUILDING_FACTORY_PRICE)
+            );
+            PlannedAction plannedAction = new PlannedAction(
+                    PlannedAction.PlannedActionType.COMPLETE_BUILDING_FACTORY,
+                    player,
+                    Session.getSession().getTurn().getCurrentMonth() + (isAutomated ? Restrictions.BUILDING_AUTOMATED_FACTORY_MONTHS : Restrictions.BUILDING_FACTORY_MONTHS),
+                    1
+            );
+            plannedAction.setSign(isAutomated);
+            plannedAction.setCount(1);
+            plannedActions.add(plannedAction);
+        }
+    }
+
+    /**
+     * Автоматизировать одну обычную фабрику игроку player.
+     *
+     * @param player игрок
+     */
+    public void automateExistingFactory(Player player) {
+        if (player.getWorkingFactories() > 0) {
+            //Строительство фабрики
+            PlannedAction plannedAction = new PlannedAction(
+                    PlannedAction.PlannedActionType.COMPLETE_AUTOMATION_FACTORY,
+                    player,
+                    Session.getSession().getTurn().getCurrentMonth() + Restrictions.AUTOMATION_FACTORY_MONTHS,
+                    1
+            );
+            plannedAction.setCount(1);
+            plannedActions.add(plannedAction);
+
+            //Оплата второй части суммы за автоматизацию
+            plannedAction = new PlannedAction(
+                    PlannedAction.PlannedActionType.PAY_SECOND_PART_FOR_AUTOMATION,
+                    player,
+                    Session.getSession().getTurn().getCurrentMonth() + Restrictions.AUTOMATION_FACTORY_MONTHS - 1,
+                    1
+            );
+            plannedAction.setMoney(Restrictions.AUTOMATION_FACTORY_PRICE / 2);
+            plannedActions.add(plannedAction);
+        }
+    }
+
+    /**
+     * Получить ссуду на 12 месяцев
+     *
+     * @param player игрок
+     * @param amount желаемый размер ссуды
+     */
+    public void newLoan(Player player, int amount) {
+        int halfCapital = player.getCapital(minResourcePrice, maxProductPrice) / 2;
+        if (amount <= halfCapital) {
+            int currentMonth = Session.getSession().getTurn().getCurrentMonth();
+            PlannedAction plannedAction;
+            for (int i = 1; i <= Restrictions.LOAN_MONTHS; i++) {
+                plannedAction = new PlannedAction(
+                        PlannedAction.PlannedActionType.PAY_LOAN_PERCENT,
+                        player,
+                        currentMonth + i,
+                        Restrictions.PAY_LOAN_PERCENT_PHASE
+                );
+                plannedActions.add(plannedAction);
+            }
+
+            plannedAction = new PlannedAction(
+                    PlannedAction.PlannedActionType.PAY_LOAN,
+                    player,
+                    currentMonth + Restrictions.LOAN_MONTHS,
+                    Restrictions.PAY_LOAN_PHASE
+            );
+            plannedActions.add(plannedAction);
+        }
     }
 
     /**
@@ -273,38 +416,6 @@ public class Bank {
      */
     public int getMaxProductPrice() {
         return maxProductPrice;
-    }
-
-    /**
-     * Построить фабрику для игрока player (автоматизированную или обычную)
-     *
-     * @param player      игрок
-     * @param isAutomated свойство "автоматизированная"
-     * @param month       месяц начала строительства
-     */
-    public void buildFactory(Player player, boolean isAutomated, int month) {
-        Factory factory = new Factory(month, isAutomated);
-        if (!isAutomated) {
-            player.getFactories().add(factory);
-        } else {
-            player.getAutoFactories().add(factory);
-        }
-    }
-
-    /**
-     * Автоматизировать одну обычную фабрику игроку player.
-     *
-     * @param player игрок
-     * @param month  месяц начала автоматизации
-     */
-    public void automateExistingFactory(Player player, int month) {
-        List<Factory> factories = player.getFactories();
-        if (factories.size() > 0) {
-            Factory factory = factories.get(0);
-            factory.startAutomation(month);
-            factories.remove(0);
-            player.getAutoFactories().add(factory);
-        }
     }
 
     /**
