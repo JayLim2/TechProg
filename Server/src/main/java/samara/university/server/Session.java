@@ -15,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Session {
     private static Session session;
+    private static int lastId = 0;
 
     private LocalDateTime startTime;
     private Set<Player> players;
@@ -78,6 +79,7 @@ public class Session {
 
     public void register(Player player) {
         if (player != null && isAvailable()) {
+            player.setId(++lastId);
             players.add(player);
             if (seniorPlayer == null) {
                 seniorPlayer = player;
@@ -103,6 +105,10 @@ public class Session {
 
     public List<Player> getPlayers() {
         ArrayList<Player> players = new ArrayList<>(this.players);
+        return players;
+    }
+
+    public Set<Player> getPlayersSet() {
         return players;
     }
 

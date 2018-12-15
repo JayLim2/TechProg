@@ -11,6 +11,8 @@ import java.util.Objects;
  * Хранит его имя в игре, аватар и все счета (ЕСМ, ЕГП, деньги, фабрики).
  */
 public class Player implements Serializable {
+    private int id;
+
     private String name;
     private Avatar avatar;
 
@@ -43,6 +45,14 @@ public class Player implements Serializable {
                 + unitsOfResources * minResourcesPrice
                 + unitsOfProducts + maxProductsPrice
                 + money;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -138,7 +148,8 @@ public class Player implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Player player = (Player) o;
-        return unitsOfProducts == player.unitsOfProducts &&
+        return id == player.id ||
+                (unitsOfProducts == player.unitsOfProducts &&
                 unitsOfResources == player.unitsOfResources &&
                 money == player.money &&
                 workingFactories == player.workingFactories &&
@@ -146,7 +157,7 @@ public class Player implements Serializable {
                 underConstructionFactories == player.underConstructionFactories &&
                 underConstructionAutomatedFactories == player.underConstructionAutomatedFactories &&
                 Objects.equals(name, player.name) &&
-                Objects.equals(avatar, player.avatar);
+                        Objects.equals(avatar, player.avatar));
     }
 
     @Override

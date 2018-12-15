@@ -43,12 +43,12 @@ public class Bank {
         int currentPhase = Session.getSession().getTurn().getCurrentPhase();
 
         //Regular costs
-        if (currentPhase == 1) {
+        /*if (currentPhase == 1) {
             List<Player> players = Session.getSession().getPlayers();
             for (Player player : players) {
                 player.setMoney(player.getMoney() - getRegularCosts(player));
             }
-        }
+        }*/
 
         //Other planned actions
         if (plannedActions.size() > 0) {
@@ -57,9 +57,12 @@ public class Bank {
             Iterator<PlannedAction> iterator = plannedActions.iterator();
             while (iterator.hasNext()) {
                 PlannedAction action = iterator.next();
+                System.out.println("planned action " + action);
                 if (action.isActionDone(currentPhase, currentMonth)) {
                     player = action.getPlayer();
                     type = action.getType();
+                    System.out.println("\tplayer: " + player);
+                    System.out.println("\ttype: " + type);
                     switch (type) {
                         case BUY_RESOURCES: {
                             buy();
@@ -131,8 +134,52 @@ public class Bank {
      * и обрабатывает запланированные действия.
      */
     public void nextPhase() {
-        calculateReserves();
-        handlePlannedActions();
+        int currentPhase = Session.getSession().getTurn().getCurrentPhase();
+        System.out.println("\ncurrent phase: " + currentPhase);
+        switch (currentPhase) {
+            case Restrictions.REGULAR_COSTS_PHASE: {
+                System.out.println("===============================");
+                Set<Player> setPlayers = Session.getSession().getPlayersSet();
+                List<Player> tmp = new ArrayList<>();
+                for (Player setPlayer : setPlayers) {
+                    tmp.add(setPlayer);
+                }
+                List<Player> players = Session.getSession().getPlayers();
+                System.out.println();
+                int i = 0;
+                for (Player player : players) {
+                    /*Player test = tmp.get(i++);
+                    System.out.println(test);
+                    System.out.println(player);
+                    System.out.println(test == player);*/
+                    player.setMoney(player.getMoney() - getRegularCosts(player));
+                }
+                System.out.println("===============================");
+            }
+            break;
+            case Restrictions.CALCULATE_RESERVES_PHASE: {
+                calculateReserves();
+            }
+            break;
+            case Restrictions.SEND_BID_RESOURCES_PHASE: {
+                planHandlingBids(Restrictions.BUY_RESOURCES_BID);
+            }
+            break;
+            case Restrictions.SEND_BID_PRODUCTS_PHASE: {
+                planHandlingBids(Restrictions.SELL_PRODUCTS_BID);
+            }
+            break;
+        }
+
+        Session.getSession().getTurn().toNextPhase();
+        Session.getSession().getTurn().toNextMonth();
+
+        currentPhase = Session.getSession().getTurn().getCurrentPhase();
+
+        if (currentPhase >= Restrictions.PRODUCTION_PHASE
+                && currentPhase <= Restrictions.MAX_PHASES_COUNT) {
+            handlePlannedActions();
+        }
     }
 
     /**
@@ -146,7 +193,7 @@ public class Bank {
     public void sendBid(Player player, boolean type, int count, int price) {
         Bid bid = Bid.createBid(player, type, count, price);
         bids.add(bid);
-        if (bids.size() == Session.getSession().playersCount()) {
+        /*if (bids.size() == Session.getSession().playersCount()) {
             plannedActions.add(
                     new PlannedAction(
                             !type ? PlannedAction.PlannedActionType.BUY_RESOURCES
@@ -156,7 +203,24 @@ public class Bank {
                             Session.getSession().getTurn().getCurrentPhase() + 1
                     )
             );
-        }
+        }*/
+    }
+
+    /**
+     * Запланировать обрабаотку заявок
+     *
+     * @param type тип заявок
+     */
+    public void planHandlingBids(boolean type) {
+        plannedActions.add(
+                new PlannedAction(
+                        !type ? PlannedAction.PlannedActionType.BUY_RESOURCES
+                                : PlannedAction.PlannedActionType.SELL_PRODUCTS,
+                        null,
+                        Session.getSession().getTurn().getCurrentMonth(),
+                        Session.getSession().getTurn().getCurrentPhase() + 1
+                )
+        );
     }
 
     /**
@@ -295,13 +359,32 @@ public class Bank {
      * Выполняется по алгоритму в соответствии с правилами.
      */
     public void buy() {
+        System.out.println("=== IN BUY ===");
         bids.sort(ascBidCmp);
-        for (int i = 0; i < bids.size() || reserveUnitsOfResources > 0; i++) {
+        List<Player> sessionPlayers = Session.getSession().getPlayers();
+        for (int i = 0; i < bids.size() && reserveUnitsOfResources > 0; i++) {
             Bid bid = bids.get(i);
+            /*for (Player sessionPlayer : sessionPlayers) {
+                System.out.println("sessionPlayer: " + sessionPlayer);
+                System.out.println("player: " + bid.getPlayer());
+            }*/
+            int index = sessionPlayers.indexOf(bid.getPlayer());
+            System.out.println("_ player index: " + index);
+            bid.setPlayer(sessionPlayers.get(index));
+
             if (bid.getCount() == 0 || bid.getPrice() < minResourcePrice) {
                 continue;
             }
             handleBid(bid, Restrictions.BUY_RESOURCES_BID);
+
+            for (Player sessionPlayer : sessionPlayers) {
+                System.out.println("sessionPlayer: " + sessionPlayer);
+                System.out.println("player:        " + bid.getPlayer());
+                System.out.println(sessionPlayer.getMoney());
+                System.out.println(sessionPlayer.getUnitsOfResources());
+                System.out.println();
+            }
+
             if (bid.getCount() >= reserveUnitsOfResources) {
                 bids.clear();
                 return;
@@ -317,7 +400,7 @@ public class Bank {
      */
     public void sell() {
         bids.sort(descBidCmp);
-        for (int i = 0; i < bids.size() || reserveUnitsOfProducts > 0; i++) {
+        for (int i = 0; i < bids.size() && reserveUnitsOfProducts > 0; i++) {
             Bid bid = bids.get(i);
             if (bid.getCount() == 0 || bid.getPrice() > maxProductPrice) {
                 continue;

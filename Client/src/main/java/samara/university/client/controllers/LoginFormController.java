@@ -14,6 +14,7 @@ import samara.university.client.utils.RequestSender;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 public class LoginFormController {
     private static final int MIN_NAME_LENGTH = 3;
@@ -28,6 +29,22 @@ public class LoginFormController {
 
     //Данные будущего игрока
     private int avatarId = 0;
+
+    public void initialize() {
+        Random random = new Random();
+        int len = 0;
+        while (len < 3 || len > 15) {
+            len = Math.abs(random.nextInt(16));
+        }
+        char[] chars = new char[len];
+        for (int i = 0; i < chars.length; i++) {
+            while (!(chars[i] >= 97 && chars[i] <= 122)) {
+                chars[i] = (char) random.nextInt(123);
+            }
+        }
+
+        loginInput.setText(new String(chars));
+    }
 
     public void startSearchAction() {
         String login = loginInput.getText();

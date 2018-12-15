@@ -12,6 +12,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 
 /**
  * Обработчик запросов к серверу
@@ -106,8 +107,16 @@ public class RequestHandler {
 
         public void updateSessionInfo() throws IOException {
             SessionPackage sessionPackage = createSessionPackage();
+            List<Player> players = sessionPackage.getPlayers();
+            for (Player player : players) {
+                System.out.println(player.getName());
+                System.out.println(player.getMoney());
+                System.out.println(player.getUnitsOfResources());
+                System.out.println();
+            }
             objectOutputStream.writeObject(sessionPackage);
             objectOutputStream.flush();
+            System.out.println("updated");
         }
 
         public void bankAction(ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -179,8 +188,6 @@ public class RequestHandler {
         public void nextPhase() throws IOException {
             if (session.isAllReady()) {
                 session.resetReady();
-                session.getTurn().toNextPhase();
-                session.getTurn().toNextMonth();
                 session.getBank().nextPhase();
             } else {
                 session.makeReady();
@@ -216,6 +223,13 @@ public class RequestHandler {
          * @return SessionPackage
          */
         private SessionPackage createSessionPackage() {
+            /*List<Player> players = session.getPlayers();
+            for (Player player : players) {
+                System.out.println(player.getName());
+                System.out.println(player.getMoney());
+                System.out.println(player.getUnitsOfResources());
+                System.out.println();
+            }*/
             return new SessionPackage(
                     session.getStartTime(),
                     session.getPlayers(),

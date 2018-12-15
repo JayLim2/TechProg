@@ -24,6 +24,12 @@ public class Bid {
         return player;
     }
 
+    public void setPlayer(Player player) {
+        if (player != null) {
+            this.player = player;
+        }
+    }
+
     public boolean type() {
         return type;
     }

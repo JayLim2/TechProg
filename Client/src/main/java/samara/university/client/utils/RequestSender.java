@@ -89,7 +89,8 @@ public class RequestSender {
     public SessionPackage sessionInfo() throws IOException, ClassNotFoundException {
         connect();
         sendCommand(Command.UPDATE_SESSION_INFO);
-        return (SessionPackage) objectInputStream.readObject();
+        SessionPackage sessionPackage = (SessionPackage) objectInputStream.readObject();
+        return sessionPackage;
     }
 
     /**

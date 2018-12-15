@@ -119,6 +119,10 @@ public class GameFieldFormController implements DisplayingFormController {
 
             //Запустить циклическое обновление клиента
             cyclicalUpdater();
+
+            //Пропустить первые 2 фазы
+            nextPhase(null);
+            nextPhase(null);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -132,15 +136,20 @@ public class GameFieldFormController implements DisplayingFormController {
     }
 
     private void fillAllProfiles(SessionPackage sessionPackage) {
-        List<Player> players = sessionPackage.getPlayers();
-        players.remove(me);
+        try {
+            List<Player> players = sessionPackage.getPlayers();
+            me = RequestSender.getRequestSender().me();
+            players.remove(me);
 
-        //Заполняем данные текущего игрока
-        fillProfile(me, 0);
+            //Заполняем данные текущего игрока
+            fillProfile(me, 0);
 
-        //Заполняем данные остальных игроков
-        for (int i = 0; i < players.size(); i++) {
-            fillProfile(players.get(i), i + 1);
+            //Заполняем данные остальных игроков
+            for (int i = 0; i < players.size(); i++) {
+                fillProfile(players.get(i), i + 1);
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
@@ -237,7 +246,23 @@ public class GameFieldFormController implements DisplayingFormController {
             @Override
             public void handle(ActionEvent event) {
                 try {
-                    fillAllProfiles(RequestSender.getRequestSender().sessionInfo());
+                    // FIXME: 16.12.2018 почему то приходят старые данные
+                    SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
+
+                    List<Player> players = sessionPackage.getPlayers();
+                    System.out.println("===============================");
+                    for (Player player : players) {
+                        System.out.println(player);
+                        System.out.println(player.getMoney());
+                        System.out.println(player.getUnitsOfResources());
+                        System.out.println();
+                    }
+                    System.out.println("===============================");
+
+                    fillAllProfiles(sessionPackage);
+                    labelMonth.setText(Integer.toString(sessionPackage.getCurrentMonth()));
+                    labelPhase.setText(Integer.toString(sessionPackage.getCurrentPhase()));
+                    updateMenuVisibility();
                     //здесь же обновление журнала на экране
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -293,23 +318,23 @@ public class GameFieldFormController implements DisplayingFormController {
         buttonStartConstruction.setDisable(true);
         buttonGetLoan.setDisable(true);
         switch (phase) {
-            case 1: {
+            case Restrictions.SEND_BID_RESOURCES_PHASE: {
                 buttonBuyResources.setDisable(false);
             }
             break;
-            case 2: {
+            case Restrictions.PRODUCTION_PHASE: {
                 buttonStartProduction.setDisable(false);
             }
             break;
-            case 3: {
+            case Restrictions.SEND_BID_PRODUCTS_PHASE: {
                 buttonSellProducts.setDisable(false);
             }
             break;
-            case 4: {
+            case Restrictions.NEW_LOAN_PHASE: {
                 buttonGetLoan.setDisable(false);
             }
             break;
-            case 5: {
+            case Restrictions.BUILDING_AND_AUTOMATION_PHASE: {
                 buttonStartConstruction.setDisable(false);
             }
             break;
