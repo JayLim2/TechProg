@@ -22,8 +22,6 @@ import samara.university.common.packages.SessionPackage;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -231,12 +229,6 @@ public class GameFieldFormController implements DisplayingFormController {
                     LocalDateTime.now()
             ).getSeconds();
 
-            System.out.println("\n======================");
-            System.out.println("time: " + DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).format(time));
-            System.out.println(RequestSender.getRequestSender().getTurnTime());
-            System.out.println("seconds: " + seconds);
-            System.out.println();
-
             totalSeconds = Restrictions.PHASE_LENGTH_IN_SECONDS - (int) seconds;
             //phaseCountdown();
         } catch (Exception e) {
@@ -299,10 +291,15 @@ public class GameFieldFormController implements DisplayingFormController {
     private void updateForm() {
         try {
             SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
-            fillAllProfiles(sessionPackage);
-            labelMonth.setText(Integer.toString(sessionPackage.getCurrentMonth()));
-            labelPhase.setText(Integer.toString(sessionPackage.getCurrentPhase()));
-            updateMenuVisibility();
+            if (sessionPackage.getCurrentPhase() == Restrictions.PAY_LOAN_PERCENT_PHASE
+                    || sessionPackage.getCurrentPhase() == Restrictions.PAY_LOAN_PHASE) {
+                nextPhase(null);
+            } else {
+                fillAllProfiles(sessionPackage);
+                labelMonth.setText(Integer.toString(sessionPackage.getCurrentMonth()));
+                labelPhase.setText(Integer.toString(sessionPackage.getCurrentPhase()));
+                updateMenuVisibility();
+            }
             getTurnTime();
         } catch (Exception e) {
             e.printStackTrace();

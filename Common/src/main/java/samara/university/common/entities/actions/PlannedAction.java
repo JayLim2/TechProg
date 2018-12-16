@@ -76,6 +76,13 @@ public class PlannedAction {
         return player;
     }
 
+    /**
+     * @param player новый игрок, связанный с действием
+     */
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
     public enum PlannedActionType {
         BUY_RESOURCES,
         SELL_PRODUCTS,

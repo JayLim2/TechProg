@@ -101,6 +101,15 @@ public class Session {
         return false;
     }
 
+    public Player getPlayerById(int id) {
+        for (Player player : players) {
+            if (player.getId() == id) {
+                return player;
+            }
+        }
+        return null;
+    }
+
     public List<Player> getPlayers() {
         return players;
     }

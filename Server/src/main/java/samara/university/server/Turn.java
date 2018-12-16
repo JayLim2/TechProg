@@ -46,18 +46,22 @@ public class Turn {
     }
 
     public void toNextMonth() {
-        if (currentMonth < Restrictions.MAX_MONTHS_COUNT && currentPhase == Restrictions.MAX_PHASES_COUNT) {
+        /*if (currentMonth < Restrictions.MAX_MONTHS_COUNT && currentPhase == Restrictions.MAX_PHASES_COUNT) {
             currentMonth++;
             currentPhase = 1;
             Session session = Session.getSession();
             session.setSeniorPlayer(session.getBank().nextSeniorPlayer(session.getPlayers(), session.getSeniorPlayer()));
-        }
+        }*/
     }
 
     public void toNextPhase() {
+        //System.out.println("__-_ current phase : " + currentPhase);
         if (currentPhase < Restrictions.MAX_PHASES_COUNT) {
             currentPhase++;
         } else if (currentMonth < Restrictions.MAX_MONTHS_COUNT) {
+            currentMonth++;
+            Session session = Session.getSession();
+            session.setSeniorPlayer(session.getBank().nextSeniorPlayer(session.getPlayers(), session.getSeniorPlayer()));
             currentPhase = 1;
         }
         /*

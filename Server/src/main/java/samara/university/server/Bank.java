@@ -8,7 +8,6 @@ import samara.university.common.entities.Bid;
 import samara.university.common.entities.Player;
 import samara.university.common.entities.actions.PlannedAction;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -42,14 +41,6 @@ public class Bank {
     public void handlePlannedActions() {
         int currentMonth = Session.getSession().getTurn().getCurrentMonth();
         int currentPhase = Session.getSession().getTurn().getCurrentPhase();
-
-        //Regular costs
-        /*if (currentPhase == 1) {
-            List<Player> players = Session.getSession().getPlayers();
-            for (Player player : players) {
-                player.setMoney(player.getMoney() - getRegularCosts(player));
-            }
-        }*/
 
         //Other planned actions
         if (plannedActions.size() > 0) {
@@ -136,11 +127,7 @@ public class Bank {
      */
     public void nextPhase() {
         int currentPhase = Session.getSession().getTurn().getCurrentPhase();
-        System.out.println("\n==================================\n in BANK - next phase\n");
         Session.getSession().getTurn().resetTurnTime();
-        LocalDateTime time = Session.getSession().getTurn().getPhaseStartTime();
-        System.out.println("time: " + time);
-        System.out.println("\n==================================\n");
         switch (currentPhase) {
             case Restrictions.REGULAR_COSTS_PHASE: {
                 List<Player> players = Session.getSession().getPlayers();
@@ -157,8 +144,33 @@ public class Bank {
                 planHandlingBids(Restrictions.BUY_RESOURCES_BID);
             }
             break;
+            case Restrictions.PRODUCTION_PHASE: { //4
+                // TODO: 16.12.2018
+            }
+            break;
             case Restrictions.SEND_BID_PRODUCTS_PHASE: {
                 planHandlingBids(Restrictions.SELL_PRODUCTS_BID);
+            }
+            break;
+            case Restrictions.PAY_LOAN_PERCENT_PHASE: {
+                // TODO: 16.12.2018
+                /*List<Player> players = Session.getSession().getPlayers();
+                for (Player player : players) {
+                    int loan = player.getTotalLoans();
+                    float percentLoan = 0.01F * loan;
+                }*/
+            }
+            break;
+            case Restrictions.PAY_LOAN_PHASE: { //7
+                // TODO: 16.12.2018
+            }
+            break;
+            case Restrictions.NEW_LOAN_PHASE: {
+                // TODO: 16.12.2018  
+            }
+            break;
+            case Restrictions.MAX_PHASES_COUNT: { //9
+                // TODO: 16.12.2018
             }
             break;
         }
@@ -185,17 +197,6 @@ public class Bank {
     public void sendBid(Player player, boolean type, int count, int price) {
         Bid bid = Bid.createBid(player, type, count, price);
         bids.add(bid);
-        /*if (bids.size() == Session.getSession().playersCount()) {
-            plannedActions.add(
-                    new PlannedAction(
-                            !type ? PlannedAction.PlannedActionType.BUY_RESOURCES
-                                    : PlannedAction.PlannedActionType.SELL_PRODUCTS,
-                            null,
-                            Session.getSession().getTurn().getCurrentMonth(),
-                            Session.getSession().getTurn().getCurrentPhase() + 1
-                    )
-            );
-        }*/
     }
 
     /**
@@ -233,6 +234,7 @@ public class Bank {
                 Session.getSession().getTurn().getCurrentPhase() + 1
         );
         plannedAction.setCount(count);
+        reconcilePlannedActionPlayer(plannedAction);
         plannedActions.add(plannedAction);
     }
 
@@ -268,6 +270,7 @@ public class Bank {
             );
             plannedAction.setSign(isAutomated);
             plannedAction.setCount(1);
+            reconcilePlannedActionPlayer(plannedAction);
             plannedActions.add(plannedAction);
         }
     }
@@ -287,6 +290,7 @@ public class Bank {
                     1
             );
             plannedAction.setCount(1);
+            reconcilePlannedActionPlayer(plannedAction);
             plannedActions.add(plannedAction);
 
             //Оплата второй части суммы за автоматизацию
@@ -297,6 +301,7 @@ public class Bank {
                     1
             );
             plannedAction.setMoney(Restrictions.AUTOMATION_FACTORY_PRICE / 2);
+            reconcilePlannedActionPlayer(plannedAction);
             plannedActions.add(plannedAction);
         }
     }
@@ -319,6 +324,7 @@ public class Bank {
                         currentMonth + i,
                         Restrictions.PAY_LOAN_PERCENT_PHASE
                 );
+                reconcilePlannedActionPlayer(plannedAction);
                 plannedActions.add(plannedAction);
             }
 
@@ -328,6 +334,7 @@ public class Bank {
                     currentMonth + Restrictions.LOAN_MONTHS,
                     Restrictions.PAY_LOAN_PHASE
             );
+            reconcilePlannedActionPlayer(plannedAction);
             plannedActions.add(plannedAction);
         }
     }
@@ -351,32 +358,15 @@ public class Bank {
      * Выполняется по алгоритму в соответствии с правилами.
      */
     public void buy() {
-        System.out.println("=== IN BUY ===");
         bids.sort(ascBidCmp);
-        List<Player> sessionPlayers = new ArrayList<>(Session.getSession().getPlayers());
         for (int i = 0; i < bids.size() && reserveUnitsOfResources > 0; i++) {
             Bid bid = bids.get(i);
-            /*for (Player sessionPlayer : sessionPlayers) {
-                System.out.println("sessionPlayer: " + sessionPlayer);
-                System.out.println("player: " + bid.getPlayer());
-            }*/
-            int index = sessionPlayers.indexOf(bid.getPlayer());
-            System.out.println("_ player index: " + index);
-            bid.setPlayer(sessionPlayers.get(index));
+            reconcileBidPlayer(bid);
 
             if (bid.getCount() == 0 || bid.getPrice() < minResourcePrice) {
                 continue;
             }
             handleBid(bid, Restrictions.BUY_RESOURCES_BID);
-
-            for (Player sessionPlayer : sessionPlayers) {
-                System.out.println("sessionPlayer: " + sessionPlayer);
-                System.out.println("player:        " + bid.getPlayer());
-                System.out.println(sessionPlayer.getMoney());
-                System.out.println(sessionPlayer.getUnitsOfResources());
-                System.out.println();
-            }
-
             if (bid.getCount() >= reserveUnitsOfResources) {
                 bids.clear();
                 return;
@@ -394,6 +384,8 @@ public class Bank {
         bids.sort(descBidCmp);
         for (int i = 0; i < bids.size() && reserveUnitsOfProducts > 0; i++) {
             Bid bid = bids.get(i);
+            reconcileBidPlayer(bid);
+
             if (bid.getCount() == 0 || bid.getPrice() > maxProductPrice) {
                 continue;
             }
@@ -406,6 +398,33 @@ public class Bank {
         bids.clear();
     }
 
+    private void reconcileBidPlayer(Bid bid) {
+        Player player = Session.getSession().getPlayerById(bid.getPlayer().getId());
+        if (player != null) {
+            bid.setPlayer(player);
+        }
+    }
+
+    private void reconcilePlannedActionPlayer(PlannedAction plannedAction) {
+        Player sessionPlayer = Session.getSession().getPlayerById(plannedAction.getPlayer().getId());
+        if (sessionPlayer != null) {
+            Player player = plannedAction.getPlayer();
+
+            //Обновляем эквивалентного игрока в сессии
+            sessionPlayer.setMoney(player.getMoney());
+            sessionPlayer.setUnitsOfResources(player.getUnitsOfResources());
+            sessionPlayer.setUnitsOfProducts(player.getUnitsOfProducts());
+            sessionPlayer.setWorkingFactories(player.getWorkingFactories());
+            sessionPlayer.setWorkingAutomatedFactories(player.getWorkingAutomatedFactories());
+            sessionPlayer.setUnderConstructionFactories(player.getUnderConstructionFactories());
+            sessionPlayer.setUnderConstructionAutomatedFactories(player.getUnderConstructionAutomatedFactories());
+            sessionPlayer.setTotalLoans(player.getTotalLoans());
+
+            //Привязываем запланированное действие к сессионному игроку
+            plannedAction.setPlayer(sessionPlayer);
+        }
+    }
+
     private void handleBid(Bid bid, boolean type) {
         Player player = bid.getPlayer();
         int count;
@@ -416,8 +435,8 @@ public class Bank {
             reserveUnitsOfResources -= count;
         } else {
             count = Math.min(bid.getCount(), reserveUnitsOfProducts);
-            player.setMoney(player.getMoney() - count * bid.getPrice());
-            player.setUnitsOfProducts(player.getUnitsOfProducts() + count);
+            player.setMoney(player.getMoney() + count * bid.getPrice());
+            player.setUnitsOfProducts(player.getUnitsOfProducts() - count);
             reserveUnitsOfProducts -= count;
         }
     }
