@@ -21,6 +21,9 @@ import samara.university.common.packages.BankPackage;
 import samara.university.common.packages.SessionPackage;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -98,31 +101,35 @@ public class GameFieldFormController implements DisplayingFormController {
     @Override
     public void showAction(WindowEvent event) {
         try {
+
             SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
             me = RequestSender.getRequestSender().me();
             senior = sessionPackage.getCurrentSeniorPlayer();
 
-            //Заполняем профили игроков
-            fillAllProfiles(sessionPackage);
-
-            //Информация о ходе
-            fillTurn(sessionPackage.getCurrentPhase(), sessionPackage.getCurrentMonth(), Restrictions.PHASE_LENGTH_IN_SECONDS);
-
-            //Информация о банковских резервах
-            fillBankReserves();
-
             //Настройка отображения кнопок
             updateMenuVisibility();
 
-            //Запустить обратный отсчёт хода
+            //Пропустить первые 2 фазы
+            nextPhase(null);
+            nextPhase(null);
+
+            //Обновить время начала фазы
+            //getTurnTime();
+
+            //Запустить обратный отсчет времени хода
             phaseCountdown();
 
             //Запустить циклическое обновление клиента
             cyclicalUpdater();
 
-            //Пропустить первые 2 фазы
-            nextPhase(null);
-            nextPhase(null);
+            //Заполняем профили игроков
+            fillAllProfiles(sessionPackage);
+
+            //Информация о ходе
+            fillTurn(sessionPackage.getCurrentPhase(), sessionPackage.getCurrentMonth(), totalSeconds);
+
+            //Информация о банковских резервах
+            fillBankReserves();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -204,15 +211,38 @@ public class GameFieldFormController implements DisplayingFormController {
             labelBankResourcesMinPrice.setText(Integer.toString(bankPackage.getMinResourcePrice()));
             labelBankProductsCount.setText(Integer.toString(bankPackage.getReserveUnitsOfProducts()));
             labelBankProductsMaxPrice.setText(Integer.toString(bankPackage.getMaxProductPrice()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private static final Duration ONE_SECOND_DURATION = Duration.seconds(1);
     private int totalSeconds = Restrictions.PHASE_LENGTH_IN_SECONDS;
+
+    private void getTurnTime() {
+        try {
+            LocalDateTime time = null;
+            while (time == null) {
+                time = RequestSender.getRequestSender().getTurnTime();
+            }
+
+            long seconds = java.time.Duration.between(
+                    time,
+                    LocalDateTime.now()
+            ).getSeconds();
+
+            System.out.println("\n======================");
+            System.out.println("time: " + DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).format(time));
+            System.out.println(RequestSender.getRequestSender().getTurnTime());
+            System.out.println("seconds: " + seconds);
+            System.out.println();
+
+            totalSeconds = Restrictions.PHASE_LENGTH_IN_SECONDS - (int) seconds;
+            //phaseCountdown();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     private void phaseCountdown() {
         Timeline timeline = new Timeline();
@@ -226,6 +256,9 @@ public class GameFieldFormController implements DisplayingFormController {
                 if (totalSeconds <= 0) {
                     timeline.stop();
                     timeline.getKeyFrames().clear();
+                    nextPhase(null);
+                    updateForm();
+                    phaseCountdown();
                 }
             }
         });
@@ -245,28 +278,7 @@ public class GameFieldFormController implements DisplayingFormController {
         KeyFrame frame = new KeyFrame(CYCLE_PERIOD, new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                try {
-                    // FIXME: 16.12.2018 почему то приходят старые данные
-                    SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
-
-                    List<Player> players = sessionPackage.getPlayers();
-                    System.out.println("===============================");
-                    for (Player player : players) {
-                        System.out.println(player);
-                        System.out.println(player.getMoney());
-                        System.out.println(player.getUnitsOfResources());
-                        System.out.println();
-                    }
-                    System.out.println("===============================");
-
-                    fillAllProfiles(sessionPackage);
-                    labelMonth.setText(Integer.toString(sessionPackage.getCurrentMonth()));
-                    labelPhase.setText(Integer.toString(sessionPackage.getCurrentPhase()));
-                    updateMenuVisibility();
-                    //здесь же обновление журнала на экране
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                updateForm();
 
                 if (cyclicalUpdateStopped) {
                     timeline.stop();
@@ -282,6 +294,19 @@ public class GameFieldFormController implements DisplayingFormController {
 
     private void stopCyclicUpdater() {
         cyclicalUpdateStopped = true;
+    }
+
+    private void updateForm() {
+        try {
+            SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
+            fillAllProfiles(sessionPackage);
+            labelMonth.setText(Integer.toString(sessionPackage.getCurrentMonth()));
+            labelPhase.setText(Integer.toString(sessionPackage.getCurrentPhase()));
+            updateMenuVisibility();
+            getTurnTime();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     //-----------------------------------------------------------
 

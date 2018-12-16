@@ -8,6 +8,7 @@ import samara.university.common.entities.Bid;
 import samara.university.common.entities.Player;
 import samara.university.common.entities.actions.PlannedAction;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -135,26 +136,17 @@ public class Bank {
      */
     public void nextPhase() {
         int currentPhase = Session.getSession().getTurn().getCurrentPhase();
-        System.out.println("\ncurrent phase: " + currentPhase);
+        System.out.println("\n==================================\n in BANK - next phase\n");
+        Session.getSession().getTurn().resetTurnTime();
+        LocalDateTime time = Session.getSession().getTurn().getPhaseStartTime();
+        System.out.println("time: " + time);
+        System.out.println("\n==================================\n");
         switch (currentPhase) {
             case Restrictions.REGULAR_COSTS_PHASE: {
-                System.out.println("===============================");
-                Set<Player> setPlayers = Session.getSession().getPlayersSet();
-                List<Player> tmp = new ArrayList<>();
-                for (Player setPlayer : setPlayers) {
-                    tmp.add(setPlayer);
-                }
                 List<Player> players = Session.getSession().getPlayers();
-                System.out.println();
-                int i = 0;
                 for (Player player : players) {
-                    /*Player test = tmp.get(i++);
-                    System.out.println(test);
-                    System.out.println(player);
-                    System.out.println(test == player);*/
                     player.setMoney(player.getMoney() - getRegularCosts(player));
                 }
-                System.out.println("===============================");
             }
             break;
             case Restrictions.CALCULATE_RESERVES_PHASE: {
@@ -361,7 +353,7 @@ public class Bank {
     public void buy() {
         System.out.println("=== IN BUY ===");
         bids.sort(ascBidCmp);
-        List<Player> sessionPlayers = Session.getSession().getPlayers();
+        List<Player> sessionPlayers = new ArrayList<>(Session.getSession().getPlayers());
         for (int i = 0; i < bids.size() && reserveUnitsOfResources > 0; i++) {
             Bid bid = bids.get(i);
             /*for (Player sessionPlayer : sessionPlayers) {

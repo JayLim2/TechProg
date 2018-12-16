@@ -7,8 +7,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Подсистема игровой сессии
@@ -18,7 +16,7 @@ public class Session {
     private static int lastId = 0;
 
     private LocalDateTime startTime;
-    private Set<Player> players;
+    private List<Player> players;
     private Player seniorPlayer;
     private Turn turn;
     private GameLog gameLog;
@@ -29,7 +27,7 @@ public class Session {
     private int countPlayersReadyForNextPhase;
 
     private Session() {
-        players = ConcurrentHashMap.newKeySet();
+        players = new ArrayList<>();
         gameLog = new GameLog();
         turn = new Turn(gameLog);
         startTime = LocalDateTime.now();
@@ -104,11 +102,6 @@ public class Session {
     }
 
     public List<Player> getPlayers() {
-        ArrayList<Player> players = new ArrayList<>(this.players);
-        return players;
-    }
-
-    public Set<Player> getPlayersSet() {
         return players;
     }
 

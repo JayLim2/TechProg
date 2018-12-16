@@ -12,7 +12,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.List;
 
 /**
  * Обработчик запросов к серверу
@@ -57,7 +56,6 @@ public class RequestHandler {
             }
 
             //Если сессия доступна - продолжаем
-            //System.out.println("READY FOR COMMANDS");
             while (true) {
                 try {
                     while (objectInputStream.available() <= 0) ;
@@ -82,7 +80,13 @@ public class RequestHandler {
                             break;
                         case EXIT:
                             exit();
-                            //return;
+                            break;
+                        case RESET_TURN_TIME:
+                            resetTurnTime();
+                            break;
+                        case GET_TURN_TIME:
+                            getTurnTime();
+                            break;
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -102,21 +106,15 @@ public class RequestHandler {
         }
 
         public void me() throws IOException {
+            objectOutputStream.reset();
             objectOutputStream.writeObject(me);
         }
 
         public void updateSessionInfo() throws IOException {
             SessionPackage sessionPackage = createSessionPackage();
-            List<Player> players = sessionPackage.getPlayers();
-            for (Player player : players) {
-                System.out.println(player.getName());
-                System.out.println(player.getMoney());
-                System.out.println(player.getUnitsOfResources());
-                System.out.println();
-            }
+            objectOutputStream.reset();
             objectOutputStream.writeObject(sessionPackage);
             objectOutputStream.flush();
-            System.out.println("updated");
         }
 
         public void bankAction(ObjectInputStream in) throws IOException, ClassNotFoundException {
@@ -145,6 +143,7 @@ public class RequestHandler {
         }
 
         public void reserves() throws IOException {
+            objectOutputStream.reset();
             objectOutputStream.writeObject(createBankPackage());
             objectOutputStream.flush();
         }
@@ -193,12 +192,23 @@ public class RequestHandler {
                 session.makeReady();
             }
             SessionPackage sessionPackage = createSessionPackage();
+            objectOutputStream.reset();
             objectOutputStream.writeObject(sessionPackage);
             objectOutputStream.flush();
         }
 
         public void exit() throws IOException {
             objectOutputStream.writeBoolean(Session.getSession().unregister(me));
+            objectOutputStream.flush();
+        }
+
+        public void resetTurnTime() throws IOException {
+            session.getTurn().resetTurnTime();
+        }
+
+        public void getTurnTime() throws IOException {
+            objectOutputStream.reset();
+            objectOutputStream.writeObject(session.getTurn().getPhaseStartTime());
             objectOutputStream.flush();
         }
 
@@ -223,15 +233,9 @@ public class RequestHandler {
          * @return SessionPackage
          */
         private SessionPackage createSessionPackage() {
-            /*List<Player> players = session.getPlayers();
-            for (Player player : players) {
-                System.out.println(player.getName());
-                System.out.println(player.getMoney());
-                System.out.println(player.getUnitsOfResources());
-                System.out.println();
-            }*/
             return new SessionPackage(
                     session.getStartTime(),
+                    session.getTurn().getPhaseStartTime(),
                     session.getPlayers(),
                     session.getSeniorPlayer(),
                     session.getTurn().getCurrentPhase(),

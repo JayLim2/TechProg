@@ -13,22 +13,38 @@ import java.util.Objects;
  * Требуется для передачи информаации о сессии клиенту
  */
 public class SessionPackage implements Serializable {
-    private LocalDateTime startTime;
+    private int ssid;
+
+    private LocalDateTime sessionStartTime;
+    private LocalDateTime phaseStartTime;
     private List<Player> players;
     private Player currentSeniorPlayer;
     private int currentPhase;
     private int currentMonth;
 
-    public SessionPackage(LocalDateTime startTime, List<Player> players, Player currentSeniorPlayer, int currentPhase, int currentMonth) {
-        this.startTime = startTime;
+    public SessionPackage(LocalDateTime sessionStartTime, LocalDateTime phaseStartTime, List<Player> players, Player currentSeniorPlayer, int currentPhase, int currentMonth) {
+        this.sessionStartTime = sessionStartTime;
+        this.phaseStartTime = phaseStartTime;
         this.players = players;
         this.currentSeniorPlayer = currentSeniorPlayer;
         this.currentPhase = currentPhase;
         this.currentMonth = currentMonth;
     }
 
-    public LocalDateTime getStartTime() {
-        return startTime;
+    public int getSsid() {
+        return ssid;
+    }
+
+    public void setSsid(int ssid) {
+        this.ssid = ssid;
+    }
+
+    public LocalDateTime getSessionStartTime() {
+        return sessionStartTime;
+    }
+
+    public LocalDateTime getPhaseStartTime() {
+        return phaseStartTime;
     }
 
     public List<Player> getPlayers() {
@@ -52,12 +68,17 @@ public class SessionPackage implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SessionPackage that = (SessionPackage) o;
-        return Objects.equals(startTime, that.startTime) &&
-                Objects.equals(players, that.players);
+        return ssid == that.ssid &&
+                currentPhase == that.currentPhase &&
+                currentMonth == that.currentMonth &&
+                Objects.equals(sessionStartTime, that.sessionStartTime) &&
+                Objects.equals(phaseStartTime, that.phaseStartTime) &&
+                Objects.equals(players, that.players) &&
+                Objects.equals(currentSeniorPlayer, that.currentSeniorPlayer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(startTime, players);
+        return Objects.hash(ssid, sessionStartTime, phaseStartTime, players, currentSeniorPlayer, currentPhase, currentMonth);
     }
 }

@@ -147,7 +147,7 @@ public class WaitingPlayersFormController implements DisplayingFormController {
         try {
             SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
             long seconds = java.time.Duration.between(
-                    sessionPackage.getStartTime(),
+                    sessionPackage.getSessionStartTime(),
                     LocalDateTime.now()
             ).getSeconds();
             List<Player> players = sessionPackage.getPlayers();

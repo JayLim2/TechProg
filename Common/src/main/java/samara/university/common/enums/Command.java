@@ -96,4 +96,13 @@ public enum Command implements Serializable {
      * - Ничего не возвращает.
      */
     EXIT,
+
+    /**
+     * RESET_TURN_TIME
+     * <p>
+     * Сбрасывает время начала фазы на текущее
+     */
+    RESET_TURN_TIME,
+
+    GET_TURN_TIME
 }

@@ -12,6 +12,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.time.LocalDateTime;
 
 public class RequestSender {
     private static final int SERVER_PORT = 7777;
@@ -61,6 +62,7 @@ public class RequestSender {
     public void authPlayer(String name, int avatarId) throws IOException {
         connect();
         sendCommand(Command.AUTH);
+        objectOutputStream.reset();
         objectOutputStream.writeUTF(name);
         objectOutputStream.writeInt(avatarId);
         objectOutputStream.flush();
@@ -89,8 +91,7 @@ public class RequestSender {
     public SessionPackage sessionInfo() throws IOException, ClassNotFoundException {
         connect();
         sendCommand(Command.UPDATE_SESSION_INFO);
-        SessionPackage sessionPackage = (SessionPackage) objectInputStream.readObject();
-        return sessionPackage;
+        return (SessionPackage) objectInputStream.readObject();
     }
 
     /**
@@ -120,6 +121,7 @@ public class RequestSender {
         connect();
         sendCommand(Command.BANK_ACTION);
         sendBankAction(BankAction.SEND_BID);
+        objectOutputStream.reset();
         objectOutputStream.writeObject(player);
         objectOutputStream.writeBoolean(type);
         objectOutputStream.writeInt(count);
@@ -131,6 +133,7 @@ public class RequestSender {
         connect();
         sendCommand(Command.BANK_ACTION);
         sendBankAction(BankAction.START_PRODUCTION);
+        objectOutputStream.reset();
         objectOutputStream.writeObject(player);
         objectOutputStream.writeInt(count);
         objectOutputStream.writeInt(totalCost);
@@ -141,6 +144,7 @@ public class RequestSender {
         connect();
         sendCommand(Command.BANK_ACTION);
         sendBankAction(BankAction.BUILD_FACTORY);
+        objectOutputStream.reset();
         objectOutputStream.writeObject(player);
         objectOutputStream.writeBoolean(isAutomated);
         objectOutputStream.flush();
@@ -150,6 +154,7 @@ public class RequestSender {
         connect();
         sendCommand(Command.BANK_ACTION);
         sendBankAction(BankAction.AUTOMATE_FACTORY);
+        objectOutputStream.reset();
         objectOutputStream.writeObject(player);
         objectOutputStream.flush();
     }
@@ -158,6 +163,7 @@ public class RequestSender {
         connect();
         sendCommand(Command.BANK_ACTION);
         sendBankAction(BankAction.NEW_LOAN);
+        objectOutputStream.reset();
         objectOutputStream.writeObject(player);
         objectOutputStream.writeInt(amount);
         objectOutputStream.flush();
@@ -171,6 +177,17 @@ public class RequestSender {
         if (gameOver) {
             //do something
         }
+    }
+
+    public void resetTurnTime() throws IOException {
+        connect();
+        sendCommand(Command.RESET_TURN_TIME);
+    }
+
+    public LocalDateTime getTurnTime() throws IOException, ClassNotFoundException {
+        connect();
+        sendCommand(Command.GET_TURN_TIME);
+        return (LocalDateTime) objectInputStream.readObject();
     }
 
     /**

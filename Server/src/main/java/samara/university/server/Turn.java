@@ -3,6 +3,7 @@ package samara.university.server;
 import samara.university.common.constants.Restrictions;
 import samara.university.common.entities.Player;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -11,6 +12,7 @@ import java.util.Objects;
  * Подсистема хода
  */
 public class Turn {
+    private LocalDateTime phaseStartTime;
     private Map<Player, Action> playersActions;
     private GameLog gameLog;
     private int currentMonth;
@@ -21,6 +23,18 @@ public class Turn {
         currentMonth = 1;
         gameLog = log;
         playersActions = new HashMap<>();
+    }
+
+    public synchronized void resetTurnTime() {
+        phaseStartTime = LocalDateTime.now();
+    }
+
+    public LocalDateTime getPhaseStartTime() {
+        return phaseStartTime;
+    }
+
+    public void setPhaseStartTime(LocalDateTime phaseStartTime) {
+        this.phaseStartTime = phaseStartTime;
     }
 
     public int getCurrentMonth() {
