@@ -91,6 +91,9 @@ public class RequestHandler {
                         case WINNER:
                             getWinner();
                             break;
+                        case GET_GAMELOG:
+                            getGameLog();
+                            break;
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -232,6 +235,12 @@ public class RequestHandler {
                 session.getBank().tryDeclareWinner();
             }
             objectOutputStream.writeObject(session.getWinner());
+            objectOutputStream.flush();
+        }
+
+        private void getGameLog() throws IOException {
+            objectOutputStream.reset();
+            objectOutputStream.writeUTF(Session.getSession().getGameLog().export());
             objectOutputStream.flush();
         }
 

@@ -106,5 +106,7 @@ public enum Command implements Serializable {
 
     GET_TURN_TIME,
 
-    WINNER
+    WINNER,
+
+    GET_GAMELOG
 }

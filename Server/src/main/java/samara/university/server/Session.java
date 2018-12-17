@@ -29,7 +29,7 @@ public class Session {
     private Session() {
         players = new ArrayList<>();
         gameLog = new GameLog();
-        turn = new Turn(gameLog);
+        turn = new Turn();
         startTime = LocalDateTime.now();
     }
 
@@ -130,6 +130,10 @@ public class Session {
             }
         }
         return null;
+    }
+
+    public GameLog getGameLog() {
+        return gameLog;
     }
 
     public List<Player> getPlayers() {

@@ -204,8 +204,13 @@ public class RequestSender {
         connect();
         sendCommand(Command.WINNER);
         Player player = (Player) objectInputStream.readObject();
-        System.out.println("+++++++++++WINNER+++++++++++ => " + player);
         return player;
+    }
+
+    public String getGameLog() throws IOException, ClassNotFoundException {
+        connect();
+        sendCommand(Command.GET_GAMELOG);
+        return objectInputStream.readUTF();
     }
 
     /**
