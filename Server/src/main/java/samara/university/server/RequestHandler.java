@@ -195,9 +195,11 @@ public class RequestHandler {
          */
         public void nextPhase() throws IOException {
             if (session.isAllReady()) {
+                System.out.println("all ready");
                 session.resetReady();
                 session.getBank().nextPhase();
             } else {
+                System.out.println("make ready");
                 session.makeReady();
             }
             SessionPackage sessionPackage = createSessionPackage();

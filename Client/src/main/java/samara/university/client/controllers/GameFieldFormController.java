@@ -99,7 +99,6 @@ public class GameFieldFormController implements DisplayingFormController {
     @Override
     public void showAction(WindowEvent event) {
         try {
-
             SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
             me = RequestSender.getRequestSender().me();
             senior = sessionPackage.getCurrentSeniorPlayer();
@@ -108,17 +107,17 @@ public class GameFieldFormController implements DisplayingFormController {
             updateMenuVisibility();
 
             //Пропустить первые 2 фазы
-            nextPhase(null);
-            nextPhase(null);
+            //nextPhase(null);
+            //nextPhase(null);
 
             //Обновить время начала фазы
             //getTurnTime();
 
-            //Запустить обратный отсчет времени хода
-            phaseCountdown();
-
             //Запустить циклическое обновление клиента
             cyclicalUpdater();
+
+            //Запустить обратный отсчет времени хода
+            phaseCountdown();
 
             //Заполняем профили игроков
             fillAllProfiles(sessionPackage);
@@ -128,9 +127,7 @@ public class GameFieldFormController implements DisplayingFormController {
 
             //Информация о банковских резервах
             fillBankReserves();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

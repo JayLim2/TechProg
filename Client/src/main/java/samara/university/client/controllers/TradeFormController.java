@@ -7,6 +7,8 @@ import javafx.scene.control.SpinnerValueFactory;
 import samara.university.client.utils.RequestSender;
 import samara.university.common.entities.Player;
 
+import java.io.IOException;
+
 public class TradeFormController {
     @FXML
     protected Spinner<Integer> spinnerCount;
@@ -22,19 +24,19 @@ public class TradeFormController {
     }
 
     public void ok(ActionEvent event) {
-        try {
-            Player me = RequestSender.getRequestSender().me();
-            RequestSender.getRequestSender().sendBid(
-                    me,
-                    false,
-                    spinnerCount.getValue(),
-                    spinnerPrice.getValue()
-            );
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public void cancel(ActionEvent event) {
+    }
+
+    //---------------- Вспомогательные методы -----------------------
+
+    protected void sendBid(Player player, boolean bidType) throws IOException {
+        RequestSender.getRequestSender().sendBid(
+                player,
+                bidType,
+                spinnerCount.getValue(),
+                spinnerPrice.getValue()
+        );
     }
 }

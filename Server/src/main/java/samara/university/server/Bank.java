@@ -42,19 +42,15 @@ public class Bank {
         int currentMonth = Session.getSession().getTurn().getCurrentMonth();
         int currentPhase = Session.getSession().getTurn().getCurrentPhase();
 
-        //Other planned actions
         if (plannedActions.size() > 0) {
             Player player;
             PlannedAction.PlannedActionType type;
             Iterator<PlannedAction> iterator = plannedActions.iterator();
             while (iterator.hasNext()) {
                 PlannedAction action = iterator.next();
-                System.out.println("planned action " + action);
                 if (action.isActionDone(currentPhase, currentMonth)) {
                     player = action.getPlayer();
                     type = action.getType();
-                    System.out.println("\tplayer: " + player);
-                    System.out.println("\ttype: " + type);
                     switch (type) {
                         case BUY_RESOURCES: {
                             buy();
@@ -120,6 +116,19 @@ public class Bank {
     }
 
     /**
+     * Объявляет игрока банкротом и выводит из игры
+     *
+     * @param player объект "Игрок"
+     */
+    public void tryDeclareBankrupt(Player player) {
+        if (player.getMoney() <= 0) {
+            plannedActions.removeIf(action -> action.getPlayer().getId() == player.getId());
+            bids.removeIf(bid -> bid.getPlayer().getId() == player.getId());
+            Session.getSession().unregister(player);
+        }
+    }
+
+    /**
      * Переход на следующую фазу
      * <p>
      * Банк в начале каждой фазы пересчитывает свои резервы, выставляет цены
@@ -133,6 +142,7 @@ public class Bank {
                 List<Player> players = Session.getSession().getPlayers();
                 for (Player player : players) {
                     player.setMoney(player.getMoney() - getRegularCosts(player));
+                    tryDeclareBankrupt(player);
                 }
             }
             break;
@@ -234,7 +244,6 @@ public class Bank {
                 Session.getSession().getTurn().getCurrentPhase() + 1
         );
         plannedAction.setCount(count);
-        //reconcilePlannedActionPlayer(plannedAction);
         plannedActions.add(plannedAction);
     }
 
@@ -270,7 +279,6 @@ public class Bank {
             );
             plannedAction.setSign(isAutomated);
             plannedAction.setCount(1);
-            //reconcilePlannedActionPlayer(plannedAction);
             plannedActions.add(plannedAction);
         }
     }
@@ -282,6 +290,11 @@ public class Bank {
      */
     public void automateExistingFactory(Player player) {
         if (player.getWorkingFactories() > 0) {
+            //Заплатить первую часть стоимости
+            player.setMoney(
+                    player.getMoney() - Restrictions.AUTOMATION_FACTORY_PRICE / 2
+            );
+
             //Строительство фабрики
             PlannedAction plannedAction = new PlannedAction(
                     PlannedAction.PlannedActionType.COMPLETE_AUTOMATION_FACTORY,
@@ -290,10 +303,9 @@ public class Bank {
                     1
             );
             plannedAction.setCount(1);
-            //reconcilePlannedActionPlayer(plannedAction);
             plannedActions.add(plannedAction);
 
-            //Оплата второй части суммы за автоматизацию
+            //Оплата второй части суммы за автоматизацию (запланировать)
             plannedAction = new PlannedAction(
                     PlannedAction.PlannedActionType.PAY_SECOND_PART_FOR_AUTOMATION,
                     player,
@@ -301,7 +313,6 @@ public class Bank {
                     1
             );
             plannedAction.setMoney(Restrictions.AUTOMATION_FACTORY_PRICE / 2);
-            //reconcilePlannedActionPlayer(plannedAction);
             plannedActions.add(plannedAction);
         }
     }
@@ -324,7 +335,6 @@ public class Bank {
                         currentMonth + i,
                         Restrictions.PAY_LOAN_PERCENT_PHASE
                 );
-                //reconcilePlannedActionPlayer(plannedAction);
                 plannedActions.add(plannedAction);
             }
 
@@ -334,7 +344,6 @@ public class Bank {
                     currentMonth + Restrictions.LOAN_MONTHS,
                     Restrictions.PAY_LOAN_PHASE
             );
-            //reconcilePlannedActionPlayer(plannedAction);
             plannedActions.add(plannedAction);
         }
     }
@@ -361,7 +370,6 @@ public class Bank {
         bids.sort(ascBidCmp);
         for (int i = 0; i < bids.size() && reserveUnitsOfResources > 0; i++) {
             Bid bid = bids.get(i);
-            //reconcileBidPlayer(bid);
 
             if (bid.getCount() == 0 || bid.getPrice() < minResourcePrice) {
                 continue;
@@ -441,8 +449,8 @@ public class Bank {
     public void calculateReserves() {
         int playersCount = Session.getSession().playersCount();
         int nextLevel = ProbabilityTable.nextLevel();
-        System.out.println("players count: " + playersCount);
-        System.out.println("next level: " + nextLevel);
+        //System.out.println("players count: " + playersCount);
+        //System.out.println("next level: " + nextLevel);
         ResourcePriceLevelTable.setPlayersCount(playersCount);
         ProductPriceLevelTable.setPlayersCount(playersCount);
 
@@ -457,14 +465,6 @@ public class Bank {
 
         //Рассчитать максимальную цену ЕГП
         maxProductPrice = ProductPriceLevelTable.getMaxPrice(nextLevel);
-
-        System.out.println("\n____ NEW TABLE ______");
-        System.out.println(minResourcePrice);
-        System.out.println(reserveUnitsOfResources);
-        System.out.println();
-        System.out.println(maxProductPrice);
-        System.out.println(reserveUnitsOfProducts);
-        System.out.println("_____________________\n");
     }
 
     /**

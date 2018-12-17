@@ -2,11 +2,14 @@ package samara.university.client.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.stage.WindowEvent;
 import samara.university.client.utils.Forms;
+import samara.university.client.utils.PredefinedAlerts;
 import samara.university.client.utils.RequestSender;
 import samara.university.common.entities.Player;
 
@@ -57,7 +60,9 @@ public class ProductionFormController implements DisplayingFormController {
 
     public void ok(ActionEvent event) {
         if (totalProductsCount == 0) {
-            alert("Количество ЕГП для производство должно быть > 0.");
+            PredefinedAlerts.errorAlert("Количество ЕГП для производство должно быть > 0.");
+        } else if (me.getMoney() < totalProductsCost) {
+            PredefinedAlerts.notEnoughMoneyAlert();
         } else {
             try {
                 RequestSender.getRequestSender().startProduction(me, totalProductsCount, totalProductsCost);
@@ -116,13 +121,5 @@ public class ProductionFormController implements DisplayingFormController {
 
     private void close() {
         Forms.closeForm("Production");
-    }
-
-    private void alert(String message) {
-        new Alert(
-                Alert.AlertType.ERROR,
-                message,
-                ButtonType.OK
-        ).showAndWait();
     }
 }

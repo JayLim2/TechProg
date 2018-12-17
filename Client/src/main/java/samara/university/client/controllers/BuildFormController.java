@@ -5,7 +5,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import samara.university.client.utils.Forms;
+import samara.university.client.utils.PredefinedAlerts;
 import samara.university.client.utils.RequestSender;
+import samara.university.common.constants.Restrictions;
 import samara.university.common.entities.Player;
 
 public class BuildFormController {
@@ -35,14 +37,35 @@ public class BuildFormController {
 
     public void ok(ActionEvent event) {
         try {
-            if (buildFactory.isSelected()) {
-                RequestSender.getRequestSender().buildFactory(me, false);
-            } else if (buildAutomatedFactory.isSelected()) {
-                RequestSender.getRequestSender().buildFactory(me, true);
-            } else {
-                RequestSender.getRequestSender().automateFactory(me);
+            if (RequestSender.getRequestSender().sessionInfo().getCurrentPhase() != Restrictions.SEND_BID_RESOURCES_PHASE) {
+                PredefinedAlerts.illegalPhaseAlert();
+                close();
+                return;
             }
-            close();
+
+            int myMoney = me.getMoney();
+            if (buildFactory.isSelected()) {
+                if (myMoney < Restrictions.BUILDING_FACTORY_PRICE) {
+                    PredefinedAlerts.notEnoughMoneyAlert();
+                } else {
+                    RequestSender.getRequestSender().buildFactory(me, false);
+                    close();
+                }
+            } else if (buildAutomatedFactory.isSelected()) {
+                if (myMoney < Restrictions.BUILDING_AUTOMATED_FACTORY_PRICE) {
+                    PredefinedAlerts.notEnoughMoneyAlert();
+                } else {
+                    RequestSender.getRequestSender().buildFactory(me, true);
+                    close();
+                }
+            } else {
+                if (myMoney < (Restrictions.AUTOMATION_FACTORY_PRICE / 2)) {
+                    PredefinedAlerts.notEnoughMoneyAlert();
+                } else {
+                    RequestSender.getRequestSender().automateFactory(me);
+                    close();
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

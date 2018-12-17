@@ -5,7 +5,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import samara.university.client.utils.Forms;
+import samara.university.client.utils.PredefinedAlerts;
 import samara.university.client.utils.RequestSender;
+import samara.university.common.constants.Restrictions;
+import samara.university.common.entities.Player;
 
 public class BuyFormController extends TradeFormController {
     @FXML
@@ -29,8 +32,23 @@ public class BuyFormController extends TradeFormController {
 
     @Override
     public void ok(ActionEvent event) {
-        super.ok(event);
-        close();
+        try {
+            if (RequestSender.getRequestSender().sessionInfo().getCurrentPhase() != Restrictions.SEND_BID_RESOURCES_PHASE) {
+                PredefinedAlerts.illegalPhaseAlert();
+                close();
+                return;
+            }
+
+            Player me = RequestSender.getRequestSender().me();
+            if (me.getMoney() < spinnerCount.getValue() * spinnerPrice.getValue()) {
+                PredefinedAlerts.notEnoughMoneyAlert();
+            } else {
+                sendBid(me, false);
+                close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
