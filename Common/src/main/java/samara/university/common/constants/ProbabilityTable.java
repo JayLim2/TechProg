@@ -31,10 +31,10 @@ public class ProbabilityTable {
         float nextFloat = random.nextFloat();
         float current = 0;
         int i;
-        for (i = 0; i < oldLevelRow.length && Float.compare(nextFloat, current) < 0; i++) {
+        for (i = 0; i < oldLevelRow.length && Float.compare(current, nextFloat) <= 0; i++) {
             current += oldLevelRow[i];
-            System.out.println("current: " + current);
         }
-        return i + 1;
+        currentLevel = i + 1;
+        return currentLevel;
     }
 }

@@ -28,7 +28,7 @@ public class Bank {
     public Bank() {
         bids = new ArrayList<>();
         plannedActions = new LinkedList<>();
-        calculateReserves();
+        //calculateReserves();
     }
 
     /**
@@ -484,6 +484,14 @@ public class Bank {
 
         //Рассчитать максимальную цену ЕГП
         maxProductPrice = ProductPriceLevelTable.getMaxPrice(nextLevel);
+
+        System.out.println("\n____ NEW TABLE ______");
+        System.out.println(minResourcePrice);
+        System.out.println(reserveUnitsOfResources);
+        System.out.println();
+        System.out.println(maxProductPrice);
+        System.out.println(reserveUnitsOfProducts);
+        System.out.println("_____________________\n");
     }
 
     /**

@@ -61,7 +61,12 @@ public class Turn {
         } else if (currentMonth < Restrictions.MAX_MONTHS_COUNT) {
             currentMonth++;
             Session session = Session.getSession();
-            session.setSeniorPlayer(session.getBank().nextSeniorPlayer(session.getPlayers(), session.getSeniorPlayer()));
+            System.out.println("old senior: " + session.getSeniorPlayer());
+            Player nextSenior = session.getBank().nextSeniorPlayer(session.getPlayers(), session.getSeniorPlayer());
+            System.out.println(nextSenior);
+            session.setSeniorPlayer(nextSenior);
+            System.out.println("new senior: " + session.getSeniorPlayer());
+            System.out.println();
             currentPhase = 1;
         }
         /*

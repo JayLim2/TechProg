@@ -144,7 +144,15 @@ public class RequestHandler {
 
         public void reserves() throws IOException {
             objectOutputStream.reset();
-            objectOutputStream.writeObject(createBankPackage());
+            BankPackage bankPackage = createBankPackage();
+            /*System.out.println("\n== ON SERVER == ");
+            System.out.println("minPrice: " + bankPackage.getMinResourcePrice());
+            System.out.println("resources: " + bankPackage.getReserveUnitsOfResources());
+            System.out.println("maxPrice: " + bankPackage.getMaxProductPrice());
+            System.out.println("products: " + bankPackage.getReserveUnitsOfProducts());
+            System.out.println("================\n");
+            */
+            objectOutputStream.writeObject(bankPackage);
             objectOutputStream.flush();
         }
 

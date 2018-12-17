@@ -166,6 +166,8 @@ public class GameFieldFormController implements DisplayingFormController {
         imageView.setImage(new Image(player.getAvatar().getPath()));
 
         imageView = (ImageView) getElementById("image_view", "player_profile", "senior", i);
+        System.out.println("player: " + player);
+        System.out.println("senior: " + senior);
         imageView.setVisible(Objects.equals(player, senior));
 
         text = (Text) getElementById("text", "player_profile", "login", i);
@@ -291,7 +293,9 @@ public class GameFieldFormController implements DisplayingFormController {
     private void updateForm() {
         try {
             SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
-            if (sessionPackage.getCurrentPhase() == Restrictions.PAY_LOAN_PERCENT_PHASE
+            if (sessionPackage.getCurrentPhase() == Restrictions.REGULAR_COSTS_PHASE
+                    || sessionPackage.getCurrentPhase() == Restrictions.CALCULATE_RESERVES_PHASE
+                    || sessionPackage.getCurrentPhase() == Restrictions.PAY_LOAN_PERCENT_PHASE
                     || sessionPackage.getCurrentPhase() == Restrictions.PAY_LOAN_PHASE) {
                 nextPhase(null);
             } else {
@@ -300,6 +304,8 @@ public class GameFieldFormController implements DisplayingFormController {
                 labelPhase.setText(Integer.toString(sessionPackage.getCurrentPhase()));
                 updateMenuVisibility();
             }
+            senior = sessionPackage.getCurrentSeniorPlayer();
+            fillBankReserves();
             getTurnTime();
         } catch (Exception e) {
             e.printStackTrace();
@@ -361,6 +367,10 @@ public class GameFieldFormController implements DisplayingFormController {
             }
             break;
         }
+    }
+
+    private void updateSeniorMarker() {
+
     }
 
     public void showBuyResourcesForm(ActionEvent event) {

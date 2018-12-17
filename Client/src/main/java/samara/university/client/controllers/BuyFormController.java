@@ -16,7 +16,7 @@ public class BuyFormController extends TradeFormController {
     public void initialize() {
         super.initialize();
         try {
-            int minResourcePrice = RequestSender.getRequestSender().bankInfo().getMaxProductPrice();
+            int minResourcePrice = RequestSender.getRequestSender().bankInfo().getMinResourcePrice();
             priceFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(
                     minResourcePrice, Integer.MAX_VALUE, minResourcePrice, 50);
 

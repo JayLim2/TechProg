@@ -114,7 +114,17 @@ public class RequestSender {
         connect();
         sendCommand(Command.BANK_ACTION);
         sendBankAction(BankAction.RESERVES);
-        return (BankPackage) objectInputStream.readObject();
+        BankPackage bankPackage = (BankPackage) objectInputStream.readObject();
+
+        /*System.out.println("\n== ON CLIENT == ");
+        System.out.println("minPrice: " + bankPackage.getMinResourcePrice());
+        System.out.println("resources: " + bankPackage.getReserveUnitsOfResources());
+        System.out.println("maxPrice: " + bankPackage.getMaxProductPrice());
+        System.out.println("products: " + bankPackage.getReserveUnitsOfProducts());
+        System.out.println("================\n");*/
+
+        return bankPackage;
+        //return (BankPackage) objectInputStream.readObject();
     }
 
     public void sendBid(Player player, boolean type, int count, int price) throws IOException {
