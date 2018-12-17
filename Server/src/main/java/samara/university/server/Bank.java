@@ -234,7 +234,7 @@ public class Bank {
                 Session.getSession().getTurn().getCurrentPhase() + 1
         );
         plannedAction.setCount(count);
-        reconcilePlannedActionPlayer(plannedAction);
+        //reconcilePlannedActionPlayer(plannedAction);
         plannedActions.add(plannedAction);
     }
 
@@ -270,7 +270,7 @@ public class Bank {
             );
             plannedAction.setSign(isAutomated);
             plannedAction.setCount(1);
-            reconcilePlannedActionPlayer(plannedAction);
+            //reconcilePlannedActionPlayer(plannedAction);
             plannedActions.add(plannedAction);
         }
     }
@@ -290,7 +290,7 @@ public class Bank {
                     1
             );
             plannedAction.setCount(1);
-            reconcilePlannedActionPlayer(plannedAction);
+            //reconcilePlannedActionPlayer(plannedAction);
             plannedActions.add(plannedAction);
 
             //Оплата второй части суммы за автоматизацию
@@ -301,7 +301,7 @@ public class Bank {
                     1
             );
             plannedAction.setMoney(Restrictions.AUTOMATION_FACTORY_PRICE / 2);
-            reconcilePlannedActionPlayer(plannedAction);
+            //reconcilePlannedActionPlayer(plannedAction);
             plannedActions.add(plannedAction);
         }
     }
@@ -324,7 +324,7 @@ public class Bank {
                         currentMonth + i,
                         Restrictions.PAY_LOAN_PERCENT_PHASE
                 );
-                reconcilePlannedActionPlayer(plannedAction);
+                //reconcilePlannedActionPlayer(plannedAction);
                 plannedActions.add(plannedAction);
             }
 
@@ -334,7 +334,7 @@ public class Bank {
                     currentMonth + Restrictions.LOAN_MONTHS,
                     Restrictions.PAY_LOAN_PHASE
             );
-            reconcilePlannedActionPlayer(plannedAction);
+            //reconcilePlannedActionPlayer(plannedAction);
             plannedActions.add(plannedAction);
         }
     }
@@ -361,7 +361,7 @@ public class Bank {
         bids.sort(ascBidCmp);
         for (int i = 0; i < bids.size() && reserveUnitsOfResources > 0; i++) {
             Bid bid = bids.get(i);
-            reconcileBidPlayer(bid);
+            //reconcileBidPlayer(bid);
 
             if (bid.getCount() == 0 || bid.getPrice() < minResourcePrice) {
                 continue;
@@ -384,7 +384,7 @@ public class Bank {
         bids.sort(descBidCmp);
         for (int i = 0; i < bids.size() && reserveUnitsOfProducts > 0; i++) {
             Bid bid = bids.get(i);
-            reconcileBidPlayer(bid);
+            //reconcileBidPlayer(bid);
 
             if (bid.getCount() == 0 || bid.getPrice() > maxProductPrice) {
                 continue;
@@ -396,33 +396,6 @@ public class Bank {
             }
         }
         bids.clear();
-    }
-
-    private void reconcileBidPlayer(Bid bid) {
-        Player player = Session.getSession().getPlayerById(bid.getPlayer().getId());
-        if (player != null) {
-            bid.setPlayer(player);
-        }
-    }
-
-    private void reconcilePlannedActionPlayer(PlannedAction plannedAction) {
-        Player sessionPlayer = Session.getSession().getPlayerById(plannedAction.getPlayer().getId());
-        if (sessionPlayer != null) {
-            Player player = plannedAction.getPlayer();
-
-            //Обновляем эквивалентного игрока в сессии
-            sessionPlayer.setMoney(player.getMoney());
-            sessionPlayer.setUnitsOfResources(player.getUnitsOfResources());
-            sessionPlayer.setUnitsOfProducts(player.getUnitsOfProducts());
-            sessionPlayer.setWorkingFactories(player.getWorkingFactories());
-            sessionPlayer.setWorkingAutomatedFactories(player.getWorkingAutomatedFactories());
-            sessionPlayer.setUnderConstructionFactories(player.getUnderConstructionFactories());
-            sessionPlayer.setUnderConstructionAutomatedFactories(player.getUnderConstructionAutomatedFactories());
-            sessionPlayer.setTotalLoans(player.getTotalLoans());
-
-            //Привязываем запланированное действие к сессионному игроку
-            plannedAction.setPlayer(sessionPlayer);
-        }
     }
 
     private void handleBid(Bid bid, boolean type) {

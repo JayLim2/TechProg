@@ -12,6 +12,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 
 /**
  * Обработчик запросов к серверу
@@ -161,31 +162,31 @@ public class RequestHandler {
             boolean type = objectInputStream.readBoolean();
             int count = objectInputStream.readInt();
             int price = objectInputStream.readInt();
-            session.getBank().sendBid(player, type, count, price);
+            session.getBank().sendBid(getEqualsPlayerInSession(player), type, count, price);
         }
 
         public void startProduction() throws IOException, ClassNotFoundException {
             Player player = (Player) objectInputStream.readObject();
             int count = objectInputStream.readInt();
             int totalCost = objectInputStream.readInt();
-            session.getBank().startProduction(player, count, totalCost);
+            session.getBank().startProduction(getEqualsPlayerInSession(player), count, totalCost);
         }
 
         public void buildFactory() throws IOException, ClassNotFoundException {
             Player player = (Player) objectInputStream.readObject();
             boolean isAutomated = objectInputStream.readBoolean();
-            session.getBank().buildFactory(player, isAutomated);
+            session.getBank().buildFactory(getEqualsPlayerInSession(player), isAutomated);
         }
 
         public void automateFactory() throws IOException, ClassNotFoundException {
             Player player = (Player) objectInputStream.readObject();
-            session.getBank().automateExistingFactory(player);
+            session.getBank().automateExistingFactory(getEqualsPlayerInSession(player));
         }
 
         public void newLoan() throws IOException, ClassNotFoundException {
             Player player = (Player) objectInputStream.readObject();
             int amount = objectInputStream.readInt();
-            session.getBank().newLoan(player, amount);
+            session.getBank().newLoan(getEqualsPlayerInSession(player), amount);
         }
 
         /**
@@ -218,6 +219,22 @@ public class RequestHandler {
             objectOutputStream.reset();
             objectOutputStream.writeObject(session.getTurn().getPhaseStartTime());
             objectOutputStream.flush();
+        }
+
+        /**
+         * Поиск эквивалентного объекта игрока в сессии
+         *
+         * @param player объект "Игрок", пришедший с клиента
+         * @return эквивалентный объект из сессии
+         */
+        private Player getEqualsPlayerInSession(Player player) {
+            List<Player> players = session.getPlayers();
+            for (Player sessionPlayer : players) {
+                if (player.getId() == sessionPlayer.getId()) {
+                    return sessionPlayer;
+                }
+            }
+            return null;
         }
 
         /**

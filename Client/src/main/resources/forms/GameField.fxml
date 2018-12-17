@@ -255,15 +255,12 @@
                 <Image url="@../avatars/11.jpg"/>
             </image>
         </ImageView>
-        <Text layoutX="231.0" layoutY="293.0" strokeType="OUTSIDE" strokeWidth="0.0" text="-0"/>
         <ImageView fx:id="image_view_player_profile_senior_0" fitHeight="25.0" fitWidth="22.0" layoutX="62.0"
                    layoutY="264.0" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../images/seniorPlayer.png"/>
             </image>
         </ImageView>
-        <Text fx:id="text_factories_amount_0" layoutX="417.0" layoutY="316.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0"/>
         <Text fx:id="labelSecondsLeft" layoutX="349.0" layoutY="386.0" strokeType="OUTSIDE" strokeWidth="0.0" text="00">
             <font>
                 <Font size="14.0"/>
