@@ -101,6 +101,28 @@ public class Session {
         return false;
     }
 
+    /**
+     * Определение самого обеспеченного на текущий момент игрока
+     * <p>
+     * Используется для определения победителя в случае, если игроков к концу игры осталось больше 1.
+     *
+     * @param minResourcesPrice мин.цена ЕСМ
+     * @param maxProductsPrice  макс.цена ЕГП
+     * @return самый обеспеченный игрок
+     */
+    public Player getMaxPlayer(int minResourcesPrice, int maxProductsPrice) {
+        if (playersCount() > 0) {
+            Player max = players.get(0);
+            for (Player current : players) {
+                if (current.getCapital(minResourcesPrice, maxProductsPrice) > max.getCapital(minResourcesPrice, maxProductsPrice)) {
+                    max = current;
+                }
+            }
+            return max;
+        }
+        return null;
+    }
+
     public Player getPlayerById(int id) {
         for (Player player : players) {
             if (player.getId() == id) {
@@ -124,6 +146,14 @@ public class Session {
 
     public void setSeniorPlayer(Player nextSeniorPlayer) {
         this.seniorPlayer = nextSeniorPlayer;
+    }
+
+    public Player getWinner() {
+        return winner;
+    }
+
+    public void setWinner(Player winner) {
+        this.winner = winner;
     }
 
     public Turn getTurn() {

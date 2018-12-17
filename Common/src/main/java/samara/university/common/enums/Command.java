@@ -104,5 +104,7 @@ public enum Command implements Serializable {
      */
     RESET_TURN_TIME,
 
-    GET_TURN_TIME
+    GET_TURN_TIME,
+
+    WINNER
 }

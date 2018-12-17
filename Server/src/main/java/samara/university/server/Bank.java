@@ -122,10 +122,25 @@ public class Bank {
      */
     public void tryDeclareBankrupt(Player player) {
         if (player.getMoney() <= 0) {
+            player.setBankrupt(true);
             plannedActions.removeIf(action -> action.getPlayer().getId() == player.getId());
             bids.removeIf(bid -> bid.getPlayer().getId() == player.getId());
             Session.getSession().unregister(player);
         }
+    }
+
+    public boolean tryDeclareWinner() {
+        Session session = Session.getSession();
+        if (session.playersCount() == 1) {
+            session.setWinner(session.getPlayers().get(0));
+            return true;
+        } else {
+            if (session.getTurn().getCurrentMonth() == Restrictions.MAX_MONTHS_COUNT) {
+                session.setWinner(session.getMaxPlayer(minResourcePrice, maxProductPrice));
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -135,11 +150,13 @@ public class Bank {
      * и обрабатывает запланированные действия.
      */
     public void nextPhase() {
-        int currentPhase = Session.getSession().getTurn().getCurrentPhase();
-        Session.getSession().getTurn().resetTurnTime();
+        Session session = Session.getSession();
+
+        int currentPhase = session.getTurn().getCurrentPhase();
+        session.getTurn().resetTurnTime();
         switch (currentPhase) {
             case Restrictions.REGULAR_COSTS_PHASE: {
-                List<Player> players = Session.getSession().getPlayers();
+                List<Player> players = session.getPlayers();
                 for (Player player : players) {
                     player.setMoney(player.getMoney() - getRegularCosts(player));
                     tryDeclareBankrupt(player);
@@ -185,10 +202,10 @@ public class Bank {
             break;
         }
 
-        Session.getSession().getTurn().toNextPhase();
-        Session.getSession().getTurn().toNextMonth();
+        session.getTurn().toNextPhase();
+        session.getTurn().toNextMonth();
 
-        currentPhase = Session.getSession().getTurn().getCurrentPhase();
+        currentPhase = session.getTurn().getCurrentPhase();
 
         if (currentPhase >= Restrictions.PRODUCTION_PHASE
                 && currentPhase <= Restrictions.MAX_PHASES_COUNT) {

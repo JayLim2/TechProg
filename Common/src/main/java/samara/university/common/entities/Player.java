@@ -26,6 +26,8 @@ public class Player implements Serializable {
     private int inProduction;   //ЕГП в производстве
     private int totalLoans;     //непогашенные ссуды
 
+    private boolean isBankrupt; //признак банкротства
+
     public Player(String name, Avatar avatar) {
         this.name = name;
         this.avatar = avatar;
@@ -143,6 +145,14 @@ public class Player implements Serializable {
         this.inProduction = inProduction;
     }
 
+    public boolean isBankrupt() {
+        return isBankrupt;
+    }
+
+    public void setBankrupt(boolean bankrupt) {
+        isBankrupt = bankrupt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -150,13 +160,14 @@ public class Player implements Serializable {
         Player player = (Player) o;
         return id == player.id ||
                 (unitsOfProducts == player.unitsOfProducts &&
-                unitsOfResources == player.unitsOfResources &&
-                money == player.money &&
-                workingFactories == player.workingFactories &&
-                workingAutomatedFactories == player.workingAutomatedFactories &&
-                underConstructionFactories == player.underConstructionFactories &&
-                underConstructionAutomatedFactories == player.underConstructionAutomatedFactories &&
-                Objects.equals(name, player.name) &&
+                        unitsOfResources == player.unitsOfResources &&
+                        money == player.money &&
+                        workingFactories == player.workingFactories &&
+                        workingAutomatedFactories == player.workingAutomatedFactories &&
+                        underConstructionFactories == player.underConstructionFactories &&
+                        underConstructionAutomatedFactories == player.underConstructionAutomatedFactories &&
+                        isBankrupt == player.isBankrupt &&
+                        Objects.equals(name, player.name) &&
                         Objects.equals(avatar, player.avatar));
     }
 

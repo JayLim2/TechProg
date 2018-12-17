@@ -200,6 +200,14 @@ public class RequestSender {
         return (LocalDateTime) objectInputStream.readObject();
     }
 
+    public Player getWinner() throws IOException, ClassNotFoundException {
+        connect();
+        sendCommand(Command.WINNER);
+        Player player = (Player) objectInputStream.readObject();
+        System.out.println("+++++++++++WINNER+++++++++++ => " + player);
+        return player;
+    }
+
     /**
      * Вспомогательный метод отправки команды на сервер
      *

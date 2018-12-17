@@ -88,6 +88,9 @@ public class RequestHandler {
                         case GET_TURN_TIME:
                             getTurnTime();
                             break;
+                        case WINNER:
+                            getWinner();
+                            break;
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -220,6 +223,15 @@ public class RequestHandler {
         public void getTurnTime() throws IOException {
             objectOutputStream.reset();
             objectOutputStream.writeObject(session.getTurn().getPhaseStartTime());
+            objectOutputStream.flush();
+        }
+
+        private void getWinner() throws IOException {
+            objectOutputStream.reset();
+            if (session.getWinner() == null) {
+                session.getBank().tryDeclareWinner();
+            }
+            objectOutputStream.writeObject(session.getWinner());
             objectOutputStream.flush();
         }
 

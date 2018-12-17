@@ -141,6 +141,14 @@ public class GameFieldFormController implements DisplayingFormController {
         try {
             List<Player> players = sessionPackage.getPlayers();
             me = RequestSender.getRequestSender().me();
+
+            if (me.isBankrupt()) {
+                stopPhaseCountdown();
+                stopCyclicalUpdater();
+                Forms.closeForm("GameField");
+                Forms.openForm("GameOver");
+            }
+
             players.remove(me);
 
             //Заполняем данные текущего игрока
@@ -215,6 +223,7 @@ public class GameFieldFormController implements DisplayingFormController {
 
     private static final Duration ONE_SECOND_DURATION = Duration.seconds(1);
     private int totalSeconds = Restrictions.PHASE_LENGTH_IN_SECONDS;
+    private boolean phaseCountdownStopped = false;
 
     private void getTurnTime() {
         try {
@@ -241,12 +250,15 @@ public class GameFieldFormController implements DisplayingFormController {
         KeyFrame frame = new KeyFrame(ONE_SECOND_DURATION, new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                totalSeconds--;
-                updateTimeFields();
-
-                if (totalSeconds <= 0) {
+                if (totalSeconds <= 0 || phaseCountdownStopped) {
                     timeline.stop();
                     timeline.getKeyFrames().clear();
+                }
+
+                if (totalSeconds > 0) {
+                    totalSeconds--;
+                    updateTimeFields();
+                } else {
                     nextPhase(null);
                     updateForm();
                     phaseCountdown();
@@ -257,6 +269,10 @@ public class GameFieldFormController implements DisplayingFormController {
         timeline.getKeyFrames().add(frame);
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
+    }
+
+    public void stopPhaseCountdown() {
+        phaseCountdownStopped = true;
     }
 
     //-------------------- Циклическое обновление клиента раз в N секунд ---------------
@@ -283,13 +299,23 @@ public class GameFieldFormController implements DisplayingFormController {
         timeline.play();
     }
 
-    private void stopCyclicUpdater() {
+    private void stopCyclicalUpdater() {
         cyclicalUpdateStopped = true;
     }
 
     private void updateForm() {
         try {
+            //Если найден победитель - завершить игру
+            if (RequestSender.getRequestSender().getWinner() != null) {
+                stopPhaseCountdown();
+                stopCyclicalUpdater();
+                Forms.closeForm("GameField");
+                Forms.openForm("GameResults");
+                return;
+            }
+
             SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
+
             if (sessionPackage.getCurrentPhase() == Restrictions.REGULAR_COSTS_PHASE
                     || sessionPackage.getCurrentPhase() == Restrictions.CALCULATE_RESERVES_PHASE
                     || sessionPackage.getCurrentPhase() == Restrictions.PAY_LOAN_PERCENT_PHASE
