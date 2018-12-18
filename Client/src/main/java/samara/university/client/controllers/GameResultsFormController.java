@@ -44,7 +44,7 @@ public class GameResultsFormController implements DisplayingFormController {
     public void saveGamelog(ActionEvent event) {
         try {
             String gamelog = RequestSender.getRequestSender().getGameLog();
-            String dateStr = DateTimeFormatter.ofPattern("YYYY-MM-DD-HH-MM-SS").format(LocalDateTime.now());
+            String dateStr = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss").format(LocalDateTime.now());
             String fileName = "gamelog-" + dateStr + ".log";
             File file = new File(fileName);
             if (!file.exists()) {

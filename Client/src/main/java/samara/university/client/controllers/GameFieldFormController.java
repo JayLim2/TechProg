@@ -185,7 +185,7 @@ public class GameFieldFormController implements DisplayingFormController {
         imageView = (ImageView) getElementById("image_view", "player_profile", "senior", i);
         System.out.println("player: " + player);
         System.out.println("senior: " + senior);
-        imageView.setVisible(Objects.equals(player, senior));
+        imageView.setVisible(senior != null && player != null && Objects.equals(player, senior));
 
         text = (Text) getElementById("text", "player_profile", "login", i);
         text.setText(player.getName());
