@@ -99,6 +99,8 @@ public class GameFieldFormController implements DisplayingFormController {
         return formNamespace;
     }
 
+    private boolean initialized = false;
+
     @Override
     public void showAction(WindowEvent event) {
         try {
@@ -252,12 +254,20 @@ public class GameFieldFormController implements DisplayingFormController {
         }
     }
 
+    private boolean gameFinished = false;
+
     private void phaseCountdown() {
         //Timeline timeline = new Timeline();
 
         KeyFrame frame = new KeyFrame(ONE_SECOND_DURATION, new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                if (gameFinished) {
+                    phaseCountdownStopped = true;
+                    Forms.closeForm("GameField");
+                    Forms.openForm("GameResults");
+                }
+
                 if (totalSeconds <= 0 || phaseCountdownStopped) {
                     countdown.stop();
                     countdown.getKeyFrames().clear();
@@ -283,6 +293,12 @@ public class GameFieldFormController implements DisplayingFormController {
     }
 
     //-------------------- Циклическое обновление клиента раз в N секунд ---------------
+
+    /*
+    FIXME здесь есть баг: если выходит текущий старший игрок, неверно обновляется форма
+    еще возможно есть баг с логгированием банкротства, возможно также только в этой ситуации
+     */
+
     private static final Duration CYCLE_PERIOD = Duration.seconds(3);
     private boolean cyclicalUpdateStopped = false;
 
@@ -330,8 +346,7 @@ public class GameFieldFormController implements DisplayingFormController {
                     if (RequestSender.getRequestSender().getWinner() != null) {
                         stopPhaseCountdown();
                         stopCyclicalUpdater();
-                        Forms.closeForm("GameField");
-                        Forms.openForm("GameResults");
+                        gameFinished = true;
                         return;
                     }
 
