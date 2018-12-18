@@ -78,7 +78,7 @@ public class WaitingPlayersFormController implements DisplayingFormController {
     private Integer totalSeconds = Restrictions.WAIT_TIME_LIMIT_SECONDS;
 
     private void playCountdown() {
-        Timeline timeline = new Timeline();
+        //Timeline timeline = new Timeline();
 
         KeyFrame frame = new KeyFrame(ONE_SECOND_DURATION, new EventHandler<ActionEvent>() {
             @Override
@@ -87,17 +87,20 @@ public class WaitingPlayersFormController implements DisplayingFormController {
                 updateTimeFields();
 
                 if (totalSeconds <= 0) {
-                    timeline.stop();
-                    timeline.getKeyFrames().clear();
+                    countdown.stop();
+                    countdown.getKeyFrames().clear();
                     playGame();
                 }
             }
         });
 
-        timeline.getKeyFrames().add(frame);
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
+        countdown.getKeyFrames().add(frame);
+        countdown.setCycleCount(Timeline.INDEFINITE);
+        countdown.play();
     }
+
+    Timeline countdown = new Timeline();
+    Timeline waiter = new Timeline();
 
     // FIXME: 02.12.2018 баг с отрисовкой времени на форме
     /**
@@ -110,7 +113,7 @@ public class WaitingPlayersFormController implements DisplayingFormController {
         проверять состояние сессии на сервере и в случае изменения
         обновлять интерфейс актуальными данными
          */
-        Timeline timeline = new Timeline();
+        //Timeline timeline = new Timeline();
 
         KeyFrame frame = new KeyFrame(UPDATE_INFO_INTERVAL, new EventHandler<ActionEvent>() {
             @Override
@@ -118,15 +121,15 @@ public class WaitingPlayersFormController implements DisplayingFormController {
                 updateInfo();
 
                 if (totalSeconds <= 0) {
-                    timeline.stop();
-                    timeline.getKeyFrames().clear();
+                    waiter.stop();
+                    waiter.getKeyFrames().clear();
                 }
             }
         });
 
-        timeline.getKeyFrames().add(frame);
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
+        waiter.getKeyFrames().add(frame);
+        waiter.setCycleCount(Timeline.INDEFINITE);
+        waiter.play();
     }
 
     private void resetTime() {
@@ -168,11 +171,13 @@ public class WaitingPlayersFormController implements DisplayingFormController {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
     private void playGame() {
+        countdown.stop();
+        waiter.stop();
         Forms.openForm("GameField");
         Forms.closeForm("WaitingPlayers");
     }

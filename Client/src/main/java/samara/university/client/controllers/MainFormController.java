@@ -1,8 +1,12 @@
 package samara.university.client.controllers;
 
 import javafx.event.ActionEvent;
-import javafx.scene.control.Alert;
 import samara.university.client.utils.Forms;
+import samara.university.client.utils.PredefinedAlerts;
+
+import java.awt.*;
+import java.io.File;
+import java.net.URI;
 
 public class MainFormController {
     /**
@@ -21,7 +25,12 @@ public class MainFormController {
      * @param event события нажатия на кнопку
      */
     public void helpAction(ActionEvent event) {
-        new Alert(Alert.AlertType.INFORMATION, "Справка будет добавлена позднее.").show();
+        try {
+            URI uri = new File("help/help.html").toURI();
+            Desktop.getDesktop().browse(uri);
+        } catch (Exception e) {
+            PredefinedAlerts.errorAlert("Пакет со справочной системой поврежден или не найден.");
+        }
     }
 
     /**

@@ -6,16 +6,11 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
@@ -257,14 +252,14 @@ public class GameFieldFormController implements DisplayingFormController {
     }
 
     private void phaseCountdown() {
-        Timeline timeline = new Timeline();
+        //Timeline timeline = new Timeline();
 
         KeyFrame frame = new KeyFrame(ONE_SECOND_DURATION, new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 if (totalSeconds <= 0 || phaseCountdownStopped) {
-                    timeline.stop();
-                    timeline.getKeyFrames().clear();
+                    countdown.stop();
+                    countdown.getKeyFrames().clear();
                 }
 
                 if (totalSeconds > 0) {
@@ -278,9 +273,9 @@ public class GameFieldFormController implements DisplayingFormController {
             }
         });
 
-        timeline.getKeyFrames().add(frame);
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
+        countdown.getKeyFrames().add(frame);
+        countdown.setCycleCount(Timeline.INDEFINITE);
+        countdown.play();
     }
 
     public void stopPhaseCountdown() {
@@ -300,8 +295,10 @@ public class GameFieldFormController implements DisplayingFormController {
     private static final Duration CYCLE_PERIOD = Duration.seconds(3);
     private boolean cyclicalUpdateStopped = false;
 
+    Timeline updater = new Timeline();
+    Timeline countdown = new Timeline();
     private void cyclicalUpdater() {
-        Timeline timeline = new Timeline();
+        //Timeline timeline = new Timeline();
 
         KeyFrame frame = new KeyFrame(CYCLE_PERIOD, new EventHandler<ActionEvent>() {
             @Override
@@ -310,15 +307,15 @@ public class GameFieldFormController implements DisplayingFormController {
                 updateGamelog();
 
                 if (cyclicalUpdateStopped) {
-                    timeline.stop();
-                    timeline.getKeyFrames().clear();
+                    updater.stop();
+                    updater.getKeyFrames().clear();
                 }
             }
         });
 
-        timeline.getKeyFrames().add(frame);
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
+        updater.getKeyFrames().add(frame);
+        updater.setCycleCount(Timeline.INDEFINITE);
+        updater.play();
     }
 
     private void stopCyclicalUpdater() {
@@ -353,7 +350,7 @@ public class GameFieldFormController implements DisplayingFormController {
             fillBankReserves();
             getTurnTime();
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
     //-----------------------------------------------------------
@@ -456,6 +453,10 @@ public class GameFieldFormController implements DisplayingFormController {
 
     public void interruptGameForMe(ActionEvent event) {
         //Прерывает игру и выводит игрока из сессии
+        countdown.stop();
+        updater.stop();
+        Forms.closeForm("GameField");
+        Forms.openForm("GameOver");
     }
 
     /**
