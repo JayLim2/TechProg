@@ -97,6 +97,20 @@ public class GameLog {
         }
         //--------------------------------------------------
 
+        //--------- loans
+        public static String logNewLoan(int amount) {
+            return "Взял ссуду на сумму " + amount + " у.е.";
+        }
+
+        public static String logPayLoan(int amount) {
+            return "Выплатил ссуду на сумму " + amount + " у.е.";
+        }
+
+        public static String logPayLoanPercent(int amount) {
+            return "Выплатил ссудный процент на сумму " + amount + " у.е.";
+        }
+        //----------------
+
         //-------- Производство ЕГП
         public static String logStartProduction(int count, int price) {
             return "Начал производство " + count + " ЕГП по цене: " + price + " у.е.";

@@ -120,17 +120,35 @@ public class Bank {
                         }
                         break;
                         case PAY_LOAN: {
+                            int amount = action.getMoney();
                             player.setMoney(
-                                    player.getMoney() - action.getMoney()
+                                    player.getMoney() - amount
                             );
                             player.setTotalLoans(
-                                    player.getTotalLoans() - action.getMoney()
+                                    player.getTotalLoans() - amount
+                            );
+                            //Запись в лог
+                            String log = GameLog.Actions.logPayLoan(amount);
+                            gameLog.log(
+                                    player,
+                                    currentMonth,
+                                    currentPhase,
+                                    log
                             );
                         }
                         break;
                         case PAY_LOAN_PERCENT: {
+                            int amount = Math.round(player.getTotalLoans() * Restrictions.LOAN_PERCENT);
                             player.setMoney(
-                                    player.getMoney() - Math.round(player.getTotalLoans() * Restrictions.LOAN_PERCENT)
+                                    player.getMoney() - amount
+                            );
+                            //Запись в лог
+                            String log = GameLog.Actions.logPayLoanPercent(amount);
+                            gameLog.log(
+                                    player,
+                                    currentMonth,
+                                    currentPhase,
+                                    log
                             );
                         }
                         break;
@@ -410,6 +428,16 @@ public class Bank {
         int halfCapital = player.getCapital(minResourcePrice, maxProductPrice) / 2;
         if (amount <= halfCapital) {
             int currentMonth = Session.getSession().getTurn().getCurrentMonth();
+
+            //Запись в лог
+            String log = GameLog.Actions.logNewLoan(amount);
+            gameLog.log(
+                    player,
+                    currentMonth,
+                    Session.getSession().getTurn().getCurrentPhase(),
+                    log
+            );
+
             PlannedAction plannedAction;
             for (int i = 1; i <= Restrictions.LOAN_MONTHS; i++) {
                 plannedAction = new PlannedAction(
