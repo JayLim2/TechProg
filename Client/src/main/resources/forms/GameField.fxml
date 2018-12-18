@@ -278,7 +278,7 @@
         </Text>
         <TextArea fx:id="gamelogArea" layoutX="278.0" layoutY="147.0" prefHeight="112.0" prefWidth="459.0">
             <font>
-                <Font size="18.0"/>
+                <Font size="14.0"/>
             </font>
         </TextArea>
     </children>

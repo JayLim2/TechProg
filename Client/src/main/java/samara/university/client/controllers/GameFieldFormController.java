@@ -109,8 +109,7 @@ public class GameFieldFormController implements DisplayingFormController {
     public void showAction(WindowEvent event) {
         try {
             //gamelogArea.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
-            gamelogArea.setDisable(true);
-
+            //gamelogArea.setDisable(true);
 
             SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
             me = RequestSender.getRequestSender().me();
@@ -291,8 +290,7 @@ public class GameFieldFormController implements DisplayingFormController {
     private void updateGamelog() {
         try {
             String gamelog = RequestSender.getRequestSender().getGameLog();
-
-
+            gamelogArea.setText(gamelog);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -309,6 +307,7 @@ public class GameFieldFormController implements DisplayingFormController {
             @Override
             public void handle(ActionEvent event) {
                 updateForm();
+                updateGamelog();
 
                 if (cyclicalUpdateStopped) {
                     timeline.stop();
