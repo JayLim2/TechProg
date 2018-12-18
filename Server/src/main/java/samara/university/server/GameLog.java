@@ -79,10 +79,13 @@ public class GameLog {
             return "Произведено " + count + " ЕГП";
         }
 
-        public static String logConstruction(boolean start, boolean isAutomated) {
-            String string = start ? "Начал" : "Завершил";
-            string += " строительство " + (isAutomated ? "автоматизированной" : "обычной") + " фабрики за " + (isAutomated ? Restrictions.BUILDING_AUTOMATED_FACTORY_PRICE : Restrictions.BUILDING_FACTORY_PRICE) + " у.е.";
-            return string;
+        //------------- Строительство и автоматизация фабрик
+        public static String logStartConstruction(boolean isAutomated) {
+            return "Начал строительство " + (isAutomated ? "автоматизированной" : "обычной") + " фабрики за " + (isAutomated ? Restrictions.BUILDING_AUTOMATED_FACTORY_PRICE : Restrictions.BUILDING_FACTORY_PRICE) + " у.е.";
+        }
+
+        public static String logEndConstruction(boolean isAutomated) {
+            return "Завершил строительство " + (isAutomated ? "автоматизированной" : "обычной") + " фабрики";
         }
 
         public static String logAutomation(boolean start) {
@@ -92,12 +95,17 @@ public class GameLog {
             string += " половина: " + (Restrictions.AUTOMATION_FACTORY_PRICE / 2);
             return string;
         }
+        //--------------------------------------------------
 
-        public static String logProduction(boolean start, int count, boolean mode) {
-            String string = start ? "Начал" : "Завершил";
-            string += " производство " + count + " ЕГП в режиме: " + (mode ? "1 ЕГП за 2000 у.е. " : "2 ЕГП за 3000 у.е.");
-            return string;
+        //-------- Производство ЕГП
+        public static String logStartProduction(int count, int price) {
+            return "Начал производство " + count + " ЕГП по цене: " + price + " у.е.";
         }
+
+        public static String logEndProduction(int count) {
+            return "Завершил производство " + count + " ЕГП";
+        }
+        //-------------------------
 
         public static String logBankrupt() {
             return "Стал банкротом.";

@@ -25,6 +25,8 @@ public class Bank {
 
     private List<PlannedAction> plannedActions; //отложенные действия
 
+    private GameLog gameLog;
+
     public Bank() {
         bids = new ArrayList<>();
         plannedActions = new LinkedList<>();
@@ -91,6 +93,9 @@ public class Bank {
                             player.setUnitsOfProducts(
                                     player.getUnitsOfProducts() + action.getCount()
                             );
+                            //Запись в лог
+                            String log = GameLog.Actions.logEndProduction(action.getCount());
+                            gameLog.log(player, currentMonth, currentPhase, log);
                         }
                         break;
                         case PAY_LOAN: {
@@ -120,13 +125,15 @@ public class Bank {
      *
      * @param player объект "Игрок"
      */
-    public void tryDeclareBankrupt(Player player) {
+    public boolean tryDeclareBankrupt(Player player) {
         if (player.getMoney() <= 0) {
             player.setBankrupt(true);
             plannedActions.removeIf(action -> action.getPlayer().getId() == player.getId());
             bids.removeIf(bid -> bid.getPlayer().getId() == player.getId());
             Session.getSession().unregister(player);
+            return true;
         }
+        return false;
     }
 
     public boolean tryDeclareWinner() {
@@ -151,15 +158,27 @@ public class Bank {
      */
     public void nextPhase() {
         Session session = Session.getSession();
+        if (gameLog == null) {
+            gameLog = session.getGameLog();
+        }
 
+        int currentMonth = session.getTurn().getCurrentMonth();
         int currentPhase = session.getTurn().getCurrentPhase();
         session.getTurn().resetTurnTime();
         switch (currentPhase) {
             case Restrictions.REGULAR_COSTS_PHASE: {
                 List<Player> players = session.getPlayers();
                 for (Player player : players) {
-                    player.setMoney(player.getMoney() - getRegularCosts(player));
-                    tryDeclareBankrupt(player);
+                    int regularCosts = getRegularCosts(player);
+                    player.setMoney(player.getMoney() - regularCosts);
+
+                    //Запись в лог
+                    String log = GameLog.Actions.logRegularCosts(regularCosts);
+                    gameLog.log(player, currentMonth, currentPhase, log);
+                    if (tryDeclareBankrupt(player)) {
+                        log = GameLog.Actions.logBankrupt();
+                        gameLog.log(player, currentMonth, currentPhase, log);
+                    }
                 }
             }
             break;
@@ -254,13 +273,20 @@ public class Bank {
         player.setMoney(
                 player.getMoney() - price
         );
+        int currentPhase = Session.getSession().getTurn().getCurrentPhase();
+        int currentMonth = Session.getSession().getTurn().getCurrentMonth();
         PlannedAction plannedAction = new PlannedAction(
                 PlannedAction.PlannedActionType.COMPLETE_PRODUCTION,
                 player,
-                Session.getSession().getTurn().getCurrentMonth(),
-                Session.getSession().getTurn().getCurrentPhase() + 1
+                currentMonth,
+                currentPhase + 1
         );
         plannedAction.setCount(count);
+
+        //Запись в лог
+        String log = GameLog.Actions.logStartProduction(count, price);
+        gameLog.log(player, currentMonth, currentPhase, log);
+
         plannedActions.add(plannedAction);
     }
 
@@ -296,6 +322,16 @@ public class Bank {
             );
             plannedAction.setSign(isAutomated);
             plannedAction.setCount(1);
+
+            //Запись в лог
+            String log = GameLog.Actions.logStartConstruction(isAutomated);
+            gameLog.log(
+                    player,
+                    Session.getSession().getTurn().getCurrentMonth(),
+                    Session.getSession().getTurn().getCurrentPhase(),
+                    log
+            );
+
             plannedActions.add(plannedAction);
         }
     }

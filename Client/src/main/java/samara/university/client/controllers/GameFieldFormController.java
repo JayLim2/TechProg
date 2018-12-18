@@ -6,10 +6,16 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
@@ -49,6 +55,9 @@ public class GameFieldFormController implements DisplayingFormController {
     private Text labelMinutesLeft;
     @FXML
     private Text labelSecondsLeft;
+
+    @FXML
+    private TextArea gamelogArea;
 
     private Player me;
     private Player senior;
@@ -99,6 +108,10 @@ public class GameFieldFormController implements DisplayingFormController {
     @Override
     public void showAction(WindowEvent event) {
         try {
+            //gamelogArea.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
+            gamelogArea.setDisable(true);
+
+
             SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
             me = RequestSender.getRequestSender().me();
             senior = sessionPackage.getCurrentSeniorPlayer();
@@ -273,6 +286,16 @@ public class GameFieldFormController implements DisplayingFormController {
 
     public void stopPhaseCountdown() {
         phaseCountdownStopped = true;
+    }
+
+    private void updateGamelog() {
+        try {
+            String gamelog = RequestSender.getRequestSender().getGameLog();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     //-------------------- Циклическое обновление клиента раз в N секунд ---------------
