@@ -72,6 +72,14 @@ public class Bank {
                                         player.getWorkingFactories() + action.getCount()
                                 );
                             }
+                            //Запись в лог
+                            String log = GameLog.Actions.logEndConstruction(action.isSign());
+                            gameLog.log(
+                                    player,
+                                    Session.getSession().getTurn().getCurrentMonth(),
+                                    Session.getSession().getTurn().getCurrentPhase(),
+                                    log
+                            );
                         }
                         break;
                         case COMPLETE_AUTOMATION_FACTORY: {
@@ -80,6 +88,14 @@ public class Bank {
                             );
                             player.setWorkingAutomatedFactories(
                                     player.getWorkingAutomatedFactories() + action.getCount()
+                            );
+                            //Запись в лог
+                            String log = GameLog.Actions.logAutomation(false);
+                            gameLog.log(
+                                    player,
+                                    Session.getSession().getTurn().getCurrentMonth(),
+                                    Session.getSession().getTurn().getCurrentPhase(),
+                                    log
                             );
                         }
                         break;
@@ -95,7 +111,12 @@ public class Bank {
                             );
                             //Запись в лог
                             String log = GameLog.Actions.logEndProduction(action.getCount());
-                            gameLog.log(player, currentMonth, currentPhase, log);
+                            gameLog.log(
+                                    player,
+                                    currentMonth,
+                                    currentPhase,
+                                    log
+                            );
                         }
                         break;
                         case PAY_LOAN: {
@@ -348,7 +369,16 @@ public class Bank {
                     player.getMoney() - Restrictions.AUTOMATION_FACTORY_PRICE / 2
             );
 
-            //Строительство фабрики
+            //Запись в лог
+            String log = GameLog.Actions.logAutomation(true);
+            gameLog.log(
+                    player,
+                    Session.getSession().getTurn().getCurrentMonth(),
+                    Session.getSession().getTurn().getCurrentPhase(),
+                    log
+            );
+
+            //Автоматизация фабрики
             PlannedAction plannedAction = new PlannedAction(
                     PlannedAction.PlannedActionType.COMPLETE_AUTOMATION_FACTORY,
                     player,
@@ -425,6 +455,14 @@ public class Bank {
             Bid bid = bids.get(i);
 
             if (bid.getCount() == 0 || bid.getPrice() < minResourcePrice) {
+                //Запись в лог
+                String log = GameLog.Actions.logApprovingBid(false, bid.type(), bid.getCount(), bid.getPrice());
+                gameLog.log(
+                        bid.getPlayer(),
+                        Session.getSession().getTurn().getCurrentMonth(),
+                        Session.getSession().getTurn().getCurrentPhase(),
+                        log
+                );
                 continue;
             }
             handleBid(bid, Restrictions.BUY_RESOURCES_BID);
@@ -473,6 +511,14 @@ public class Bank {
             player.setUnitsOfProducts(player.getUnitsOfProducts() - count);
             reserveUnitsOfProducts -= count;
         }
+        //Запись в лог
+        String log = GameLog.Actions.logApprovingBid(true, bid.type(), bid.getCount(), bid.getPrice());
+        gameLog.log(
+                bid.getPlayer(),
+                Session.getSession().getTurn().getCurrentMonth(),
+                Session.getSession().getTurn().getCurrentPhase(),
+                log
+        );
     }
 
     private BidComparator ascBidCmp = new BidComparator(false);

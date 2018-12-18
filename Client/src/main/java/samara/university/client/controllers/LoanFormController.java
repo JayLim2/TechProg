@@ -25,14 +25,16 @@ public class LoanFormController {
     private int amount;
 
     public void initialize() {
-        SpinnerValueFactory<Integer> countAutoFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(
-                0, me.getWorkingAutomatedFactories(), 0, 1);
-        SpinnerValueFactory<Integer> countFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(
-                0, me.getWorkingFactories(), 0, 1);
-        spinnerFactoriesCount.setValueFactory(countFactory);
-        spinnerAutoFactoriesCount.setValueFactory(countAutoFactory);
-
         try {
+            me = RequestSender.getRequestSender().me();
+
+            SpinnerValueFactory<Integer> countAutoFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(
+                    0, me.getWorkingAutomatedFactories(), 0, 1);
+            SpinnerValueFactory<Integer> countFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(
+                    0, me.getWorkingFactories(), 0, 1);
+            spinnerFactoriesCount.setValueFactory(countFactory);
+            spinnerAutoFactoriesCount.setValueFactory(countAutoFactory);
+
             labelMonth.setText(Integer.toString(RequestSender.getRequestSender().sessionInfo().getCurrentMonth() + Restrictions.LOAN_MONTHS));
         } catch (Exception e) {
             e.printStackTrace();

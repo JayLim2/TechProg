@@ -40,12 +40,8 @@ public class SellFormController extends TradeFormController {
             }
 
             Player me = RequestSender.getRequestSender().me();
-            if (me.getMoney() < spinnerCount.getValue() * spinnerPrice.getValue()) {
-                PredefinedAlerts.notEnoughMoneyAlert();
-            } else {
-                super.sendBid(me, true);
-                close();
-            }
+            super.sendBid(me, true);
+            close();
         } catch (Exception e) {
             e.printStackTrace();
         }
