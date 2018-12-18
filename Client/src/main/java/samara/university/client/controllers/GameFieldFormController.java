@@ -21,7 +21,6 @@ import samara.university.common.entities.Player;
 import samara.university.common.packages.BankPackage;
 import samara.university.common.packages.SessionPackage;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -120,12 +119,6 @@ public class GameFieldFormController implements DisplayingFormController {
             //Обновить время начала фазы
             //getTurnTime();
 
-            //Запустить циклическое обновление клиента
-            cyclicalUpdater();
-
-            //Запустить обратный отсчет времени хода
-            phaseCountdown();
-
             //Заполняем профили игроков
             fillAllProfiles(sessionPackage);
 
@@ -134,6 +127,12 @@ public class GameFieldFormController implements DisplayingFormController {
 
             //Информация о банковских резервах
             fillBankReserves();
+
+            //Запустить обратный отсчет времени хода
+            phaseCountdown();
+
+            //Запустить циклическое обновление клиента
+            cyclicalUpdater();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -150,10 +149,12 @@ public class GameFieldFormController implements DisplayingFormController {
             me = RequestSender.getRequestSender().me();
 
             if (me.isBankrupt()) {
+                updaterThread.interrupt();
                 stopPhaseCountdown();
                 stopCyclicalUpdater();
                 Forms.closeForm("GameField");
                 Forms.openForm("GameOver");
+                return;
             }
 
             players.remove(me);
@@ -165,7 +166,7 @@ public class GameFieldFormController implements DisplayingFormController {
             for (int i = 0; i < players.size(); i++) {
                 fillProfile(players.get(i), i + 1);
             }
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -267,7 +268,6 @@ public class GameFieldFormController implements DisplayingFormController {
                     updateTimeFields();
                 } else {
                     nextPhase(null);
-                    updateForm();
                     phaseCountdown();
                 }
             }
@@ -282,31 +282,27 @@ public class GameFieldFormController implements DisplayingFormController {
         phaseCountdownStopped = true;
     }
 
-    private void updateGamelog() {
-        try {
-            String gamelog = RequestSender.getRequestSender().getGameLog();
-            gamelogArea.setText(gamelog);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     //-------------------- Циклическое обновление клиента раз в N секунд ---------------
     private static final Duration CYCLE_PERIOD = Duration.seconds(3);
     private boolean cyclicalUpdateStopped = false;
 
-    Timeline updater = new Timeline();
-    Timeline countdown = new Timeline();
+    private Timeline updater = new Timeline();
+    private Timeline countdown = new Timeline();
+
+    private Thread updaterThread = null;
+
     private void cyclicalUpdater() {
+        if (updaterThread == null) {
+            updaterThread = new Thread(new UpdateFormTask());
+            updaterThread.start();
+        }
         //Timeline timeline = new Timeline();
 
         KeyFrame frame = new KeyFrame(CYCLE_PERIOD, new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                updateForm();
-                updateGamelog();
-
                 if (cyclicalUpdateStopped) {
+                    updaterThread.interrupt();
                     updater.stop();
                     updater.getKeyFrames().clear();
                 }
@@ -322,35 +318,50 @@ public class GameFieldFormController implements DisplayingFormController {
         cyclicalUpdateStopped = true;
     }
 
-    private void updateForm() {
-        try {
-            //Если найден победитель - завершить игру
-            if (RequestSender.getRequestSender().getWinner() != null) {
-                stopPhaseCountdown();
-                stopCyclicalUpdater();
-                Forms.closeForm("GameField");
-                Forms.openForm("GameResults");
-                return;
-            }
+    private class UpdateFormTask implements Runnable {
+        final int duration = 3000;
 
-            SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
+        @Override
+        public void run() {
+            try {
+                while (true) {
+                    //Если найден победитель - завершить игру
+                    // FIXME: 19.12.2018 NOT JAVA FX THREAD EXCEPTION
+                    if (RequestSender.getRequestSender().getWinner() != null) {
+                        stopPhaseCountdown();
+                        stopCyclicalUpdater();
+                        Forms.closeForm("GameField");
+                        Forms.openForm("GameResults");
+                        return;
+                    }
 
-            if (sessionPackage.getCurrentPhase() == Restrictions.REGULAR_COSTS_PHASE
-                    || sessionPackage.getCurrentPhase() == Restrictions.CALCULATE_RESERVES_PHASE
-                    || sessionPackage.getCurrentPhase() == Restrictions.PAY_LOAN_PERCENT_PHASE
-                    || sessionPackage.getCurrentPhase() == Restrictions.PAY_LOAN_PHASE) {
-                nextPhase(null);
-            } else {
-                fillAllProfiles(sessionPackage);
-                labelMonth.setText(Integer.toString(sessionPackage.getCurrentMonth()));
-                labelPhase.setText(Integer.toString(sessionPackage.getCurrentPhase()));
-                updateMenuVisibility();
+                    //Обновить лог игры
+                    String gamelog = RequestSender.getRequestSender().getGameLog();
+                    gamelogArea.setText(gamelog);
+                    //------------------
+
+                    SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
+
+                    if (sessionPackage.getCurrentPhase() == Restrictions.REGULAR_COSTS_PHASE
+                            || sessionPackage.getCurrentPhase() == Restrictions.CALCULATE_RESERVES_PHASE
+                            || sessionPackage.getCurrentPhase() == Restrictions.PAY_LOAN_PERCENT_PHASE
+                            || sessionPackage.getCurrentPhase() == Restrictions.PAY_LOAN_PHASE) {
+                        nextPhase(null);
+                    } else {
+                        fillAllProfiles(sessionPackage);
+                        labelMonth.setText(Integer.toString(sessionPackage.getCurrentMonth()));
+                        labelPhase.setText(Integer.toString(sessionPackage.getCurrentPhase()));
+                        updateMenuVisibility();
+                    }
+                    senior = sessionPackage.getCurrentSeniorPlayer();
+                    fillBankReserves();
+                    getTurnTime();
+
+                    Thread.sleep(duration);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            senior = sessionPackage.getCurrentSeniorPlayer();
-            fillBankReserves();
-            getTurnTime();
-        } catch (Exception e) {
-            //e.printStackTrace();
         }
     }
     //-----------------------------------------------------------
@@ -453,6 +464,12 @@ public class GameFieldFormController implements DisplayingFormController {
 
     public void interruptGameForMe(ActionEvent event) {
         //Прерывает игру и выводит игрока из сессии
+        try {
+            RequestSender.getRequestSender().exit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        updaterThread.interrupt();
         countdown.stop();
         updater.stop();
         Forms.closeForm("GameField");

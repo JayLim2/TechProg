@@ -103,10 +103,55 @@ public class WaitingPlayersFormController implements DisplayingFormController {
     Timeline waiter = new Timeline();
 
     // FIXME: 02.12.2018 баг с отрисовкой времени на форме
+
+    private Thread waiterThread = null;
+
+    private class WaitPlayersTask implements Runnable {
+
+        @Override
+        public void run() {
+            try {
+                while (true) {
+                    SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
+                    long seconds = java.time.Duration.between(
+                            sessionPackage.getSessionStartTime(),
+                            LocalDateTime.now()
+                    ).getSeconds();
+                    List<Player> players = sessionPackage.getPlayers();
+
+                    if (players.size() == Restrictions.MAX_PLAYERS_COUNT) {
+                        totalSeconds = 0;
+                    } else {
+                        totalSeconds = Restrictions.WAIT_TIME_LIMIT_SECONDS - (int) seconds;
+                        for (int i = 0; i < avatarBlocks.length; i++) {
+                            if (i < players.size()) {
+                                Player player = players.get(i);
+                                avatarBlocks[i].setImage(new Image(player.getAvatar().getPath()));
+                                labelBlocks[i].setText(player.getName());
+                            } else {
+                                avatarBlocks[i].setImage(new Image(Avatar.getEmptyAvatar().getPath()));
+                                labelBlocks[i].setText("Логин");
+                            }
+                        }
+                    }
+
+                    Thread.sleep(5000);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * Ожидание игроков
      */
     private void waitPlayers() {
+        if (waiterThread == null) {
+            waiterThread = new Thread(new WaitPlayersTask());
+            waiterThread.start();
+        }
+
         // TODO: 24.11.2018
         /*
         Регулярно (например, раз в 5 сек)
@@ -118,9 +163,8 @@ public class WaitingPlayersFormController implements DisplayingFormController {
         KeyFrame frame = new KeyFrame(UPDATE_INFO_INTERVAL, new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                updateInfo();
-
                 if (totalSeconds <= 0) {
+                    waiterThread.interrupt();
                     waiter.stop();
                     waiter.getKeyFrames().clear();
                 }
@@ -147,35 +191,11 @@ public class WaitingPlayersFormController implements DisplayingFormController {
     }
 
     private void updateInfo() {
-        try {
-            SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
-            long seconds = java.time.Duration.between(
-                    sessionPackage.getSessionStartTime(),
-                    LocalDateTime.now()
-            ).getSeconds();
-            List<Player> players = sessionPackage.getPlayers();
 
-            if (players.size() == Restrictions.MAX_PLAYERS_COUNT) {
-                totalSeconds = 0;
-            } else {
-                totalSeconds = Restrictions.WAIT_TIME_LIMIT_SECONDS - (int) seconds;
-                for (int i = 0; i < avatarBlocks.length; i++) {
-                    if (i < players.size()) {
-                        Player player = players.get(i);
-                        avatarBlocks[i].setImage(new Image(player.getAvatar().getPath()));
-                        labelBlocks[i].setText(player.getName());
-                    } else {
-                        avatarBlocks[i].setImage(new Image(Avatar.getEmptyAvatar().getPath()));
-                        labelBlocks[i].setText("Логин");
-                    }
-                }
-            }
-        } catch (Exception e) {
-            //e.printStackTrace();
-        }
     }
 
     private void playGame() {
+        waiterThread.interrupt();
         countdown.stop();
         waiter.stop();
         Forms.openForm("GameField");

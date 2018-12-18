@@ -59,7 +59,7 @@ public class RequestHandler {
             //Если сессия доступна - продолжаем
             while (true) {
                 try {
-                    while (objectInputStream.available() <= 0) ;
+                    //while (objectInputStream.available() <= 0) ;
 
                     int cmdCode = objectInputStream.readInt();
                     Command command = Command.values()[cmdCode];
@@ -95,9 +95,7 @@ public class RequestHandler {
                             getGameLog();
                             break;
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (ClassNotFoundException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

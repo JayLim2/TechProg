@@ -24,7 +24,7 @@ public class GameLog {
      * Генерация файла с журналом игры
      */
     public String export() {
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder().append(" ");
         for (String action : actions) {
             builder.append(action).append("\n");
         }
