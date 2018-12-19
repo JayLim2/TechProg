@@ -241,8 +241,10 @@ public class RequestHandler {
         }
 
         public void exit() throws IOException {
-            objectOutputStream.writeBoolean(Session.getSession().unregister(me));
-            objectOutputStream.flush();
+            //objectOutputStream.reset();
+            Session.getSession().getBank().declareBankrupt(me);
+            /*objectOutputStream.writeBoolean(Session.getSession().getBank().declareBankrupt(me));
+            objectOutputStream.flush();*/
         }
 
         public void resetTurnTime() throws IOException {

@@ -8,277 +8,219 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="mainPane" prefHeight="420.0" prefWidth="756.0" xmlns="http://javafx.com/javafx/8.0.171"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="samara.university.client.controllers.GameFieldFormController">
+<AnchorPane fx:id="mainPane" prefHeight="420.0" prefWidth="756.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="samara.university.client.controllers.GameFieldFormController">
     <children>
-        <ImageView fx:id="image_view_player_profile_avatar_1" fitHeight="85.0" fitWidth="73.0" layoutX="14.0"
-                   layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="image_view_player_profile_avatar_1" fitHeight="85.0" fitWidth="73.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../avatars/11.jpg"/>
+                <Image url="@../avatars/11.jpg" />
             </image>
         </ImageView>
-        <Text fx:id="text_player_profile_login_1" layoutX="90.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="Логин">
+        <Text fx:id="text_player_profile_login_1" layoutX="90.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Логин">
             <font>
-                <Font size="14.0"/>
+                <Font size="14.0" />
             </font>
         </Text>
-        <Text layoutX="89.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Деньги:"/>
-        <Text layoutX="89.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ЕСМ:"/>
-        <Text layoutX="89.0" layoutY="65.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ЕГП:"/>
-        <Text layoutX="87.0" layoutY="79.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Фабрики:"/>
-        <Text layoutX="95.0" layoutY="91.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- обычные"/>
-        <Text layoutX="96.0" layoutY="102.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- автоматизированные"/>
-        <Text fx:id="text_money_amount_1" layoutX="226.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0"/>
-        <Text fx:id="text_resources_amount_1" layoutX="226.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0"/>
-        <Text fx:id="text_factories_amount_1" layoutX="226.0" layoutY="91.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0"/>
-        <Text fx:id="text_products_amount_1" layoutX="226.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0"/>
-        <Text fx:id="text_auto_factories_amount_1" layoutX="226.0" layoutY="102.0" strokeType="OUTSIDE"
-              strokeWidth="0.0" text="0"/>
-        <Text fx:id="text_factories_in_progress_amount_1" layoutX="232.0" layoutY="91.0" strokeType="OUTSIDE"
-              strokeWidth="0.0" text="+0"/>
-        <Text fx:id="text_auto_factories_in_progress_amount_1" layoutX="232.0" layoutY="102.0" strokeType="OUTSIDE"
-              strokeWidth="0.0" text="+0"/>
-        <Text fx:id="text_products_in_progress_amount_1" layoutX="232.0" layoutY="66.0" strokeType="OUTSIDE"
-              strokeWidth="0.0" text="+0"/>
+        <Text layoutX="89.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Деньги:" />
+        <Text layoutX="89.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ЕСМ:" />
+        <Text layoutX="89.0" layoutY="65.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ЕГП:" />
+        <Text layoutX="87.0" layoutY="79.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Фабрики:" />
+        <Text layoutX="95.0" layoutY="91.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- обычные" />
+        <Text layoutX="96.0" layoutY="102.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- автоматизированные" />
+        <Text fx:id="text_money_amount_1" layoutX="226.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+        <Text fx:id="text_resources_amount_1" layoutX="226.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+        <Text fx:id="text_factories_amount_1" layoutX="226.0" layoutY="91.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+        <Text fx:id="text_products_amount_1" layoutX="226.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+        <Text fx:id="text_auto_factories_amount_1" layoutX="226.0" layoutY="102.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+        <Text fx:id="text_factories_in_progress_amount_1" layoutX="232.0" layoutY="91.0" strokeType="OUTSIDE" strokeWidth="0.0" text="+0" />
+        <Text fx:id="text_auto_factories_in_progress_amount_1" layoutX="232.0" layoutY="102.0" strokeType="OUTSIDE" strokeWidth="0.0" text="+0" />
+        <Text fx:id="text_products_in_progress_amount_1" layoutX="232.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0" text="+0" />
         <Text layoutX="146.0" layoutY="370.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Месяц:">
             <font>
-                <Font size="14.0"/>
+                <Font size="14.0" />
             </font>
         </Text>
         <Text layoutX="220.0" layoutY="371.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Фаза:">
             <font>
-                <Font size="14.0"/>
+                <Font size="14.0" />
             </font>
         </Text>
         <Text layoutX="287.0" layoutY="371.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Осталось на ход:">
             <font>
-                <Font size="14.0"/>
+                <Font size="14.0" />
             </font>
         </Text>
         <Text fx:id="labelMonth" layoutX="164.0" layoutY="387.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
             <font>
-                <Font size="14.0"/>
+                <Font size="14.0" />
             </font>
         </Text>
         <Text fx:id="labelPhase" layoutX="233.0" layoutY="387.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0">
             <font>
-                <Font size="14.0"/>
+                <Font size="14.0" />
             </font>
         </Text>
-        <Text fx:id="labelMinutesLeft" layoutX="321.0" layoutY="386.0" strokeType="OUTSIDE" strokeWidth="0.0" text="00"
-              wrappingWidth="21.999994933605194">
+        <Text fx:id="labelMinutesLeft" layoutX="321.0" layoutY="386.0" strokeType="OUTSIDE" strokeWidth="0.0" text="00" wrappingWidth="21.999994933605194">
             <font>
-                <Font size="14.0"/>
+                <Font size="14.0" />
             </font>
         </Text>
-        <Button fx:id="buttonBuyResources" layoutX="464.0" layoutY="293.0" mnemonicParsing="false"
-                onAction="#showBuyResourcesForm" prefHeight="30.0" prefWidth="133.0" text="Купить ЕСМ">
+        <Button fx:id="buttonBuyResources" layoutX="464.0" layoutY="293.0" mnemonicParsing="false" onAction="#showBuyResourcesForm" prefHeight="30.0" prefWidth="133.0" text="Купить ЕСМ">
             <font>
-                <Font size="14.0"/>
+                <Font size="14.0" />
             </font>
         </Button>
-        <Button fx:id="buttonSellProducts" layoutX="608.0" layoutY="293.0" mnemonicParsing="false"
-                onAction="#showSellProductsForm" prefHeight="30.0" prefWidth="133.0" text="Продать ЕГП">
+        <Button fx:id="buttonSellProducts" layoutX="608.0" layoutY="293.0" mnemonicParsing="false" onAction="#showSellProductsForm" prefHeight="30.0" prefWidth="133.0" text="Продать ЕГП">
             <font>
-                <Font size="14.0"/>
+                <Font size="14.0" />
             </font>
         </Button>
-        <Button fx:id="buttonStartConstruction" layoutX="607.0" layoutY="327.0" mnemonicParsing="false"
-                onAction="#showStartConstructionForm" prefHeight="30.0" prefWidth="133.0" text="Строительство">
+        <Button fx:id="buttonStartConstruction" layoutX="607.0" layoutY="327.0" mnemonicParsing="false" onAction="#showStartConstructionForm" prefHeight="30.0" prefWidth="133.0" text="Строительство">
             <font>
-                <Font size="14.0"/>
+                <Font size="14.0" />
             </font>
         </Button>
-        <Button fx:id="buttonStartProduction" layoutX="464.0" layoutY="329.0" mnemonicParsing="false"
-                onAction="#showStartProductionForm" prefHeight="30.0" prefWidth="133.0" text="Производство">
+        <Button fx:id="buttonStartProduction" layoutX="464.0" layoutY="329.0" mnemonicParsing="false" onAction="#showStartProductionForm" prefHeight="30.0" prefWidth="133.0" text="Производство">
             <font>
-                <Font size="14.0"/>
+                <Font size="14.0" />
             </font>
         </Button>
-        <Button layoutX="608.0" layoutY="366.0" mnemonicParsing="false" onAction="#nextPhase" prefHeight="30.0"
-                prefWidth="133.0" text="Следующая фаза">
+        <Button layoutX="608.0" layoutY="366.0" mnemonicParsing="false" onAction="#nextPhase" prefHeight="30.0" prefWidth="133.0" text="Следующая фаза">
             <font>
-                <Font size="14.0"/>
+                <Font size="14.0" />
             </font>
         </Button>
-        <Button fx:id="buttonGetLoan" layoutX="464.0" layoutY="366.0" mnemonicParsing="false"
-                onAction="#showGetLoanForm" prefHeight="30.0" prefWidth="133.0" text="Ссуда">
+        <Button fx:id="buttonGetLoan" layoutX="464.0" layoutY="366.0" mnemonicParsing="false" onAction="#showGetLoanForm" prefHeight="30.0" prefWidth="133.0" text="Ссуда">
             <font>
-                <Font size="14.0"/>
+                <Font size="14.0" />
             </font>
         </Button>
         <Text layoutX="274.0" layoutY="134.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Журнал игры:">
             <font>
-                <Font size="14.0"/>
+                <Font size="14.0" />
             </font>
         </Text>
-        <Button layoutX="730.0" layoutY="117.0" mnemonicParsing="false" onAction="#showHelpForm" text="i"/>
-        <Button layoutX="717.0" layoutY="261.0" mnemonicParsing="false" onAction="#interruptGameForMe" text="⟾"/>
+        <Button layoutX="730.0" layoutY="117.0" mnemonicParsing="false" onAction="#showHelpForm" text="i" />
+        <Button layoutX="717.0" layoutY="261.0" mnemonicParsing="false" onAction="#interruptGameForMe" text="⟾" />
         <Text layoutX="15.0" layoutY="132.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Банк">
             <font>
-                <Font size="14.0"/>
+                <Font size="14.0" />
             </font>
         </Text>
-        <Text layoutX="17.0" layoutY="153.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Продажа банком ЕСМ:"/>
-        <Text layoutX="21.0" layoutY="167.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Минимальная цена:"/>
-        <Text layoutX="21.0" layoutY="178.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Количество:"/>
-        <Text fx:id="labelBankResourcesMinPrice" layoutX="152.0" layoutY="168.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0"/>
-        <Text fx:id="labelBankResourcesCount" layoutX="152.0" layoutY="179.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0"/>
-        <Text fx:id="labelBankProductsCount" layoutX="152.0" layoutY="228.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0"/>
-        <Text fx:id="labelBankProductsMaxPrice" layoutX="152.0" layoutY="217.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0"/>
-        <Text layoutX="21.0" layoutY="227.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Количество:"/>
-        <Text layoutX="21.0" layoutY="216.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Минимальная цена:"/>
-        <Text layoutX="17.0" layoutY="202.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Покупка банком ЕГП:"/>
-        <ImageView fx:id="image_view_player_profile_senior_1" fitHeight="25.0" fitWidth="22.0" layoutX="64.0"
-                   layoutY="13.0" pickOnBounds="true" preserveRatio="true" visible="false">
+        <Text layoutX="17.0" layoutY="153.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Продажа банком ЕСМ:" />
+        <Text layoutX="21.0" layoutY="167.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Минимальная цена:" />
+        <Text layoutX="21.0" layoutY="178.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Количество:" />
+        <Text fx:id="labelBankResourcesMinPrice" layoutX="152.0" layoutY="168.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+        <Text fx:id="labelBankResourcesCount" layoutX="152.0" layoutY="179.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+        <Text fx:id="labelBankProductsCount" layoutX="152.0" layoutY="228.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+        <Text fx:id="labelBankProductsMaxPrice" layoutX="152.0" layoutY="217.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+        <Text layoutX="21.0" layoutY="227.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Количество:" />
+        <Text layoutX="21.0" layoutY="216.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Минимальная цена:" />
+        <Text layoutX="17.0" layoutY="202.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Покупка банком ЕГП:" />
+        <ImageView fx:id="image_view_player_profile_senior_1" fitHeight="25.0" fitWidth="22.0" layoutX="64.0" layoutY="13.0" pickOnBounds="true" preserveRatio="true" visible="false">
             <image>
-                <Image url="@../images/seniorPlayer.png"/>
+                <Image url="@../images/seniorPlayer.png" />
             </image>
         </ImageView>
-        <Text fx:id="text_products_in_progress_amount_2" layoutX="489.0" layoutY="68.0" strokeType="OUTSIDE"
-              strokeWidth="0.0" text="+0"/>
-        <Text fx:id="text_auto_factories_in_progress_amount_2" layoutX="489.0" layoutY="104.0" strokeType="OUTSIDE"
-              strokeWidth="0.0" text="+0"/>
-        <Text fx:id="text_factories_in_progress_amount_2" layoutX="489.0" layoutY="93.0" strokeType="OUTSIDE"
-              strokeWidth="0.0" text="+0"/>
-        <Text fx:id="text_auto_factories_amount_2" layoutX="483.0" layoutY="104.0" strokeType="OUTSIDE"
-              strokeWidth="0.0" text="0"/>
-        <Text fx:id="text_products_amount_2" layoutX="483.0" layoutY="68.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0"/>
-        <Text fx:id="text_factories_amount_2" layoutX="483.0" layoutY="93.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0"/>
-        <Text fx:id="text_resources_amount_2" layoutX="483.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0"/>
-        <Text fx:id="text_money_amount_2" layoutX="483.0" layoutY="44.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0"/>
-        <Text layoutX="353.0" layoutY="104.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- автоматизированные"/>
-        <Text layoutX="352.0" layoutY="93.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- обычные"/>
-        <Text layoutX="344.0" layoutY="81.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Фабрики:"/>
-        <Text layoutX="346.0" layoutY="67.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ЕГП:"/>
-        <Text layoutX="346.0" layoutY="56.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ЕСМ:"/>
-        <Text layoutX="346.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Деньги:"/>
-        <Text fx:id="text_player_profile_login_2" layoutX="347.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="Логин">
+        <Text fx:id="text_products_in_progress_amount_2" layoutX="489.0" layoutY="68.0" strokeType="OUTSIDE" strokeWidth="0.0" text="+0" />
+        <Text fx:id="text_auto_factories_in_progress_amount_2" layoutX="489.0" layoutY="104.0" strokeType="OUTSIDE" strokeWidth="0.0" text="+0" />
+        <Text fx:id="text_factories_in_progress_amount_2" layoutX="489.0" layoutY="93.0" strokeType="OUTSIDE" strokeWidth="0.0" text="+0" />
+        <Text fx:id="text_auto_factories_amount_2" layoutX="483.0" layoutY="104.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+        <Text fx:id="text_products_amount_2" layoutX="483.0" layoutY="68.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+        <Text fx:id="text_factories_amount_2" layoutX="483.0" layoutY="93.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+        <Text fx:id="text_resources_amount_2" layoutX="483.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+        <Text fx:id="text_money_amount_2" layoutX="483.0" layoutY="44.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+        <Text layoutX="353.0" layoutY="104.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- автоматизированные" />
+        <Text layoutX="352.0" layoutY="93.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- обычные" />
+        <Text layoutX="344.0" layoutY="81.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Фабрики:" />
+        <Text layoutX="346.0" layoutY="67.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ЕГП:" />
+        <Text layoutX="346.0" layoutY="56.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ЕСМ:" />
+        <Text layoutX="346.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Деньги:" />
+        <Text fx:id="text_player_profile_login_2" layoutX="347.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Логин">
             <font>
-                <Font size="14.0"/>
+                <Font size="14.0" />
             </font>
         </Text>
-        <ImageView fx:id="image_view_player_profile_avatar_2" fitHeight="85.0" fitWidth="73.0" layoutX="271.0"
-                   layoutY="16.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="image_view_player_profile_avatar_2" fitHeight="85.0" fitWidth="73.0" layoutX="271.0" layoutY="16.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../avatars/11.jpg"/>
+                <Image url="@../avatars/11.jpg" />
             </image>
         </ImageView>
-        <Text fx:id="text_products_in_progress_amount_3" layoutX="733.0" layoutY="71.0" strokeType="OUTSIDE"
-              strokeWidth="0.0" text="+0"/>
-        <Text fx:id="text_auto_factories_in_progress_amount_3" layoutX="733.0" layoutY="107.0" strokeType="OUTSIDE"
-              strokeWidth="0.0" text="+0"/>
-        <Text fx:id="text_factories_in_progress_amount_3" layoutX="733.0" layoutY="96.0" strokeType="OUTSIDE"
-              strokeWidth="0.0" text="+0"/>
-        <Text fx:id="text_auto_factories_amount_3" layoutX="727.0" layoutY="107.0" strokeType="OUTSIDE"
-              strokeWidth="0.0" text="0"/>
-        <Text fx:id="text_products_amount_3" layoutX="727.0" layoutY="71.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0"/>
-        <Text fx:id="text_factories_amount_3" layoutX="727.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0"/>
-        <Text fx:id="text_resources_amount_3" layoutX="727.0" layoutY="60.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0"/>
-        <Text fx:id="text_money_amount_3" layoutX="727.0" layoutY="47.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0"/>
-        <Text layoutX="597.0" layoutY="107.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- автоматизированные"/>
-        <Text layoutX="596.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- обычные"/>
-        <Text layoutX="588.0" layoutY="84.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Фабрики:"/>
-        <Text layoutX="590.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ЕГП:"/>
-        <Text layoutX="590.0" layoutY="59.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ЕСМ:"/>
-        <Text layoutX="590.0" layoutY="46.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Деньги:"/>
-        <Text fx:id="text_player_profile_login_3" layoutX="591.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="Логин">
+        <Text fx:id="text_products_in_progress_amount_3" layoutX="733.0" layoutY="71.0" strokeType="OUTSIDE" strokeWidth="0.0" text="+0" />
+        <Text fx:id="text_auto_factories_in_progress_amount_3" layoutX="733.0" layoutY="107.0" strokeType="OUTSIDE" strokeWidth="0.0" text="+0" />
+        <Text fx:id="text_factories_in_progress_amount_3" layoutX="733.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0" text="+0" />
+        <Text fx:id="text_auto_factories_amount_3" layoutX="727.0" layoutY="107.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+        <Text fx:id="text_products_amount_3" layoutX="727.0" layoutY="71.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+        <Text fx:id="text_factories_amount_3" layoutX="727.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+        <Text fx:id="text_resources_amount_3" layoutX="727.0" layoutY="60.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+        <Text fx:id="text_money_amount_3" layoutX="727.0" layoutY="47.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+        <Text layoutX="597.0" layoutY="107.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- автоматизированные" />
+        <Text layoutX="596.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- обычные" />
+        <Text layoutX="588.0" layoutY="84.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Фабрики:" />
+        <Text layoutX="590.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ЕГП:" />
+        <Text layoutX="590.0" layoutY="59.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ЕСМ:" />
+        <Text layoutX="590.0" layoutY="46.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Деньги:" />
+        <Text fx:id="text_player_profile_login_3" layoutX="591.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Логин">
             <font>
-                <Font size="14.0"/>
+                <Font size="14.0" />
             </font>
         </Text>
-        <ImageView fx:id="image_view_player_profile_avatar_3" fitHeight="85.0" fitWidth="73.0" layoutX="515.0"
-                   layoutY="19.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="image_view_player_profile_avatar_3" fitHeight="85.0" fitWidth="73.0" layoutX="515.0" layoutY="19.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../avatars/11.jpg"/>
+                <Image url="@../avatars/11.jpg" />
             </image>
         </ImageView>
-        <ImageView fx:id="image_view_player_profile_senior_2" fitHeight="25.0" fitWidth="22.0" layoutX="321.0"
-                   layoutY="15.0" pickOnBounds="true" preserveRatio="true" visible="false">
+        <ImageView fx:id="image_view_player_profile_senior_2" fitHeight="25.0" fitWidth="22.0" layoutX="321.0" layoutY="15.0" pickOnBounds="true" preserveRatio="true" visible="false">
             <image>
-                <Image url="@../images/seniorPlayer.png"/>
+                <Image url="@../images/seniorPlayer.png" />
             </image>
         </ImageView>
-        <ImageView fx:id="image_view_player_profile_senior_3" fitHeight="25.0" fitWidth="22.0" layoutX="565.0"
-                   layoutY="18.0" pickOnBounds="true" preserveRatio="true" visible="false">
+        <ImageView fx:id="image_view_player_profile_senior_3" fitHeight="25.0" fitWidth="22.0" layoutX="565.0" layoutY="18.0" pickOnBounds="true" preserveRatio="true" visible="false">
             <image>
-                <Image url="@../images/seniorPlayer.png"/>
+                <Image url="@../images/seniorPlayer.png" />
             </image>
         </ImageView>
-        <Text fx:id="text_products_in_progress_amount_0" layoutX="230.0" layoutY="317.0" strokeType="OUTSIDE"
-              strokeWidth="0.0" text="+0"/>
-        <Text fx:id="text_auto_factories_in_progress_amount_0" layoutX="413.0" layoutY="317.0" strokeType="OUTSIDE"
-              strokeWidth="0.0" text="+0"/>
-        <Text fx:id="text_factories_in_progress_amount_0" layoutX="413.0" layoutY="306.0" strokeType="OUTSIDE"
-              strokeWidth="0.0" text="+0"/>
-        <Text fx:id="text_auto_factories_amount_0" layoutX="407.0" layoutY="317.0" strokeType="OUTSIDE"
-              strokeWidth="0.0" text="0"/>
-        <Text fx:id="text_products_amount_0" layoutX="224.0" layoutY="317.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0"/>
-        <Text fx:id="text_factories_amount_0" layoutX="407.0" layoutY="306.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0"/>
-        <Text fx:id="text_resources_amount_0" layoutX="224.0" layoutY="306.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0"/>
-        <Text fx:id="text_money_amount_0" layoutX="224.0" layoutY="293.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="0"/>
-        <Text layoutX="277.0" layoutY="317.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- автоматизированные"/>
-        <Text layoutX="276.0" layoutY="306.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- обычные"/>
-        <Text layoutX="268.0" layoutY="294.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Фабрики:"/>
-        <Text layoutX="87.0" layoutY="316.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ЕГП:"/>
-        <Text layoutX="87.0" layoutY="305.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ЕСМ:"/>
-        <Text layoutX="87.0" layoutY="292.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Деньги:"/>
-        <Text fx:id="text_player_profile_login_0" layoutX="88.0" layoutY="278.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="Логин">
+        <Text fx:id="text_products_in_progress_amount_0" layoutX="230.0" layoutY="317.0" strokeType="OUTSIDE" strokeWidth="0.0" text="+0" />
+        <Text fx:id="text_auto_factories_in_progress_amount_0" layoutX="413.0" layoutY="317.0" strokeType="OUTSIDE" strokeWidth="0.0" text="+0" />
+        <Text fx:id="text_factories_in_progress_amount_0" layoutX="413.0" layoutY="306.0" strokeType="OUTSIDE" strokeWidth="0.0" text="+0" />
+        <Text fx:id="text_auto_factories_amount_0" layoutX="407.0" layoutY="317.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+        <Text fx:id="text_products_amount_0" layoutX="224.0" layoutY="317.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+        <Text fx:id="text_factories_amount_0" layoutX="407.0" layoutY="306.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+        <Text fx:id="text_resources_amount_0" layoutX="224.0" layoutY="306.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+        <Text fx:id="text_money_amount_0" layoutX="224.0" layoutY="293.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" />
+        <Text layoutX="277.0" layoutY="317.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- автоматизированные" />
+        <Text layoutX="276.0" layoutY="306.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- обычные" />
+        <Text layoutX="268.0" layoutY="294.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Фабрики:" />
+        <Text layoutX="87.0" layoutY="316.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ЕГП:" />
+        <Text layoutX="87.0" layoutY="305.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ЕСМ:" />
+        <Text layoutX="87.0" layoutY="292.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Деньги:" />
+        <Text fx:id="text_player_profile_login_0" layoutX="88.0" layoutY="278.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Логин">
             <font>
-                <Font size="14.0"/>
+                <Font size="14.0" />
             </font>
         </Text>
-        <ImageView fx:id="image_view_player_profile_avatar_0" fitHeight="85.0" fitWidth="73.0" layoutX="12.0"
-                   layoutY="265.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="image_view_player_profile_avatar_0" fitHeight="85.0" fitWidth="73.0" layoutX="12.0" layoutY="265.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../avatars/11.jpg"/>
+                <Image url="@../avatars/11.jpg" />
             </image>
         </ImageView>
-        <ImageView fx:id="image_view_player_profile_senior_0" fitHeight="25.0" fitWidth="22.0" layoutX="62.0"
-                   layoutY="264.0" pickOnBounds="true" preserveRatio="true" visible="false">
+        <ImageView fx:id="image_view_player_profile_senior_0" fitHeight="25.0" fitWidth="22.0" layoutX="62.0" layoutY="264.0" pickOnBounds="true" preserveRatio="true" visible="false">
             <image>
-                <Image url="@../images/seniorPlayer.png"/>
+                <Image url="@../images/seniorPlayer.png" />
             </image>
         </ImageView>
         <Text fx:id="labelSecondsLeft" layoutX="349.0" layoutY="386.0" strokeType="OUTSIDE" strokeWidth="0.0" text="00">
             <font>
-                <Font size="14.0"/>
+                <Font size="14.0" />
             </font>
         </Text>
-        <Text layoutX="341.0" layoutY="386.0" strokeType="OUTSIDE" strokeWidth="0.0" text=":"
-              wrappingWidth="11.267575979232788">
+        <Text layoutX="341.0" layoutY="386.0" strokeType="OUTSIDE" strokeWidth="0.0" text=":" wrappingWidth="11.267575979232788">
             <font>
-                <Font size="14.0"/>
+                <Font size="14.0" />
             </font>
         </Text>
         <TextArea fx:id="gamelogArea" layoutX="278.0" layoutY="147.0" prefHeight="112.0" prefWidth="459.0">
             <font>
-                <Font size="14.0"/>
+                <Font size="14.0" />
             </font>
         </TextArea>
     </children>

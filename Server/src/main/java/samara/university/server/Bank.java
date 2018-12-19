@@ -166,13 +166,18 @@ public class Bank {
      */
     public boolean tryDeclareBankrupt(Player player) {
         if (player.getMoney() <= 0) {
-            player.setBankrupt(true);
-            plannedActions.removeIf(action -> action.getPlayer().getId() == player.getId());
-            bids.removeIf(bid -> bid.getPlayer().getId() == player.getId());
-            Session.getSession().unregister(player);
-            return true;
+            return declareBankrupt(player);
         }
         return false;
+    }
+
+    public boolean declareBankrupt(Player player) {
+        boolean result = true;
+        player.setBankrupt(true);
+        result &= plannedActions.removeIf(action -> action.getPlayer().getId() == player.getId());
+        result &= bids.removeIf(bid -> bid.getPlayer().getId() == player.getId());
+        result &= Session.getSession().unregister(player);
+        return result;
     }
 
     public boolean tryDeclareWinner() {

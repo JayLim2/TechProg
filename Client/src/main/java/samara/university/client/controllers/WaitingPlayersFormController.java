@@ -15,7 +15,6 @@ import javafx.scene.text.Text;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import samara.university.client.utils.Forms;
-import samara.university.client.utils.PredefinedAlerts;
 import samara.university.client.utils.RequestSender;
 import samara.university.common.constants.Restrictions;
 import samara.university.common.entities.Avatar;
@@ -78,103 +77,83 @@ public class WaitingPlayersFormController implements DisplayingFormController {
     private static final Duration UPDATE_INFO_INTERVAL = Duration.seconds(5);
     private Integer totalSeconds = Restrictions.WAIT_TIME_LIMIT_SECONDS;
 
+    private boolean countdownStopped = false;
+    private boolean updaterStopped = false;
+
+    public void stopCountdown() {
+        countdownStopped = true;
+    }
+
+    public void stopUpdater() {
+        updaterStopped = true;
+    }
+
     private void playCountdown() {
-        //Timeline timeline = new Timeline();
+        Timeline timeline = new Timeline();
 
         KeyFrame frame = new KeyFrame(ONE_SECOND_DURATION, new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                totalSeconds--;
-                updateTimeFields();
+                if(countdownStopped) {
+                    timelineStop();
+                } else {
+                    totalSeconds--;
+                    updateTimeFields();
 
-                if (totalSeconds <= 0) {
-                    countdown.stop();
-                    countdown.getKeyFrames().clear();
-                    playGame();
+                    if (totalSeconds <= 0) {
+                        timelineStop();
+                        playGame();
+                    }
                 }
+            }
+
+            private void timelineStop() {
+                timeline.stop();
+                timeline.getKeyFrames().clear();
             }
         });
 
-        countdown.getKeyFrames().add(frame);
-        countdown.setCycleCount(Timeline.INDEFINITE);
-        countdown.play();
+        timeline.getKeyFrames().add(frame);
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
     }
-
-    Timeline countdown = new Timeline();
-    Timeline waiter = new Timeline();
 
     // FIXME: 02.12.2018 баг с отрисовкой времени на форме
-
-    private Thread waiterThread = null;
-
-    private class WaitPlayersTask implements Runnable {
-
-        @Override
-        public void run() {
-            try {
-                while (true) {
-                    SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
-                    long seconds = java.time.Duration.between(
-                            sessionPackage.getSessionStartTime(),
-                            LocalDateTime.now()
-                    ).getSeconds();
-                    List<Player> players = sessionPackage.getPlayers();
-
-                    if (players.size() == Restrictions.MAX_PLAYERS_COUNT) {
-                        totalSeconds = 0;
-                    } else {
-                        totalSeconds = Restrictions.WAIT_TIME_LIMIT_SECONDS - (int) seconds;
-                        for (int i = 0; i < avatarBlocks.length; i++) {
-                            if (i < players.size()) {
-                                Player player = players.get(i);
-                                avatarBlocks[i].setImage(new Image(player.getAvatar().getPath()));
-                                labelBlocks[i].setText(player.getName());
-                            } else {
-                                avatarBlocks[i].setImage(new Image(Avatar.getEmptyAvatar().getPath()));
-                                labelBlocks[i].setText("Логин");
-                            }
-                        }
-                    }
-
-                    Thread.sleep(5000);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     /**
      * Ожидание игроков
      */
     private void waitPlayers() {
-        if (waiterThread == null) {
-            waiterThread = new Thread(new WaitPlayersTask());
-            waiterThread.start();
-        }
-
         // TODO: 24.11.2018
         /*
         Регулярно (например, раз в 5 сек)
         проверять состояние сессии на сервере и в случае изменения
         обновлять интерфейс актуальными данными
          */
-        //Timeline timeline = new Timeline();
+        Timeline timeline = new Timeline();
 
         KeyFrame frame = new KeyFrame(UPDATE_INFO_INTERVAL, new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if (totalSeconds <= 0) {
-                    waiterThread.interrupt();
-                    waiter.stop();
-                    waiter.getKeyFrames().clear();
+                if(updaterStopped) {
+                    timelineStop();
+                } else {
+                    updateInfo();
+
+                    if (totalSeconds <= 0) {
+                        timelineStop();
+                    }
                 }
+            }
+
+            private void timelineStop() {
+                timeline.stop();
+                timeline.getKeyFrames().clear();
             }
         });
 
-        waiter.getKeyFrames().add(frame);
-        waiter.setCycleCount(Timeline.INDEFINITE);
-        waiter.play();
+        timeline.getKeyFrames().add(frame);
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
     }
 
     private void resetTime() {
@@ -192,24 +171,38 @@ public class WaitingPlayersFormController implements DisplayingFormController {
     }
 
     private void updateInfo() {
-
-    }
-
-    private void playGame() {
         try {
-            if (RequestSender.getRequestSender().sessionInfo().getPlayers().size() > 1) {
-                Forms.openForm("GameField");
+            SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
+            long seconds = java.time.Duration.between(
+                    sessionPackage.getSessionStartTime(),
+                    LocalDateTime.now()
+            ).getSeconds();
+            List<Player> players = sessionPackage.getPlayers();
+
+            if (players.size() == Restrictions.MAX_PLAYERS_COUNT) {
+                totalSeconds = 0;
             } else {
-                Forms.openForm("Main");
-                PredefinedAlerts.errorAlert("Вы единственный игрок в сессии.");
+                totalSeconds = Restrictions.WAIT_TIME_LIMIT_SECONDS - (int) seconds;
+                for (int i = 0; i < avatarBlocks.length; i++) {
+                    if (i < players.size()) {
+                        Player player = players.get(i);
+                        avatarBlocks[i].setImage(new Image(player.getAvatar().getPath()));
+                        labelBlocks[i].setText(player.getName());
+                    } else {
+                        avatarBlocks[i].setImage(new Image(Avatar.getEmptyAvatar().getPath()));
+                        labelBlocks[i].setText("Логин");
+                    }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Forms.closeForm("WaitingPlayers");
+    }
 
-        waiterThread.interrupt();
-        countdown.stop();
-        waiter.stop();
+    private void playGame() {
+        stopCountdown();
+        stopUpdater();
+        Forms.openForm("GameField");
+        Forms.closeForm("WaitingPlayers");
     }
 }

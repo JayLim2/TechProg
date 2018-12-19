@@ -119,7 +119,7 @@ public class Forms {
 
     public static void closeForm(String formName) {
         Stage stage = formStages.get(formName);
-        if (stage != null) {
+        if (stage != null && stage.isShowing()) {
             System.out.println("CLOSING " + formName + " ...");
             stage.close();
         }

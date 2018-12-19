@@ -37,7 +37,7 @@ public class BuildFormController {
 
     public void ok(ActionEvent event) {
         try {
-            if (RequestSender.getRequestSender().sessionInfo().getCurrentPhase() != Restrictions.SEND_BID_RESOURCES_PHASE) {
+            if (RequestSender.getRequestSender().sessionInfo().getCurrentPhase() != Restrictions.BUILDING_AND_AUTOMATION_PHASE) {
                 PredefinedAlerts.illegalPhaseAlert();
                 close();
                 return;
