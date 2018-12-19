@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import samara.university.client.utils.PredefinedAlerts;
 import samara.university.client.utils.RequestSender;
 import samara.university.common.entities.Player;
 
@@ -32,11 +33,15 @@ public class TradeFormController {
     //---------------- Вспомогательные методы -----------------------
 
     protected void sendBid(Player player, boolean bidType) throws IOException {
-        RequestSender.getRequestSender().sendBid(
-                player,
-                bidType,
-                spinnerCount.getValue(),
-                spinnerPrice.getValue()
-        );
+        if (bidType && player.getUnitsOfProducts() < spinnerCount.getValue()) {
+            PredefinedAlerts.errorAlert("Недостаточно ЕГП для продажи.");
+        } else {
+            RequestSender.getRequestSender().sendBid(
+                    player,
+                    bidType,
+                    spinnerCount.getValue(),
+                    spinnerPrice.getValue()
+            );
+        }
     }
 }

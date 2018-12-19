@@ -9,6 +9,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import samara.university.client.utils.Forms;
+import samara.university.client.utils.PredefinedAlerts;
 import samara.university.client.utils.RequestSender;
 
 import java.io.IOException;
@@ -50,13 +51,23 @@ public class LoginFormController {
         String login = loginInput.getText();
         if (login.length() >= MIN_NAME_LENGTH && login.length() <= MAX_NAME_LENGTH) {
             try {
-                RequestSender.getRequestSender().authPlayer(login, avatarId);
+                boolean isUniqueLogin = RequestSender.getRequestSender().checkLoginUniqueness(login);
+                if (isUniqueLogin) {
+                    boolean authorized = RequestSender.getRequestSender().authPlayer(login, avatarId);
+                    if (!authorized) {
+                        PredefinedAlerts.errorAlert("Игра уже идет, либо найдены все 4 игрока.");
+                        goBackAction();
+                    } else {
+                        Forms.openForm("WaitingPlayers");
+                        Forms.closeForm("Login");
+                    }
+                } else {
+                    errorMsgLabel.setText("Такое имя уже занято.");
+                    errorMsgLabel.setVisible(true);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            Forms.openForm("WaitingPlayers");
-            Forms.closeForm("Login");
         } else {
             errorMsgLabel.setText("Длина логина должна быть\nот " + MIN_NAME_LENGTH + " до " + MAX_NAME_LENGTH + " символов.");
             errorMsgLabel.setVisible(true);

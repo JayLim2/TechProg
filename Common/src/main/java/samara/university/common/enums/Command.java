@@ -6,6 +6,10 @@ import java.io.Serializable;
  * Спецификация команд сервера
  */
 public enum Command implements Serializable {
+    START_GAME,
+
+    CHECK_LOGIN_UNIQUENESS,
+
     /**
      * AUTH
      * <p>

@@ -26,6 +26,8 @@ public class Session {
 
     private int countPlayersReadyForNextPhase;
 
+    private boolean gameStarted;
+
     private Session() {
         players = new ArrayList<>();
         gameLog = new GameLog();
@@ -58,7 +60,7 @@ public class Session {
     }
 
     public boolean isAvailable() {
-        return playersCount() <= Restrictions.MAX_PLAYERS_COUNT;
+        return !gameStarted && playersCount() <= Restrictions.MAX_PLAYERS_COUNT;
     }
 
     //----------------------- Ready to next phase --------------------------
@@ -75,14 +77,26 @@ public class Session {
     }
     //---------------------------------------------------------------------
 
-    public void register(Player player) {
+    //Уникальный логин в рамках сессии
+    public boolean isUniqueLogin(String login) {
+        for (Player player : players) {
+            if (player.getName().equalsIgnoreCase(login)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean register(Player player) {
         if (player != null && isAvailable()) {
             player.setId(++lastId);
             players.add(player);
             if (seniorPlayer == null) {
                 seniorPlayer = player;
             }
+            return true;
         }
+        return false;
     }
 
     /**
@@ -131,6 +145,16 @@ public class Session {
         }
         return null;
     }
+
+    //-------------- стартовала ли игра
+    public boolean isGameStarted() {
+        return gameStarted;
+    }
+
+    public void setGameStarted(boolean gameStarted) {
+        this.gameStarted = gameStarted;
+    }
+    //---------------------------------
 
     public GameLog getGameLog() {
         return gameLog;

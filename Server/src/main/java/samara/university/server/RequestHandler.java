@@ -52,9 +52,9 @@ public class RequestHandler {
 
             //Запрашиваем сессию
             session = Session.getSession();
-            if (!session.isAvailable()) {
+            /*if (!session.isAvailable()) {
                 return;
-            }
+            }*/
 
             //Если сессия доступна - продолжаем
             while (true) {
@@ -64,6 +64,12 @@ public class RequestHandler {
                     int cmdCode = objectInputStream.readInt();
                     Command command = Command.values()[cmdCode];
                     switch (command) {
+                        case START_GAME:
+                            session.setGameStarted(true);
+                            break;
+                        case CHECK_LOGIN_UNIQUENESS:
+                            checkLoginUniqueness();
+                            break;
                         case AUTH:
                             authPlayer();
                             break;
@@ -101,13 +107,35 @@ public class RequestHandler {
             }
         }
 
+        public void checkLoginUniqueness() throws IOException {
+            String name = objectInputStream.readUTF();
+            System.out.println("\n\n========= ЛОГИН =============");
+            System.out.println(name);
+            objectOutputStream.reset();
+            System.out.println("Reset");
+            boolean is = session.isUniqueLogin(name);
+            System.out.println(is);
+            objectOutputStream.writeBoolean(is);
+            objectOutputStream.flush();
+
+            System.out.println("\n\n========= / ЛОГИН =============");
+        }
+
         public void authPlayer() throws IOException {
-            if (session == null || !session.isAvailable()) return;
+            //if (session == null || !session.isAvailable()) return;
 
             String name = objectInputStream.readUTF();
+            System.out.println("\n\n======================");
+            System.out.println(name);
             int defaultAvatarId = objectInputStream.readInt();
+            System.out.println(defaultAvatarId);
             this.me = new Player(name, Avatar.getDefaultAvatar(defaultAvatarId));
-            session.register(this.me);
+            objectOutputStream.reset();
+            boolean registered = session.register(this.me);
+            System.out.println("registered: " + registered);
+            System.out.println("========================\n\n");
+            objectOutputStream.writeBoolean(registered);
+            objectOutputStream.flush();
         }
 
         public void me() throws IOException {

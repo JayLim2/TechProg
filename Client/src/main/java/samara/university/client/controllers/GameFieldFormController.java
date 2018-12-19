@@ -106,6 +106,7 @@ public class GameFieldFormController implements DisplayingFormController {
         try {
             //gamelogArea.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
             //gamelogArea.setDisable(true);
+            RequestSender.getRequestSender().startGame();
 
             SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
             me = RequestSender.getRequestSender().me();

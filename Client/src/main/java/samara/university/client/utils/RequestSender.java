@@ -52,6 +52,24 @@ public class RequestSender {
         }
     }
 
+    public void startGame() throws IOException {
+        connect();
+        sendCommand(Command.START_GAME);
+    }
+
+    public boolean checkLoginUniqueness(String name) throws IOException {
+        connect();
+        System.out.println("PREPARE TO SEND");
+        sendCommand(Command.CHECK_LOGIN_UNIQUENESS);
+        System.out.println("SENT!");
+        objectOutputStream.reset();
+        System.out.println("RESET!");
+        objectOutputStream.writeUTF(name);
+        System.out.println("NAME!");
+        objectOutputStream.flush();
+        return objectInputStream.readBoolean();
+    }
+
     /**
      * Отправка команды авторизации
      *
@@ -59,13 +77,19 @@ public class RequestSender {
      * @param avatarId id выбранного аватара
      * @throws IOException исключение ввода-вывода
      */
-    public void authPlayer(String name, int avatarId) throws IOException {
+    public boolean authPlayer(String name, int avatarId) throws IOException {
         connect();
+        System.out.println("PREPARE TO SEND");
         sendCommand(Command.AUTH);
+        System.out.println("SENT!");
         objectOutputStream.reset();
+        System.out.println("RESET!");
         objectOutputStream.writeUTF(name);
+        System.out.println("NAME");
         objectOutputStream.writeInt(avatarId);
+        System.out.println("AVATAR ID");
         objectOutputStream.flush();
+        return objectInputStream.readBoolean();
     }
 
     /**

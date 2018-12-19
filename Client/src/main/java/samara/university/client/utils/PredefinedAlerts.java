@@ -17,6 +17,6 @@ public class PredefinedAlerts {
                 Alert.AlertType.ERROR,
                 message,
                 ButtonType.OK
-        ).show();
+        ).showAndWait();
     }
 }

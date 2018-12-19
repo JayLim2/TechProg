@@ -16,9 +16,16 @@ public class SellFormController extends TradeFormController {
     @FXML
     private Spinner<Integer> spinnerPrice;
 
+    private Player me;
+
     public void initialize() {
-        super.initialize();
+        //super.initialize();
         try {
+            me = RequestSender.getRequestSender().me();
+
+            countFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(
+                    0, me.getUnitsOfProducts(), 0, 1);
+
             int maxProductPrice = RequestSender.getRequestSender().bankInfo().getMaxProductPrice();
             priceFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(
                     50, maxProductPrice, maxProductPrice, 50);
@@ -39,7 +46,6 @@ public class SellFormController extends TradeFormController {
                 return;
             }
 
-            Player me = RequestSender.getRequestSender().me();
             super.sendBid(me, true);
             close();
         } catch (Exception e) {
