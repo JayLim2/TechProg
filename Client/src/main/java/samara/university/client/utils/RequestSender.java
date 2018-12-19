@@ -193,13 +193,16 @@ public class RequestSender {
         objectOutputStream.flush();
     }
 
-    public void newLoan(Player player, int amount) throws IOException {
+    public void newLoan(Player player, int amount, int amountAuto, int count, int countAuto) throws IOException {
         connect();
         sendCommand(Command.BANK_ACTION);
         sendBankAction(BankAction.NEW_LOAN);
         objectOutputStream.reset();
         objectOutputStream.writeObject(player);
         objectOutputStream.writeInt(amount);
+        objectOutputStream.writeInt(amountAuto);
+        objectOutputStream.writeInt(count);
+        objectOutputStream.writeInt(countAuto);
         objectOutputStream.flush();
     }
 

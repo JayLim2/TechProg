@@ -24,7 +24,10 @@ public class Player implements Serializable {
     private int underConstructionFactories;             //строящиеся обычные фабрики
     private int underConstructionAutomatedFactories;    //строящиеся авто-фабрики
     private int inProduction;   //ЕГП в производстве
+
     private int totalLoans;     //непогашенные ссуды
+    private int bailedFactories; //заложенные фабрики
+    private int bailedAutoFactories; //заложенные автофабрики
 
     private boolean isBankrupt; //признак банкротства
 
@@ -143,6 +146,22 @@ public class Player implements Serializable {
 
     public void setInProduction(int inProduction) {
         this.inProduction = inProduction;
+    }
+
+    public int getBailedFactories() {
+        return bailedFactories;
+    }
+
+    public void setBailedFactories(int bailedFactories) {
+        this.bailedFactories = bailedFactories;
+    }
+
+    public int getBailedAutoFactories() {
+        return bailedAutoFactories;
+    }
+
+    public void setBailedAutoFactories(int bailedAutoFactories) {
+        this.bailedAutoFactories = bailedAutoFactories;
     }
 
     public boolean isBankrupt() {

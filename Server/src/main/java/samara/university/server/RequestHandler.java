@@ -218,7 +218,10 @@ public class RequestHandler {
         public void newLoan() throws IOException, ClassNotFoundException {
             Player player = (Player) objectInputStream.readObject();
             int amount = objectInputStream.readInt();
-            session.getBank().newLoan(getEqualsPlayerInSession(player), amount);
+            int amountAuto = objectInputStream.readInt();
+            int count = objectInputStream.readInt();
+            int countAuto = objectInputStream.readInt();
+            session.getBank().newLoan(getEqualsPlayerInSession(player), amount, amountAuto, count, countAuto);
         }
 
         /**

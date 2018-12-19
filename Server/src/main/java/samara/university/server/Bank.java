@@ -127,6 +127,17 @@ public class Bank {
                             player.setTotalLoans(
                                     player.getTotalLoans() - amount
                             );
+
+                            if (!action.isSign()) {
+                                player.setBailedFactories(
+                                        player.getBailedFactories() - action.getCount()
+                                );
+                            } else {
+                                player.setBailedAutoFactories(
+                                        player.getBailedAutoFactories() - action.getCount()
+                                );
+                            }
+
                             //Запись в лог
                             String log = GameLog.Actions.logPayLoan(amount);
                             gameLog.log(
@@ -429,7 +440,7 @@ public class Bank {
      * @param player игрок
      * @param amount желаемый размер ссуды
      */
-    public void newLoan(Player player, int amount) {
+    public void newLoan(Player player, int amount, int amountAuto, int count, int countAuto) {
         int halfCapital = player.getCapital(minResourcePrice, maxProductPrice) / 2;
         if (amount <= halfCapital) {
             int currentMonth = Session.getSession().getTurn().getCurrentMonth();
@@ -447,6 +458,15 @@ public class Bank {
                     player.getMoney() + amount
             );
 
+            player.setBailedFactories(
+                    player.getBailedFactories() + count
+            );
+
+            player.setBailedAutoFactories(
+                    player.getBailedAutoFactories() + countAuto
+            );
+
+            //Ссудные проценты
             PlannedAction plannedAction;
             for (int i = 1; i <= Restrictions.LOAN_MONTHS; i++) {
                 plannedAction = new PlannedAction(
@@ -458,12 +478,28 @@ public class Bank {
                 plannedActions.add(plannedAction);
             }
 
+            //Планируем ссуды по обычным фабрикам
             plannedAction = new PlannedAction(
                     PlannedAction.PlannedActionType.PAY_LOAN,
                     player,
                     currentMonth + Restrictions.LOAN_MONTHS,
                     Restrictions.PAY_LOAN_PHASE
             );
+            plannedAction.setMoney(amount);
+            plannedAction.setCount(count);
+            plannedAction.setSign(false);
+            plannedActions.add(plannedAction);
+
+            //Планируем ссуды по авто фабрикам
+            plannedAction = new PlannedAction(
+                    PlannedAction.PlannedActionType.PAY_LOAN,
+                    player,
+                    currentMonth + Restrictions.LOAN_MONTHS,
+                    Restrictions.PAY_LOAN_PHASE
+            );
+            plannedAction.setMoney(amountAuto);
+            plannedAction.setCount(countAuto);
+            plannedAction.setSign(true);
             plannedActions.add(plannedAction);
         }
     }

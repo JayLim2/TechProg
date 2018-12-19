@@ -23,15 +23,18 @@ public class LoanFormController {
 
     private Player me;
     private int amount;
+    private int amountAuto;
+    private int count;
+    private int countAuto;
 
     public void initialize() {
         try {
             me = RequestSender.getRequestSender().me();
 
             SpinnerValueFactory<Integer> countAutoFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(
-                    0, me.getWorkingAutomatedFactories(), 0, 1);
+                    0, me.getWorkingAutomatedFactories() - me.getBailedAutoFactories(), 0, 1);
             SpinnerValueFactory<Integer> countFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(
-                    0, me.getWorkingFactories(), 0, 1);
+                    0, me.getWorkingFactories() - me.getBailedFactories(), 0, 1);
             spinnerFactoriesCount.setValueFactory(countFactory);
             spinnerAutoFactoriesCount.setValueFactory(countAutoFactory);
 
@@ -44,7 +47,7 @@ public class LoanFormController {
     public void ok(ActionEvent event) {
         try {
             me = RequestSender.getRequestSender().me();
-            RequestSender.getRequestSender().newLoan(me, amount);
+            RequestSender.getRequestSender().newLoan(me, amount, amountAuto, count, countAuto);
             close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -56,9 +59,13 @@ public class LoanFormController {
     }
 
     public void spin(MouseEvent event) {
-        amount = spinnerAutoFactoriesCount.getValue() * Restrictions.LOAN_AMOUNT_BY_FACTORY
-                + spinnerFactoriesCount.getValue() * Restrictions.LOAN_AMOUNT_BY_AUTOMATED_FACTORY;
-        labelTotalLoan.setText(Integer.toString(amount));
+        count = spinnerFactoriesCount.getValue();
+        amount = count * Restrictions.LOAN_AMOUNT_BY_AUTOMATED_FACTORY;
+
+        countAuto = spinnerAutoFactoriesCount.getValue();
+        amountAuto = countAuto * Restrictions.LOAN_AMOUNT_BY_FACTORY;
+
+        labelTotalLoan.setText(Integer.toString(amount + amountAuto));
     }
 
     private void close() {

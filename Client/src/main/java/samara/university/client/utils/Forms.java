@@ -61,14 +61,15 @@ public class Forms {
     }
 
     public static void openFormAsModal(String formName) {
-        Stage stage = formStages.get(formName);
+        /*Stage stage = formStages.get(formName);
         if (stage != null) {
             stage.show();
             return;
-        }
+        }*/
 
         try {
             if (formName != null) {
+                Stage stage;
                 stage = getForm(formName);
                 stage.initModality(Modality.APPLICATION_MODAL);
                 stage.showAndWait();

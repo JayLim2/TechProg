@@ -182,8 +182,8 @@ public class GameFieldFormController implements DisplayingFormController {
         imageView.setImage(new Image(player.getAvatar().getPath()));
 
         imageView = (ImageView) getElementById("image_view", "player_profile", "senior", i);
-        System.out.println("player: " + player);
-        System.out.println("senior: " + senior);
+        //System.out.println("player: " + player);
+        //System.out.println("senior: " + senior);
         imageView.setVisible(senior != null && player != null && Objects.equals(player, senior));
 
         text = (Text) getElementById("text", "player_profile", "login", i);
@@ -365,6 +365,7 @@ public class GameFieldFormController implements DisplayingFormController {
                         nextPhase(null);
                     } else {
                         fillAllProfiles(sessionPackage);
+                        System.out.println("____ UPDATE ______");
                         labelMonth.setText(Integer.toString(sessionPackage.getCurrentMonth()));
                         labelPhase.setText(Integer.toString(sessionPackage.getCurrentPhase()));
                         updateMenuVisibility();
