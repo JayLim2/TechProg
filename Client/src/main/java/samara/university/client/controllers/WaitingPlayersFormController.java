@@ -15,6 +15,7 @@ import javafx.scene.text.Text;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import samara.university.client.utils.Forms;
+import samara.university.client.utils.PredefinedAlerts;
 import samara.university.client.utils.RequestSender;
 import samara.university.common.constants.Restrictions;
 import samara.university.common.entities.Avatar;
@@ -195,10 +196,20 @@ public class WaitingPlayersFormController implements DisplayingFormController {
     }
 
     private void playGame() {
+        try {
+            if (RequestSender.getRequestSender().sessionInfo().getPlayers().size() > 1) {
+                Forms.openForm("GameField");
+            } else {
+                Forms.openForm("Main");
+                PredefinedAlerts.errorAlert("Вы единственный игрок в сессии.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Forms.closeForm("WaitingPlayers");
+
         waiterThread.interrupt();
         countdown.stop();
         waiter.stop();
-        Forms.openForm("GameField");
-        Forms.closeForm("WaitingPlayers");
     }
 }

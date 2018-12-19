@@ -438,6 +438,10 @@ public class Bank {
                     log
             );
 
+            player.setMoney(
+                    player.getMoney() + amount
+            );
+
             PlannedAction plannedAction;
             for (int i = 1; i <= Restrictions.LOAN_MONTHS; i++) {
                 plannedAction = new PlannedAction(

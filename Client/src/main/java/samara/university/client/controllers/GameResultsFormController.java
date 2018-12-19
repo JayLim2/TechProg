@@ -2,6 +2,8 @@ package samara.university.client.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import javafx.stage.WindowEvent;
 import samara.university.client.utils.Forms;
@@ -18,12 +20,15 @@ import java.time.format.DateTimeFormatter;
 public class GameResultsFormController implements DisplayingFormController {
     @FXML
     private Text labelWinnerName;
+    @FXML
+    private ImageView winnerAvatar;
 
     @Override
     public void showAction(WindowEvent event) {
         try {
             Player player = RequestSender.getRequestSender().getWinner();
             if (player != null) {
+                winnerAvatar.setImage(new Image(player.getAvatar().getPath()));
                 labelWinnerName.setText(player.getName());
             }
         } catch (Exception e) {
