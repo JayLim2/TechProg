@@ -389,37 +389,22 @@ public class GameFieldFormController implements DisplayingFormController {
                 gamelogArea.setText(gamelog);
                 //------------------
 
-                System.out.println("\n\nBEFORE GET SESSION PACKAGE");
                 SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
-                System.out.println("AFTERRRR GET SESSION PACKAGE");
 
                 if (sessionPackage.getCurrentPhase() == Restrictions.REGULAR_COSTS_PHASE
                         || sessionPackage.getCurrentPhase() == Restrictions.CALCULATE_RESERVES_PHASE
                         || sessionPackage.getCurrentPhase() == Restrictions.PAY_LOAN_PERCENT_PHASE
                         || sessionPackage.getCurrentPhase() == Restrictions.PAY_LOAN_PHASE) {
-                    System.out.println("before ____ next phase");
                     nextPhase(null);
-                    System.out.println("after ___ next phase");
                 } else {
-                    System.out.println("before ___ filling all profiles");
                     fillAllProfiles(sessionPackage);
-                    System.out.println("____ UPDATE ______");
                     labelMonth.setText(Integer.toString(sessionPackage.getCurrentMonth()));
-                    System.out.println("after label MONTH");
                     labelPhase.setText(Integer.toString(sessionPackage.getCurrentPhase()));
-                    System.out.println("after label PHAAAAAAAAAAAASE");
                     updateMenuVisibility();
-                    System.out.println("AFTER MENU");
                 }
-                System.out.println("before update senior");
                 senior = sessionPackage.getCurrentSeniorPlayer();
-                System.out.println("after update senior");
                 fillBankReserves();
-                System.out.println("after bank reserves");
                 getTurnTime();
-                System.out.println("after GET TURN TIME");
-
-                System.out.println("\n\n");
 
                 //Thread.sleep(duration);
             } catch (Exception e) {
@@ -515,17 +500,11 @@ public class GameFieldFormController implements DisplayingFormController {
 
     public void nextPhase(ActionEvent event) {
         try {
-            System.out.println("\tbefore ___ IN next phase");
             SessionPackage sessionPackage = RequestSender.getRequestSender().nextPhase();
-            System.out.println("\tafter ___ IN next phase");
             labelMonth.setText(Integer.toString(sessionPackage.getCurrentMonth()));
-            System.out.println("\tafter MONTH");
             labelPhase.setText(Integer.toString(sessionPackage.getCurrentPhase()));
-            System.out.println("\tafter PHASE");
             updateMenuVisibility(sessionPackage.getCurrentPhase());
-            System.out.println("\tafter MENU VISIBILITY");
             fillAllProfiles(sessionPackage);
-            System.out.println("\tafter FILLING ALL PROFILESS YEEEEE");
         } catch (Exception e) {
             e.printStackTrace();
         }

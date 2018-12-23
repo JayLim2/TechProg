@@ -257,9 +257,8 @@ public class RequestHandler {
         public void exit() throws IOException {
             //objectOutputStream.reset();
             interrupted = true;
-            if (Session.getSession().getBank().declareBankrupt(me)) {
-                Session.getSession().unregister(me);
-            }
+            Session.getSession().getBank().declareBankrupt(me);
+            Session.getSession().unregister(me);
             /*objectOutputStream.writeBoolean(Session.getSession().getBank().declareBankrupt(me));
             objectOutputStream.flush();*/
         }
