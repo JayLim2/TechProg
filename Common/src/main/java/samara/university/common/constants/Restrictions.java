@@ -51,7 +51,7 @@ public class Restrictions {
 
     public static final int LOAN_MONTHS = 12;
 
-    public static final float LOAN_PERCENT = 0.99f;
+    public static final float LOAN_PERCENT = 0.01f;
 
     public static final int LOAN_AMOUNT_BY_FACTORY = 5000;
 

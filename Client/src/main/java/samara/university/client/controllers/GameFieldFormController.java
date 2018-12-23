@@ -150,6 +150,15 @@ public class GameFieldFormController implements DisplayingFormController {
     private void fillAllProfiles(SessionPackage sessionPackage) {
         try {
             List<Player> players = sessionPackage.getPlayers();
+            if (players.size() == 0) {
+                updaterThread.interrupt();
+                stopPhaseCountdown();
+                stopCyclicalUpdater();
+                Forms.closeForm("GameField");
+                Forms.openForm("GameOver");
+                return;
+            }
+
             me = RequestSender.getRequestSender().me();
 
             if (me.isBankrupt()) {
