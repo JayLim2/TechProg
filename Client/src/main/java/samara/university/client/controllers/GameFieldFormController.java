@@ -18,6 +18,7 @@ import javafx.util.Duration;
 import samara.university.client.utils.Forms;
 import samara.university.client.utils.RequestSender;
 import samara.university.common.constants.Restrictions;
+import samara.university.common.entities.Avatar;
 import samara.university.common.entities.Player;
 import samara.university.common.packages.BankPackage;
 import samara.university.common.packages.SessionPackage;
@@ -147,6 +148,44 @@ public class GameFieldFormController implements DisplayingFormController {
 
     }
 
+    private void clearProfile(int i) {
+        Text text;
+        ImageView imageView;
+
+        imageView = (ImageView) getElementById("image_view", "player_profile", "avatar", i);
+        imageView.setImage(new Image(Avatar.getEmptyAvatar().getPath()));
+
+        imageView = (ImageView) getElementById("image_view", "player_profile", "senior", i);
+        imageView.setVisible(false);
+
+        text = (Text) getElementById("text", "player_profile", "login", i);
+        text.setText("-");
+
+        text = (Text) getElementById("text", "money", "amount", i);
+        text.setText("-");
+
+        text = (Text) getElementById("text", "resources", "amount", i);
+        text.setText("-");
+
+        text = (Text) getElementById("text", "products", "amount", i);
+        text.setText("-");
+
+        text = (Text) getElementById("text", "products" + IN_PROGRESS_SUFFIX, "amount", i);
+        text.setText("-");
+
+        text = (Text) getElementById("text", "factories", "amount", i);
+        text.setText("-");
+
+        text = (Text) getElementById("text", "factories" + IN_PROGRESS_SUFFIX, "amount", i);
+        text.setText("-");
+
+        text = (Text) getElementById("text", "auto_factories", "amount", i);
+        text.setText("-");
+
+        text = (Text) getElementById("text", "auto_factories" + IN_PROGRESS_SUFFIX, "amount", i);
+        text.setText("-");
+    }
+
     private void fillAllProfiles(SessionPackage sessionPackage) {
         try {
             List<Player> players = sessionPackage.getPlayers();
@@ -163,6 +202,11 @@ public class GameFieldFormController implements DisplayingFormController {
             }
 
             players.remove(me);
+
+            //Очистка профилей несуществующих игроков
+            for (int i = players.size(); i < Restrictions.MAX_PLAYERS_COUNT; i++) {
+                clearProfile(i);
+            }
 
             //Заполняем данные текущего игрока
             fillProfile(me, 0);
@@ -390,7 +434,7 @@ public class GameFieldFormController implements DisplayingFormController {
                 //------------------
 
                 SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
-
+                senior = sessionPackage.getCurrentSeniorPlayer();
                 if (sessionPackage.getCurrentPhase() == Restrictions.REGULAR_COSTS_PHASE
                         || sessionPackage.getCurrentPhase() == Restrictions.CALCULATE_RESERVES_PHASE
                         || sessionPackage.getCurrentPhase() == Restrictions.PAY_LOAN_PERCENT_PHASE
@@ -402,7 +446,6 @@ public class GameFieldFormController implements DisplayingFormController {
                     labelPhase.setText(Integer.toString(sessionPackage.getCurrentPhase()));
                     updateMenuVisibility();
                 }
-                senior = sessionPackage.getCurrentSeniorPlayer();
                 fillBankReserves();
                 getTurnTime();
 

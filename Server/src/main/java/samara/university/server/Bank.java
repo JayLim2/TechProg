@@ -236,6 +236,9 @@ public class Bank {
                     gameLog.log(player, currentMonth, currentPhase, log);
 
                     if (tryDeclareBankrupt(player)) {
+                        if (Objects.equals(player, session.getSeniorPlayer())) {
+                            session.setSeniorPlayer(nextSeniorPlayer(session.getPlayers(), player));
+                        }
                         playersIterator.remove();
                         log = GameLog.Actions.logBankrupt();
                         gameLog.log(player, currentMonth, currentPhase, log);
@@ -704,11 +707,13 @@ public class Bank {
      */
     public Player nextSeniorPlayer(List<Player> allPlayers, Player currentSenior) {
         int index = allPlayers.indexOf(currentSenior);
-        if (index >= 0 && index < allPlayers.size()) {
-            if (index == allPlayers.size() - 1) {
-                return allPlayers.get(0);
-            } else {
-                return allPlayers.get(++index);
+        if (index >= 0) {
+            if (index < allPlayers.size()) {
+                if (index == allPlayers.size() - 1) {
+                    return allPlayers.get(0);
+                } else {
+                    return allPlayers.get(++index);
+                }
             }
         }
         return null;
