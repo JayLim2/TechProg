@@ -2,7 +2,7 @@ package samara.university.client.controllers;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.concurrent.Task;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -23,9 +23,8 @@ import samara.university.common.packages.BankPackage;
 import samara.university.common.packages.SessionPackage;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class GameFieldFormController implements DisplayingFormController {
     @FXML
@@ -310,17 +309,42 @@ public class GameFieldFormController implements DisplayingFormController {
     private Thread updaterThread = null;
 
     private void cyclicalUpdater() {
-        if (updaterThread == null) {
-            Task<Void> task = new Task<Void>() {
+        Timer timer = new Timer(true);
+        UpdateFormTask updateFormTask = new UpdateFormTask();
+        timer.scheduleAtFixedRate(
+                new TimerTask() {
+                    @Override
+                    public void run() {
+                        Platform.runLater(updateFormTask);
+                    }
+                },
+                TimeUnit.SECONDS.toMillis(0),
+                TimeUnit.SECONDS.toMillis(3)
+        );
+
+        /*if (updaterThread == null) {
+            Runnable updater = new Runnable() {
+                @Override
+                public void run() {
+                    while (true) {
+                        Platform.runLater(
+                                new UpdateFormTask()
+                        );
+                    }
+                }
+            };
+            *//*Task<Void> task = new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
                     new UpdateFormTask().run();
                     return null;
                 }
-            };
-            updaterThread = new Thread(task);
+            };*//*
+            updaterThread = new Thread(updater);
+            updaterThread.setDaemon(true);
             updaterThread.start();
-        }
+        }*/
+        /*
         //Timeline timeline = new Timeline();
 
         KeyFrame frame = new KeyFrame(CYCLE_PERIOD, new EventHandler<ActionEvent>() {
@@ -336,7 +360,7 @@ public class GameFieldFormController implements DisplayingFormController {
 
         updater.getKeyFrames().add(frame);
         updater.setCycleCount(Timeline.INDEFINITE);
-        updater.play();
+        updater.play();*/
     }
 
     private void stopCyclicalUpdater() {
@@ -349,40 +373,38 @@ public class GameFieldFormController implements DisplayingFormController {
         @Override
         public void run() {
             try {
-                while (true) {
-                    //Если найден победитель - завершить игру
-                    if (RequestSender.getRequestSender().getWinner() != null) {
-                        stopPhaseCountdown();
-                        stopCyclicalUpdater();
-                        gameFinished = true;
-                        return;
-                    }
-
-                    //Обновить лог игры
-                    String gamelog = RequestSender.getRequestSender().getGameLog();
-                    gamelogArea.setText(gamelog);
-                    //------------------
-
-                    SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
-
-                    if (sessionPackage.getCurrentPhase() == Restrictions.REGULAR_COSTS_PHASE
-                            || sessionPackage.getCurrentPhase() == Restrictions.CALCULATE_RESERVES_PHASE
-                            || sessionPackage.getCurrentPhase() == Restrictions.PAY_LOAN_PERCENT_PHASE
-                            || sessionPackage.getCurrentPhase() == Restrictions.PAY_LOAN_PHASE) {
-                        nextPhase(null);
-                    } else {
-                        fillAllProfiles(sessionPackage);
-                        System.out.println("____ UPDATE ______");
-                        labelMonth.setText(Integer.toString(sessionPackage.getCurrentMonth()));
-                        labelPhase.setText(Integer.toString(sessionPackage.getCurrentPhase()));
-                        updateMenuVisibility();
-                    }
-                    senior = sessionPackage.getCurrentSeniorPlayer();
-                    fillBankReserves();
-                    getTurnTime();
-
-                    Thread.sleep(duration);
+                //Если найден победитель - завершить игру
+                if (RequestSender.getRequestSender().getWinner() != null) {
+                    stopPhaseCountdown();
+                    stopCyclicalUpdater();
+                    gameFinished = true;
+                    return;
                 }
+
+                //Обновить лог игры
+                String gamelog = RequestSender.getRequestSender().getGameLog();
+                gamelogArea.setText(gamelog);
+                //------------------
+
+                SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
+
+                if (sessionPackage.getCurrentPhase() == Restrictions.REGULAR_COSTS_PHASE
+                        || sessionPackage.getCurrentPhase() == Restrictions.CALCULATE_RESERVES_PHASE
+                        || sessionPackage.getCurrentPhase() == Restrictions.PAY_LOAN_PERCENT_PHASE
+                        || sessionPackage.getCurrentPhase() == Restrictions.PAY_LOAN_PHASE) {
+                    nextPhase(null);
+                } else {
+                    fillAllProfiles(sessionPackage);
+                    System.out.println("____ UPDATE ______");
+                    labelMonth.setText(Integer.toString(sessionPackage.getCurrentMonth()));
+                    labelPhase.setText(Integer.toString(sessionPackage.getCurrentPhase()));
+                    updateMenuVisibility();
+                }
+                senior = sessionPackage.getCurrentSeniorPlayer();
+                fillBankReserves();
+                getTurnTime();
+
+                //Thread.sleep(duration);
             } catch (Exception e) {
                 e.printStackTrace();
             }
