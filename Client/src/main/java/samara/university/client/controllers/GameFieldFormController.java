@@ -2,6 +2,7 @@ package samara.university.client.controllers;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -310,7 +311,14 @@ public class GameFieldFormController implements DisplayingFormController {
 
     private void cyclicalUpdater() {
         if (updaterThread == null) {
-            updaterThread = new Thread(new UpdateFormTask());
+            Task<Void> task = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    new UpdateFormTask().run();
+                    return null;
+                }
+            };
+            updaterThread = new Thread(task);
             updaterThread.start();
         }
         //Timeline timeline = new Timeline();
@@ -343,7 +351,6 @@ public class GameFieldFormController implements DisplayingFormController {
             try {
                 while (true) {
                     //Если найден победитель - завершить игру
-                    // FIXME: 19.12.2018 NOT JAVA FX THREAD EXCEPTION
                     if (RequestSender.getRequestSender().getWinner() != null) {
                         stopPhaseCountdown();
                         stopCyclicalUpdater();
