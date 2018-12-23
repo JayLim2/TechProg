@@ -105,6 +105,8 @@ public class ProductionFormController implements DisplayingFormController {
 
     @Override
     public void showAction(WindowEvent event) {
+        initialize();
+        
         totalResources = me.getUnitsOfResources();
         labelAvailable.setText(Integer.toString(totalResources));
         if (me.getWorkingAutomatedFactories() > 0) {

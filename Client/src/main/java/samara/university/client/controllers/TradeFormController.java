@@ -10,7 +10,7 @@ import samara.university.common.entities.Player;
 
 import java.io.IOException;
 
-public class TradeFormController {
+public abstract class TradeFormController implements DisplayingFormController {
     @FXML
     protected Spinner<Integer> spinnerCount;
     @FXML

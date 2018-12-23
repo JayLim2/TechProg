@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.stage.WindowEvent;
 import samara.university.client.utils.Forms;
 import samara.university.client.utils.PredefinedAlerts;
 import samara.university.client.utils.RequestSender;
@@ -35,6 +36,17 @@ public class SellFormController extends TradeFormController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    @Override
+    public void showAction(WindowEvent event) {
+        initialize();
+    }
+
+    @Override
+    public void hideAction(WindowEvent event) {
+
     }
 
     @Override

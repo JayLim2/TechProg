@@ -61,16 +61,15 @@ public class Forms {
     }
 
     public static void openFormAsModal(String formName) {
-        /*Stage stage = formStages.get(formName);
+        Stage stage = formStages.get(formName);
         if (stage != null) {
             stage.show();
             return;
-        }*/
+        }
 
         try {
             if (formName != null) {
-                Stage stage;
-                stage = getForm(formName);
+                stage = getModal(formName);
                 stage.initModality(Modality.APPLICATION_MODAL);
                 stage.showAndWait();
             }
@@ -110,8 +109,20 @@ public class Forms {
         } else {
             root = FXMLLoader.load(resourceURL);
         }
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
+        stage.setScene(new Scene(root));
+        addStyle(stage);
+        formStages.putIfAbsent(formName, stage);
+
+        return stage;
+    }
+
+    private static Stage getModal(String formName) throws IOException {
+        URL resourceURL = Main.class.getResource("/forms/" + formName + ".fxml");
+        Stage stage = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader(resourceURL);
+        Parent root = fxmlLoader.load();
+        configureDisplayingForm(stage, fxmlLoader, formName);
+        stage.setScene(new Scene(root));
         addStyle(stage);
         formStages.putIfAbsent(formName, stage);
 

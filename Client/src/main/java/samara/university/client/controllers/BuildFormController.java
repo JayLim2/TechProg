@@ -4,13 +4,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.stage.WindowEvent;
 import samara.university.client.utils.Forms;
 import samara.university.client.utils.PredefinedAlerts;
 import samara.university.client.utils.RequestSender;
 import samara.university.common.constants.Restrictions;
 import samara.university.common.entities.Player;
 
-public class BuildFormController {
+public class BuildFormController implements DisplayingFormController {
     private ToggleGroup toggleGroup;
 
     @FXML
@@ -33,6 +34,16 @@ public class BuildFormController {
         buildFactory.setSelected(true);
         buildAutomatedFactory.setToggleGroup(toggleGroup);
         automateFactory.setToggleGroup(toggleGroup);
+    }
+
+    @Override
+    public void showAction(WindowEvent event) {
+        initialize();
+    }
+
+    @Override
+    public void hideAction(WindowEvent event) {
+
     }
 
     public void ok(ActionEvent event) {

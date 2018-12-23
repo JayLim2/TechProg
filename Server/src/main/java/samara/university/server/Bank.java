@@ -106,6 +106,9 @@ public class Bank {
                         }
                         break;
                         case COMPLETE_PRODUCTION: {
+                            player.setInProduction(
+                                    player.getInProduction() - action.getCount()
+                            );
                             player.setUnitsOfProducts(
                                     player.getUnitsOfProducts() + action.getCount()
                             );
@@ -327,6 +330,12 @@ public class Bank {
     public void startProduction(Player player, int count, int price) {
         player.setMoney(
                 player.getMoney() - price
+        );
+        player.setUnitsOfResources(
+                player.getUnitsOfResources() - count
+        );
+        player.setInProduction(
+                player.getInProduction() + count
         );
         int currentPhase = Session.getSession().getTurn().getCurrentPhase();
         int currentMonth = Session.getSession().getTurn().getCurrentMonth();

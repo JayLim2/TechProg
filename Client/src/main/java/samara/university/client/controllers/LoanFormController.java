@@ -6,12 +6,13 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
+import javafx.stage.WindowEvent;
 import samara.university.client.utils.Forms;
 import samara.university.client.utils.RequestSender;
 import samara.university.common.constants.Restrictions;
 import samara.university.common.entities.Player;
 
-public class LoanFormController {
+public class LoanFormController implements DisplayingFormController {
     @FXML
     private Spinner<Integer> spinnerAutoFactoriesCount;
     @FXML
@@ -44,9 +45,19 @@ public class LoanFormController {
         }
     }
 
+    @Override
+    public void showAction(WindowEvent event) {
+        initialize();
+    }
+
+    @Override
+    public void hideAction(WindowEvent event) {
+
+    }
+
     public void ok(ActionEvent event) {
         try {
-            me = RequestSender.getRequestSender().me();
+            //me = RequestSender.getRequestSender().me();
             RequestSender.getRequestSender().newLoan(me, amount, amountAuto, count, countAuto);
             close();
         } catch (Exception e) {
