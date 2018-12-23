@@ -190,8 +190,7 @@ public class Bank {
         player.setBankrupt(true);
         result &= plannedActions.removeIf(action -> action.getPlayer().getId() == player.getId());
         result &= bids.removeIf(bid -> bid.getPlayer().getId() == player.getId());
-        result &= Session.getSession().unregister(player);
-        System.out.println(player + " iS BANKRUPT!!!!!!");
+        //result &= Session.getSession().unregister(player);
         return result;
     }
 
@@ -215,7 +214,7 @@ public class Bank {
      * Банк в начале каждой фазы пересчитывает свои резервы, выставляет цены
      * и обрабатывает запланированные действия.
      */
-    public void nextPhase() {
+    public synchronized void nextPhase() {
         Session session = Session.getSession();
         if (gameLog == null) {
             gameLog = session.getGameLog();
@@ -227,7 +226,23 @@ public class Bank {
         switch (currentPhase) {
             case Restrictions.REGULAR_COSTS_PHASE: {
                 List<Player> players = session.getPlayers();
-                for (Player player : players) {
+                Iterator<Player> playersIterator = players.iterator();
+                while (playersIterator.hasNext()) {
+                    Player player = playersIterator.next();
+                    int regularCosts = getRegularCosts(player);
+                    player.setMoney(player.getMoney() - regularCosts);
+
+                    //Запись в лог
+                    String log = GameLog.Actions.logRegularCosts(regularCosts);
+                    gameLog.log(player, currentMonth, currentPhase, log);
+
+                    if (tryDeclareBankrupt(player)) {
+                        playersIterator.remove();
+                        log = GameLog.Actions.logBankrupt();
+                        gameLog.log(player, currentMonth, currentPhase, log);
+                    }
+                }
+                /*for (Player player : players) {
                     int regularCosts = getRegularCosts(player);
                     player.setMoney(player.getMoney() - regularCosts);
 
@@ -238,7 +253,7 @@ public class Bank {
                         log = GameLog.Actions.logBankrupt();
                         gameLog.log(player, currentMonth, currentPhase, log);
                     }
-                }
+                }*/
             }
             break;
             case Restrictions.CALCULATE_RESERVES_PHASE: {

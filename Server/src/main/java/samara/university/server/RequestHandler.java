@@ -13,6 +13,7 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Обработчик запросов к серверу
@@ -60,6 +61,7 @@ public class RequestHandler {
             //Если сессия доступна - продолжаем
             while (!interrupted) {
                 try {
+                    if (objectInputStream.available() <= 0) continue;
                     //while (objectInputStream.available() <= 0) ;
 
                     int cmdCode = objectInputStream.readInt();
@@ -225,6 +227,8 @@ public class RequestHandler {
             session.getBank().newLoan(getEqualsPlayerInSession(player), amount, amountAuto, count, countAuto);
         }
 
+        private int threadId = new Random().nextInt(1000);
+
         /**
          * Переход на следующую фазу.
          * Если текущая фаза последняя, то переход на следующий ход.
@@ -238,16 +242,24 @@ public class RequestHandler {
                 System.out.println("make ready");
                 session.makeReady();
             }
+            System.out.println("\n\n__ THREAD ID: " + threadId);
+            System.out.println("before packing");
             SessionPackage sessionPackage = createSessionPackage();
+            System.out.println("after packing");
             objectOutputStream.reset();
+            System.out.println("reset fininshed!");
             objectOutputStream.writeObject(sessionPackage);
+            System.out.println("written!");
             objectOutputStream.flush();
+            System.out.println("flushed!\n");
         }
 
         public void exit() throws IOException {
             //objectOutputStream.reset();
             interrupted = true;
-            Session.getSession().getBank().declareBankrupt(me);
+            if (Session.getSession().getBank().declareBankrupt(me)) {
+                Session.getSession().unregister(me);
+            }
             /*objectOutputStream.writeBoolean(Session.getSession().getBank().declareBankrupt(me));
             objectOutputStream.flush();*/
         }
@@ -268,9 +280,7 @@ public class RequestHandler {
                 session.getBank().tryDeclareWinner();
             }
             Player winner = session.getWinner();
-            System.out.println("WINNER: " + winner);
             objectOutputStream.writeObject(winner);
-            System.out.println("WINNER 2: " + winner);
             objectOutputStream.flush();
         }
 
