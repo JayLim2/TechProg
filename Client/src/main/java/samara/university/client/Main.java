@@ -10,10 +10,6 @@ import samara.university.client.utils.Forms;
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        /*String path = getClass().getResource("/forms/Main.fxml").getFile();
-        System.out.println(path);*/
-        //System.out.println(getClass().getResource("/forms/Main.fxml"));
-
         Parent root = FXMLLoader.load(getClass().getResource("/forms/Main.fxml"));
         primaryStage.setTitle("Игра \"Менеджмент\"");
         primaryStage.setScene(new Scene(root));

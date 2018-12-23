@@ -41,7 +41,7 @@ public class Session {
      *
      * @return текущая сессия
      */
-    public static Session getSession() {
+    public synchronized static Session getSession() {
         if (session == null) {
             session = new Session();
         }
@@ -51,7 +51,7 @@ public class Session {
     /**
      * Закрытие сессии
      */
-    public static void terminateSession() {
+    public synchronized static void terminateSession() {
         session = null;
     }
 
@@ -65,14 +65,14 @@ public class Session {
 
     //----------------------- Ready to next phase --------------------------
     public boolean isAllReady() {
-        return countPlayersReadyForNextPhase == players.size() - 1;
+        return countPlayersReadyForNextPhase >= players.size() - 1;
     }
 
-    public void makeReady() {
+    public synchronized void makeReady() {
         countPlayersReadyForNextPhase++;
     }
 
-    public void resetReady() {
+    public synchronized void resetReady() {
         countPlayersReadyForNextPhase = 0;
     }
     //---------------------------------------------------------------------
@@ -87,7 +87,7 @@ public class Session {
         return true;
     }
 
-    public boolean register(Player player) {
+    public synchronized boolean register(Player player) {
         if (player != null && isAvailable()) {
             player.setId(++lastId);
             players.add(player);
@@ -105,7 +105,7 @@ public class Session {
      * @param player игрок
      * @return признак того, закончилась ли игра
      */
-    public boolean unregister(Player player) {
+    public synchronized boolean unregister(Player player) {
         players.remove(player);
         //Если остался один игрок - он объявляется победителем
         if (players.size() == 1) {
@@ -151,7 +151,7 @@ public class Session {
         return gameStarted;
     }
 
-    public void setGameStarted(boolean gameStarted) {
+    public synchronized void setGameStarted(boolean gameStarted) {
         this.gameStarted = gameStarted;
     }
     //---------------------------------
@@ -172,7 +172,7 @@ public class Session {
         return seniorPlayer;
     }
 
-    public void setSeniorPlayer(Player nextSeniorPlayer) {
+    public synchronized void setSeniorPlayer(Player nextSeniorPlayer) {
         this.seniorPlayer = nextSeniorPlayer;
     }
 
@@ -180,7 +180,7 @@ public class Session {
         return winner;
     }
 
-    public void setWinner(Player winner) {
+    public synchronized void setWinner(Player winner) {
         this.winner = winner;
     }
 

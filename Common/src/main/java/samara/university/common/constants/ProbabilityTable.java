@@ -30,11 +30,16 @@ public class ProbabilityTable {
         float[] oldLevelRow = probabilities[currentLevel - 1];
         float nextFloat = random.nextFloat();
         float current = 0;
-        int i;
-        for (i = 0; i < oldLevelRow.length && Float.compare(current, nextFloat) <= 0; i++) {
+        int i = 0;
+        do {
             current += oldLevelRow[i];
-        }
-        currentLevel = i + 1;
+            i++;
+        } while (i < oldLevelRow.length && Float.compare(current, nextFloat) < 0);
+        /*for (i = 0; i < oldLevelRow.length && Float.compare(current, nextFloat) < 0; i++) {
+            current += oldLevelRow[i];
+        }*/
+        currentLevel = i;
+        //currentLevel = Math.min(i + 1, oldLevelRow.length);
         return currentLevel;
     }
 }

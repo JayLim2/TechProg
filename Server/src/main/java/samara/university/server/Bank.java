@@ -191,6 +191,7 @@ public class Bank {
         result &= plannedActions.removeIf(action -> action.getPlayer().getId() == player.getId());
         result &= bids.removeIf(bid -> bid.getPlayer().getId() == player.getId());
         result &= Session.getSession().unregister(player);
+        System.out.println(player + " iS BANKRUPT!!!!!!");
         return result;
     }
 
@@ -465,6 +466,10 @@ public class Bank {
 
             player.setMoney(
                     player.getMoney() + amount
+            );
+
+            player.setTotalLoans(
+                    player.getTotalLoans() + amount
             );
 
             player.setBailedFactories(

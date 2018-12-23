@@ -33,8 +33,9 @@ public class RequestHandler {
         private ObjectOutputStream objectOutputStream;
 
         private Session session;
-
         private Player me;
+
+        private boolean interrupted = false;
 
         public ClientThread(Socket socket) {
             this.socket = socket;
@@ -57,7 +58,7 @@ public class RequestHandler {
             }*/
 
             //Если сессия доступна - продолжаем
-            while (true) {
+            while (!interrupted) {
                 try {
                     //while (objectInputStream.available() <= 0) ;
 
@@ -245,6 +246,7 @@ public class RequestHandler {
 
         public void exit() throws IOException {
             //objectOutputStream.reset();
+            interrupted = true;
             Session.getSession().getBank().declareBankrupt(me);
             /*objectOutputStream.writeBoolean(Session.getSession().getBank().declareBankrupt(me));
             objectOutputStream.flush();*/
@@ -265,7 +267,10 @@ public class RequestHandler {
             if (session.getWinner() == null) {
                 session.getBank().tryDeclareWinner();
             }
-            objectOutputStream.writeObject(session.getWinner());
+            Player winner = session.getWinner();
+            System.out.println("WINNER: " + winner);
+            objectOutputStream.writeObject(winner);
+            System.out.println("WINNER 2: " + winner);
             objectOutputStream.flush();
         }
 

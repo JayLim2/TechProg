@@ -23,8 +23,9 @@ import samara.university.common.packages.BankPackage;
 import samara.university.common.packages.SessionPackage;
 
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class GameFieldFormController implements DisplayingFormController {
     @FXML
@@ -264,9 +265,11 @@ public class GameFieldFormController implements DisplayingFormController {
             @Override
             public void handle(ActionEvent event) {
                 if (gameFinished) {
-                    phaseCountdownStopped = true;
+                    stopPhaseCountdown();
+                    stopCyclicalUpdater();
                     Forms.closeForm("GameField");
                     Forms.openForm("GameResults");
+                    return;
                 }
 
                 if (totalSeconds <= 0 || phaseCountdownStopped) {
@@ -309,7 +312,9 @@ public class GameFieldFormController implements DisplayingFormController {
     private Thread updaterThread = null;
 
     private void cyclicalUpdater() {
-        Timer timer = new Timer(true);
+        UpdateFormTask updateFormTask = new UpdateFormTask();
+
+        /*Timer timer = new Timer(true);
         UpdateFormTask updateFormTask = new UpdateFormTask();
         timer.scheduleAtFixedRate(
                 new TimerTask() {
@@ -320,38 +325,35 @@ public class GameFieldFormController implements DisplayingFormController {
                 },
                 TimeUnit.SECONDS.toMillis(0),
                 TimeUnit.SECONDS.toMillis(3)
-        );
+        );*/
 
-        /*if (updaterThread == null) {
+        if (updaterThread == null) {
             Runnable updater = new Runnable() {
                 @Override
                 public void run() {
-                    while (true) {
-                        Platform.runLater(
-                                new UpdateFormTask()
-                        );
+                    try {
+                        while (true) {
+                            Platform.runLater(updateFormTask);
+                            Thread.sleep(3000);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             };
-            *//*Task<Void> task = new Task<Void>() {
-                @Override
-                protected Void call() throws Exception {
-                    new UpdateFormTask().run();
-                    return null;
-                }
-            };*//*
             updaterThread = new Thread(updater);
             updaterThread.setDaemon(true);
             updaterThread.start();
-        }*/
-        /*
+        }
         //Timeline timeline = new Timeline();
 
-        KeyFrame frame = new KeyFrame(CYCLE_PERIOD, new EventHandler<ActionEvent>() {
+        /*KeyFrame frame = new KeyFrame(CYCLE_PERIOD, new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                Platform.runLater(updateFormTask);
+
                 if (cyclicalUpdateStopped) {
-                    updaterThread.interrupt();
+                    //updaterThread.interrupt();
                     updater.stop();
                     updater.getKeyFrames().clear();
                 }
