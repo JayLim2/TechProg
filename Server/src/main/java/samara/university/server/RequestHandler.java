@@ -5,7 +5,6 @@ import samara.university.common.entities.Player;
 import samara.university.common.enums.BankAction;
 import samara.university.common.enums.Command;
 import samara.university.common.packages.BankPackage;
-import samara.university.common.packages.NextPhasePackage;
 import samara.university.common.packages.SessionPackage;
 
 import java.io.IOException;
@@ -224,9 +223,9 @@ public class RequestHandler {
             }
             // TODO: 24.12.2018 возможно стоит улучшить реализацию 
             // FIXME: 24.12.2018 из-за сброса некорректно работает на клиенте!
-            NextPhasePackage nextPhasePackage = createNextPhasePackage();
+            SessionPackage sessionPackage = createSessionPackage();
             objectOutputStream.reset();
-            objectOutputStream.writeObject(nextPhasePackage);
+            objectOutputStream.writeObject(sessionPackage);
             objectOutputStream.flush();
         }
 
@@ -309,18 +308,7 @@ public class RequestHandler {
                     session.getPlayers(),
                     session.getSeniorPlayer(),
                     session.getTurn().getCurrentPhase(),
-                    session.getTurn().getCurrentMonth()
-            );
-        }
-
-        /**
-         * Создание пакета с информацией о сессии
-         *
-         * @return NextPhasePackage
-         */
-        private NextPhasePackage createNextPhasePackage() {
-            return new NextPhasePackage(
-                    createSessionPackage(),
+                    session.getTurn().getCurrentMonth(),
                     me.isReady()
             );
         }

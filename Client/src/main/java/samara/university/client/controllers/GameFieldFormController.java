@@ -21,7 +21,6 @@ import samara.university.common.constants.Restrictions;
 import samara.university.common.entities.Avatar;
 import samara.university.common.entities.Player;
 import samara.university.common.packages.BankPackage;
-import samara.university.common.packages.NextPhasePackage;
 import samara.university.common.packages.SessionPackage;
 
 import java.time.LocalDateTime;
@@ -445,7 +444,7 @@ public class GameFieldFormController implements DisplayingFormController {
                     fillAllProfiles(sessionPackage);
                     labelMonth.setText(Integer.toString(sessionPackage.getCurrentMonth()));
                     labelPhase.setText(Integer.toString(sessionPackage.getCurrentPhase()));
-                    updateMenuVisibility();
+                    updateMenuVisibility(sessionPackage.getCurrentPhase(), sessionPackage.isCurrentPlayerReady());
                 }
                 fillBankReserves();
                 getTurnTime();
@@ -477,10 +476,11 @@ public class GameFieldFormController implements DisplayingFormController {
     @FXML
     private Button buttonNextPhase;
 
+    @Deprecated
     private void updateMenuVisibility() {
         try {
             int phase = RequestSender.getRequestSender().sessionInfo().getCurrentPhase();
-            updateMenuVisibility(phase, false);
+            updateMenuVisibility(phase, buttonNextPhase.isDisabled());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -552,11 +552,10 @@ public class GameFieldFormController implements DisplayingFormController {
 
     public void nextPhase(ActionEvent event) {
         try {
-            NextPhasePackage nextPhasePackage = RequestSender.getRequestSender().nextPhase();
-            SessionPackage sessionPackage = nextPhasePackage.getSessionPackage();
+            SessionPackage sessionPackage = RequestSender.getRequestSender().nextPhase();
             labelMonth.setText(Integer.toString(sessionPackage.getCurrentMonth()));
             labelPhase.setText(Integer.toString(sessionPackage.getCurrentPhase()));
-            updateMenuVisibility(sessionPackage.getCurrentPhase(), nextPhasePackage.isPlayerReady());
+            updateMenuVisibility(sessionPackage.getCurrentPhase(), sessionPackage.isCurrentPlayerReady());
             fillAllProfiles(sessionPackage);
         } catch (Exception e) {
             e.printStackTrace();

@@ -22,13 +22,16 @@ public class SessionPackage implements Serializable {
     private int currentPhase;
     private int currentMonth;
 
-    public SessionPackage(LocalDateTime sessionStartTime, LocalDateTime phaseStartTime, List<Player> players, Player currentSeniorPlayer, int currentPhase, int currentMonth) {
+    private boolean currentPlayerReady;
+
+    public SessionPackage(LocalDateTime sessionStartTime, LocalDateTime phaseStartTime, List<Player> players, Player currentSeniorPlayer, int currentPhase, int currentMonth, boolean currentPlayerReady) {
         this.sessionStartTime = sessionStartTime;
         this.phaseStartTime = phaseStartTime;
         this.players = players;
         this.currentSeniorPlayer = currentSeniorPlayer;
         this.currentPhase = currentPhase;
         this.currentMonth = currentMonth;
+        this.currentPlayerReady = currentPlayerReady;
     }
 
     public int getSsid() {
@@ -61,6 +64,10 @@ public class SessionPackage implements Serializable {
 
     public int getCurrentMonth() {
         return currentMonth;
+    }
+
+    public boolean isCurrentPlayerReady() {
+        return currentPlayerReady;
     }
 
     @Override
