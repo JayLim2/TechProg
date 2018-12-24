@@ -21,6 +21,7 @@ import samara.university.common.constants.Restrictions;
 import samara.university.common.entities.Avatar;
 import samara.university.common.entities.Player;
 import samara.university.common.packages.BankPackage;
+import samara.university.common.packages.NextPhasePackage;
 import samara.university.common.packages.SessionPackage;
 
 import java.time.LocalDateTime;
@@ -473,41 +474,49 @@ public class GameFieldFormController implements DisplayingFormController {
     private Button buttonStartConstruction;
     @FXML
     private Button buttonGetLoan;
+    @FXML
+    private Button buttonNextPhase;
 
     private void updateMenuVisibility() {
         try {
             int phase = RequestSender.getRequestSender().sessionInfo().getCurrentPhase();
-            updateMenuVisibility(phase);
+            updateMenuVisibility(phase, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void updateMenuVisibility(int phase) {
+    private void updateMenuVisibility(int phase, boolean playerIsReady) {
         buttonBuyResources.setDisable(true);
         buttonSellProducts.setDisable(true);
         buttonStartProduction.setDisable(true);
         buttonStartConstruction.setDisable(true);
         buttonGetLoan.setDisable(true);
+        buttonNextPhase.setDisable(true);
         switch (phase) {
             case Restrictions.SEND_BID_RESOURCES_PHASE: {
                 buttonBuyResources.setDisable(false);
+                buttonNextPhase.setDisable(playerIsReady);
             }
             break;
             case Restrictions.PRODUCTION_PHASE: {
                 buttonStartProduction.setDisable(false);
+                buttonNextPhase.setDisable(playerIsReady);
             }
             break;
             case Restrictions.SEND_BID_PRODUCTS_PHASE: {
                 buttonSellProducts.setDisable(false);
+                buttonNextPhase.setDisable(playerIsReady);
             }
             break;
             case Restrictions.NEW_LOAN_PHASE: {
                 buttonGetLoan.setDisable(false);
+                buttonNextPhase.setDisable(playerIsReady);
             }
             break;
             case Restrictions.BUILDING_AND_AUTOMATION_PHASE: {
                 buttonStartConstruction.setDisable(false);
+                buttonNextPhase.setDisable(playerIsReady);
             }
             break;
         }
@@ -543,10 +552,11 @@ public class GameFieldFormController implements DisplayingFormController {
 
     public void nextPhase(ActionEvent event) {
         try {
-            SessionPackage sessionPackage = RequestSender.getRequestSender().nextPhase();
+            NextPhasePackage nextPhasePackage = RequestSender.getRequestSender().nextPhase();
+            SessionPackage sessionPackage = nextPhasePackage.getSessionPackage();
             labelMonth.setText(Integer.toString(sessionPackage.getCurrentMonth()));
             labelPhase.setText(Integer.toString(sessionPackage.getCurrentPhase()));
-            updateMenuVisibility(sessionPackage.getCurrentPhase());
+            updateMenuVisibility(sessionPackage.getCurrentPhase(), nextPhasePackage.isPlayerReady());
             fillAllProfiles(sessionPackage);
         } catch (Exception e) {
             e.printStackTrace();

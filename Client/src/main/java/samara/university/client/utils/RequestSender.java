@@ -4,6 +4,7 @@ import samara.university.common.entities.Player;
 import samara.university.common.enums.BankAction;
 import samara.university.common.enums.Command;
 import samara.university.common.packages.BankPackage;
+import samara.university.common.packages.NextPhasePackage;
 import samara.university.common.packages.SessionPackage;
 
 import java.io.IOException;
@@ -128,10 +129,10 @@ public class RequestSender {
      * @throws IOException            исключение ввода-вывода
      * @throws ClassNotFoundException исключение "класс не найден"
      */
-    public SessionPackage nextPhase() throws IOException, ClassNotFoundException {
+    public NextPhasePackage nextPhase() throws IOException, ClassNotFoundException {
         connect();
         sendCommand(Command.NEXT_PHASE);
-        return (SessionPackage) objectInputStream.readObject();
+        return (NextPhasePackage) objectInputStream.readObject();
     }
 
     public BankPackage bankInfo() throws IOException, ClassNotFoundException {

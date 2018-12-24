@@ -30,6 +30,7 @@ public class Player implements Serializable {
     private int bailedAutoFactories; //заложенные автофабрики
 
     private boolean isBankrupt; //признак банкротства
+    private boolean isReady; //признак готовности
 
     public Player(String name, Avatar avatar) {
         this.name = name;
@@ -170,6 +171,14 @@ public class Player implements Serializable {
 
     public void setBankrupt(boolean bankrupt) {
         isBankrupt = bankrupt;
+    }
+
+    public boolean isReady() {
+        return isReady;
+    }
+
+    public void setReady(boolean ready) {
+        isReady = ready;
     }
 
     @Override

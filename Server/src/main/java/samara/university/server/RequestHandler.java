@@ -5,6 +5,7 @@ import samara.university.common.entities.Player;
 import samara.university.common.enums.BankAction;
 import samara.university.common.enums.Command;
 import samara.university.common.packages.BankPackage;
+import samara.university.common.packages.NextPhasePackage;
 import samara.university.common.packages.SessionPackage;
 
 import java.io.IOException;
@@ -13,7 +14,6 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Обработчик запросов к серверу
@@ -112,31 +112,18 @@ public class RequestHandler {
 
         public void checkLoginUniqueness() throws IOException {
             String name = objectInputStream.readUTF();
-            System.out.println("\n\n========= ЛОГИН =============");
-            System.out.println(name);
             objectOutputStream.reset();
-            System.out.println("Reset");
             boolean is = session.isUniqueLogin(name);
-            System.out.println(is);
             objectOutputStream.writeBoolean(is);
             objectOutputStream.flush();
-
-            System.out.println("\n\n========= / ЛОГИН =============");
         }
 
         public void authPlayer() throws IOException {
-            //if (session == null || !session.isAvailable()) return;
-
             String name = objectInputStream.readUTF();
-            System.out.println("\n\n======================");
-            System.out.println(name);
             int defaultAvatarId = objectInputStream.readInt();
-            System.out.println(defaultAvatarId);
             this.me = new Player(name, Avatar.getDefaultAvatar(defaultAvatarId));
             objectOutputStream.reset();
             boolean registered = session.register(this.me);
-            System.out.println("registered: " + registered);
-            System.out.println("========================\n\n");
             objectOutputStream.writeBoolean(registered);
             objectOutputStream.flush();
         }
@@ -181,13 +168,6 @@ public class RequestHandler {
         public void reserves() throws IOException {
             objectOutputStream.reset();
             BankPackage bankPackage = createBankPackage();
-            /*System.out.println("\n== ON SERVER == ");
-            System.out.println("minPrice: " + bankPackage.getMinResourcePrice());
-            System.out.println("resources: " + bankPackage.getReserveUnitsOfResources());
-            System.out.println("maxPrice: " + bankPackage.getMaxProductPrice());
-            System.out.println("products: " + bankPackage.getReserveUnitsOfProducts());
-            System.out.println("================\n");
-            */
             objectOutputStream.writeObject(bankPackage);
             objectOutputStream.flush();
         }
@@ -227,44 +207,40 @@ public class RequestHandler {
             session.getBank().newLoan(getEqualsPlayerInSession(player), amount, amountAuto, count, countAuto);
         }
 
-        private int threadId = new Random().nextInt(1000);
-
         /**
          * Переход на следующую фазу.
          * Если текущая фаза последняя, то переход на следующий ход.
          */
         public void nextPhase() throws IOException {
             if (session.isAllReady()) {
-                System.out.println("all ready");
+                session.getPlayers().forEach(player -> player.setReady(false));
                 session.resetReady();
                 session.getBank().nextPhase();
-            } else {
-                System.out.println("make ready");
+                System.out.println("all ready");
+            } else if (!me.isReady()) {
+                me.setReady(true);
                 session.makeReady();
+                System.out.println("make ready");
             }
-            System.out.println("\n\n__ THREAD ID: " + threadId);
-            System.out.println("before packing");
-            SessionPackage sessionPackage = createSessionPackage();
-            System.out.println("after packing");
+            // TODO: 24.12.2018 возможно стоит улучшить реализацию 
+            // FIXME: 24.12.2018 из-за сброса некорректно работает на клиенте!
+            NextPhasePackage nextPhasePackage = createNextPhasePackage();
             objectOutputStream.reset();
-            System.out.println("reset fininshed!");
-            objectOutputStream.writeObject(sessionPackage);
-            System.out.println("written!");
+            objectOutputStream.writeObject(nextPhasePackage);
             objectOutputStream.flush();
-            System.out.println("flushed!\n");
         }
 
-        public void exit() throws IOException {
-            //objectOutputStream.reset();
+        public void exit() {
             interrupted = true;
             session.getBank().declareBankrupt(me);
             session.setSeniorPlayer(session.getBank().nextSeniorPlayer(session.getPlayers(), me));
             session.unregister(me);
-            /*objectOutputStream.writeBoolean(Session.getSession().getBank().declareBankrupt(me));
-            objectOutputStream.flush();*/
+            if (session.playersCount() == 0) {
+                Session.terminateSession();
+            }
         }
 
-        public void resetTurnTime() throws IOException {
+        public void resetTurnTime() {
             session.getTurn().resetTurnTime();
         }
 
@@ -334,6 +310,18 @@ public class RequestHandler {
                     session.getSeniorPlayer(),
                     session.getTurn().getCurrentPhase(),
                     session.getTurn().getCurrentMonth()
+            );
+        }
+
+        /**
+         * Создание пакета с информацией о сессии
+         *
+         * @return NextPhasePackage
+         */
+        private NextPhasePackage createNextPhasePackage() {
+            return new NextPhasePackage(
+                    createSessionPackage(),
+                    me.isReady()
             );
         }
     }
