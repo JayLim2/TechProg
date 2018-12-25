@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class Forms {
     private static Map<String, Stage> formStages;
     private static final Pattern pattern = Pattern.compile("([\\w]*).fxml");
-    private static final String CSS_PATH = "/css/main.css";
+    public static final String CSS_PATH = "/css/main.css";
 
     public static void initialize() {
 

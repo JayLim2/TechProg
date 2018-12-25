@@ -14,6 +14,7 @@ public class Main extends Application {
         primaryStage.setTitle("Игра \"Менеджмент\"");
         primaryStage.setScene(new Scene(root));
         primaryStage.setResizable(false);
+        primaryStage.getScene().getStylesheets().add(Forms.CSS_PATH);
         primaryStage.show();
 
         Forms.registerForm("Main", primaryStage);

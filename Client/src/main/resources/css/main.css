@@ -12,3 +12,8 @@
     -fx-background-color: #0E81AF;
     -fx-border-width: 5;
 }
+
+.main {
+    -fx-background-image: url("../images/mainBackground.jpg") no-repat;
+    -fx-background-size: 100%;
+}
