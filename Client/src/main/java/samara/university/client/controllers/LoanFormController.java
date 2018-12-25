@@ -8,9 +8,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.stage.WindowEvent;
 import samara.university.client.utils.Forms;
+import samara.university.client.utils.PredefinedAlerts;
 import samara.university.client.utils.RequestSender;
 import samara.university.common.constants.Restrictions;
 import samara.university.common.entities.Player;
+
+import java.net.SocketException;
 
 public class LoanFormController implements DisplayingFormController {
     @FXML
@@ -40,6 +43,8 @@ public class LoanFormController implements DisplayingFormController {
             spinnerAutoFactoriesCount.setValueFactory(countAutoFactory);
 
             labelMonth.setText(Integer.toString(RequestSender.getRequestSender().sessionInfo().getCurrentMonth() + Restrictions.LOAN_MONTHS));
+        } catch (SocketException e) {
+            PredefinedAlerts.connectionResetAlert();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -60,6 +65,8 @@ public class LoanFormController implements DisplayingFormController {
             //me = RequestSender.getRequestSender().me();
             RequestSender.getRequestSender().newLoan(me, amount, amountAuto, count, countAuto);
             close();
+        } catch (SocketException e) {
+            PredefinedAlerts.connectionResetAlert();
         } catch (Exception e) {
             e.printStackTrace();
         }

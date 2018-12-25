@@ -11,6 +11,8 @@ import samara.university.client.utils.RequestSender;
 import samara.university.common.constants.Restrictions;
 import samara.university.common.entities.Player;
 
+import java.net.SocketException;
+
 public class BuildFormController implements DisplayingFormController {
     private ToggleGroup toggleGroup;
 
@@ -26,6 +28,8 @@ public class BuildFormController implements DisplayingFormController {
     public void initialize() {
         try {
             me = RequestSender.getRequestSender().me();
+        } catch (SocketException e) {
+            PredefinedAlerts.connectionResetAlert();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -77,6 +81,8 @@ public class BuildFormController implements DisplayingFormController {
                     close();
                 }
             }
+        } catch (SocketException e) {
+            PredefinedAlerts.connectionResetAlert();
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -14,6 +14,7 @@ import samara.university.client.utils.RequestSender;
 import samara.university.common.entities.Player;
 
 import java.io.IOException;
+import java.net.SocketException;
 
 public class ProductionFormController implements DisplayingFormController {
     @FXML
@@ -42,6 +43,8 @@ public class ProductionFormController implements DisplayingFormController {
     public void initialize() {
         try {
             me = RequestSender.getRequestSender().me();
+        } catch (SocketException e) {
+            PredefinedAlerts.connectionResetAlert();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -66,6 +69,8 @@ public class ProductionFormController implements DisplayingFormController {
         } else {
             try {
                 RequestSender.getRequestSender().startProduction(me, totalProductsCount, totalProductsCost);
+            } catch (SocketException e) {
+                PredefinedAlerts.connectionResetAlert();
             } catch (IOException e) {
                 e.printStackTrace();
             }

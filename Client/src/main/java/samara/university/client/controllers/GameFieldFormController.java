@@ -16,6 +16,7 @@ import javafx.scene.text.Text;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import samara.university.client.utils.Forms;
+import samara.university.client.utils.PredefinedAlerts;
 import samara.university.client.utils.RequestSender;
 import samara.university.common.constants.Restrictions;
 import samara.university.common.entities.Avatar;
@@ -23,6 +24,7 @@ import samara.university.common.entities.Player;
 import samara.university.common.packages.BankPackage;
 import samara.university.common.packages.SessionPackage;
 
+import java.net.SocketException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -138,6 +140,8 @@ public class GameFieldFormController implements DisplayingFormController {
 
             //Запустить циклическое обновление клиента
             cyclicalUpdater();
+        } catch (SocketException e) {
+            PredefinedAlerts.connectionResetAlert();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -215,6 +219,8 @@ public class GameFieldFormController implements DisplayingFormController {
             for (int i = 0; i < players.size(); i++) {
                 fillProfile(players.get(i), i + 1);
             }
+        } catch (SocketException e) {
+            PredefinedAlerts.connectionResetAlert();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -228,8 +234,6 @@ public class GameFieldFormController implements DisplayingFormController {
         imageView.setImage(new Image(player.getAvatar().getPath()));
 
         imageView = (ImageView) getElementById("image_view", "player_profile", "senior", i);
-        //System.out.println("player: " + player);
-        //System.out.println("senior: " + senior);
         imageView.setVisible(senior != null && player != null && Objects.equals(player, senior));
 
         text = (Text) getElementById("text", "player_profile", "login", i);
@@ -273,6 +277,8 @@ public class GameFieldFormController implements DisplayingFormController {
             labelBankResourcesMinPrice.setText(Integer.toString(bankPackage.getMinResourcePrice()));
             labelBankProductsCount.setText(Integer.toString(bankPackage.getReserveUnitsOfProducts()));
             labelBankProductsMaxPrice.setText(Integer.toString(bankPackage.getMaxProductPrice()));
+        } catch (SocketException e) {
+            PredefinedAlerts.connectionResetAlert();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -296,6 +302,8 @@ public class GameFieldFormController implements DisplayingFormController {
 
             totalSeconds = Restrictions.PHASE_LENGTH_IN_SECONDS - (int) seconds;
             //phaseCountdown();
+        } catch (SocketException e) {
+            PredefinedAlerts.connectionResetAlert();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -359,19 +367,6 @@ public class GameFieldFormController implements DisplayingFormController {
     private void cyclicalUpdater() {
         UpdateFormTask updateFormTask = new UpdateFormTask();
 
-        /*Timer timer = new Timer(true);
-        UpdateFormTask updateFormTask = new UpdateFormTask();
-        timer.scheduleAtFixedRate(
-                new TimerTask() {
-                    @Override
-                    public void run() {
-                        Platform.runLater(updateFormTask);
-                    }
-                },
-                TimeUnit.SECONDS.toMillis(0),
-                TimeUnit.SECONDS.toMillis(3)
-        );*/
-
         if (updaterThread == null) {
             Runnable updater = new Runnable() {
                 @Override
@@ -390,24 +385,6 @@ public class GameFieldFormController implements DisplayingFormController {
             updaterThread.setDaemon(true);
             updaterThread.start();
         }
-        //Timeline timeline = new Timeline();
-
-        /*KeyFrame frame = new KeyFrame(CYCLE_PERIOD, new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                Platform.runLater(updateFormTask);
-
-                if (cyclicalUpdateStopped) {
-                    //updaterThread.interrupt();
-                    updater.stop();
-                    updater.getKeyFrames().clear();
-                }
-            }
-        });
-
-        updater.getKeyFrames().add(frame);
-        updater.setCycleCount(Timeline.INDEFINITE);
-        updater.play();*/
     }
 
     private void stopCyclicalUpdater() {
@@ -415,8 +392,6 @@ public class GameFieldFormController implements DisplayingFormController {
     }
 
     private class UpdateFormTask implements Runnable {
-        final int duration = 3000;
-
         @Override
         public void run() {
             try {
@@ -450,6 +425,11 @@ public class GameFieldFormController implements DisplayingFormController {
                 getTurnTime();
 
                 //Thread.sleep(duration);
+            } catch (SocketException e) {
+                updaterThread.interrupt();
+                stopPhaseCountdown();
+                stopCyclicalUpdater();
+                PredefinedAlerts.connectionResetAlert();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -481,6 +461,8 @@ public class GameFieldFormController implements DisplayingFormController {
         try {
             int phase = RequestSender.getRequestSender().sessionInfo().getCurrentPhase();
             updateMenuVisibility(phase, buttonNextPhase.isDisabled());
+        } catch (SocketException e) {
+            PredefinedAlerts.connectionResetAlert();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -557,6 +539,8 @@ public class GameFieldFormController implements DisplayingFormController {
             labelPhase.setText(Integer.toString(sessionPackage.getCurrentPhase()));
             updateMenuVisibility(sessionPackage.getCurrentPhase(), sessionPackage.isCurrentPlayerReady());
             fillAllProfiles(sessionPackage);
+        } catch (SocketException e) {
+            PredefinedAlerts.connectionResetAlert();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -566,6 +550,8 @@ public class GameFieldFormController implements DisplayingFormController {
         //Прерывает игру и выводит игрока из сессии
         try {
             RequestSender.getRequestSender().exit();
+        } catch (SocketException e) {
+            PredefinedAlerts.connectionResetAlert();
         } catch (Exception e) {
             e.printStackTrace();
         }

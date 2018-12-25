@@ -11,6 +11,8 @@ import samara.university.client.utils.RequestSender;
 import samara.university.common.constants.Restrictions;
 import samara.university.common.entities.Player;
 
+import java.net.SocketException;
+
 public class SellFormController extends TradeFormController {
     @FXML
     private Spinner<Integer> spinnerCount;
@@ -33,6 +35,8 @@ public class SellFormController extends TradeFormController {
 
             spinnerCount.setValueFactory(countFactory);
             spinnerPrice.setValueFactory(priceFactory);
+        } catch (SocketException e) {
+            PredefinedAlerts.connectionResetAlert();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -60,6 +64,8 @@ public class SellFormController extends TradeFormController {
 
             super.sendBid(me, true);
             close();
+        } catch (SocketException e) {
+            PredefinedAlerts.connectionResetAlert();
         } catch (Exception e) {
             e.printStackTrace();
         }

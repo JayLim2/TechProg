@@ -15,6 +15,7 @@ import samara.university.client.utils.RequestSender;
 import samara.university.common.entities.Avatar;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -79,6 +80,9 @@ public class LoginFormController implements DisplayingFormController {
                     errorMsgLabel.setText("Такое имя уже занято.");
                     errorMsgLabel.setVisible(true);
                 }
+            } catch (SocketException e) {
+                //PredefinedAlerts.connectionResetAlert();
+                PredefinedAlerts.errorAlert("AAAAAA");
             } catch (IOException e) {
                 e.printStackTrace();
             }

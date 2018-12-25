@@ -12,6 +12,8 @@ import samara.university.common.constants.Restrictions;
 import samara.university.common.entities.Player;
 import samara.university.common.packages.BankPackage;
 
+import java.net.SocketException;
+
 public class BuyFormController extends TradeFormController {
     @FXML
     private Spinner<Integer> spinnerCount;
@@ -31,6 +33,8 @@ public class BuyFormController extends TradeFormController {
 
             spinnerCount.setValueFactory(countFactory);
             spinnerPrice.setValueFactory(priceFactory);
+        } catch (SocketException e) {
+            PredefinedAlerts.connectionResetAlert();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -62,6 +66,8 @@ public class BuyFormController extends TradeFormController {
                 sendBid(me, false);
                 close();
             }
+        } catch (SocketException e) {
+            PredefinedAlerts.connectionResetAlert();
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -58,17 +58,11 @@ public class RequestSender {
     }
 
     public boolean checkLoginUniqueness(String name) throws IOException {
-        System.out.println("before connect");
         connect();
-        System.out.println("PREPARE TO SEND");
         sendCommand(Command.CHECK_LOGIN_UNIQUENESS);
-        System.out.println("SENT!");
         objectOutputStream.reset();
-        System.out.println("RESET!");
         objectOutputStream.writeUTF(name);
-        System.out.println("NAME!");
         objectOutputStream.flush();
-        System.out.println();
         return objectInputStream.readBoolean();
     }
 
@@ -81,15 +75,10 @@ public class RequestSender {
      */
     public boolean authPlayer(String name, int avatarId) throws IOException {
         connect();
-        //System.out.println("PREPARE TO SEND");
         sendCommand(Command.AUTH);
-        //System.out.println("SENT!");
         objectOutputStream.reset();
-        //System.out.println("RESET!");
         objectOutputStream.writeUTF(name);
-        //System.out.println("NAME");
         objectOutputStream.writeInt(avatarId);
-        //System.out.println("AVATAR ID");
         objectOutputStream.flush();
         return objectInputStream.readBoolean();
     }
@@ -140,17 +129,7 @@ public class RequestSender {
         connect();
         sendCommand(Command.BANK_ACTION);
         sendBankAction(BankAction.RESERVES);
-        BankPackage bankPackage = (BankPackage) objectInputStream.readObject();
-
-        /*System.out.println("\n== ON CLIENT == ");
-        System.out.println("minPrice: " + bankPackage.getMinResourcePrice());
-        System.out.println("resources: " + bankPackage.getReserveUnitsOfResources());
-        System.out.println("maxPrice: " + bankPackage.getMaxProductPrice());
-        System.out.println("products: " + bankPackage.getReserveUnitsOfProducts());
-        System.out.println("================\n");*/
-
-        return bankPackage;
-        //return (BankPackage) objectInputStream.readObject();
+        return (BankPackage) objectInputStream.readObject();
     }
 
     public void sendBid(Player player, boolean type, int count, int price) throws IOException {
@@ -212,7 +191,6 @@ public class RequestSender {
         connect();
         sendCommand(Command.EXIT);
         isConnected = false;
-        //objectInputStream.readBoolean();
     }
 
     public void resetTurnTime() throws IOException {
@@ -229,11 +207,10 @@ public class RequestSender {
     public Player getWinner() throws IOException, ClassNotFoundException {
         connect();
         sendCommand(Command.WINNER);
-        Player player = (Player) objectInputStream.readObject();
-        return player;
+        return (Player) objectInputStream.readObject();
     }
 
-    public String getGameLog() throws IOException, ClassNotFoundException {
+    public String getGameLog() throws IOException {
         connect();
         sendCommand(Command.GET_GAMELOG);
         return objectInputStream.readUTF();

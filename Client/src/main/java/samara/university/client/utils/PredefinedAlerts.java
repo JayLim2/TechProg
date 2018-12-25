@@ -12,6 +12,10 @@ public class PredefinedAlerts {
         errorAlert("Фаза, в которой возможно было совершить данное действие, уже закончилась.");
     }
 
+    public static void connectionResetAlert() {
+        errorAlert("Соединение с сервером потеряно.");
+    }
+
     public static void errorAlert(String message) {
         new Alert(
                 Alert.AlertType.ERROR,

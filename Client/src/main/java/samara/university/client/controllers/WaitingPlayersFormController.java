@@ -16,6 +16,7 @@ import javafx.scene.text.Text;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import samara.university.client.utils.Forms;
+import samara.university.client.utils.PredefinedAlerts;
 import samara.university.client.utils.RequestSender;
 import samara.university.common.constants.Restrictions;
 import samara.university.common.entities.Avatar;
@@ -23,6 +24,7 @@ import samara.university.common.entities.Player;
 import samara.university.common.packages.SessionPackage;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -48,12 +50,10 @@ public class WaitingPlayersFormController implements DisplayingFormController {
     @Override
     public void showAction(WindowEvent event) {
         ObservableList<Node> nodes = sessionPlayersPane.getChildren();
-        //nodes.forEach(System.out::println);
         for (int i = 0, k = 0; k < size; k++) {
             avatarBlocks[k] = (ImageView) nodes.get(i++);
             labelBlocks[k] = (Text) nodes.get(i++);
         }
-        //updateInfo();
         updateTimeFields();
         playCountdown();
         waitPlayers();
@@ -69,10 +69,10 @@ public class WaitingPlayersFormController implements DisplayingFormController {
             RequestSender.getRequestSender().exit();
             updaterThread.interrupt();
             updaterThread = null;
-            //stopCountdown();
-            //stopUpdater();
             Forms.openForm("Main");
             Forms.closeForm("WaitingPlayers");
+        } catch (SocketException e) {
+            PredefinedAlerts.connectionResetAlert();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -125,25 +125,11 @@ public class WaitingPlayersFormController implements DisplayingFormController {
 
     private Thread updaterThread = null;
 
-    // FIXME: 02.12.2018 баг с отрисовкой времени на форме
     /**
      * Ожидание игроков
      */
     private void waitPlayers() {
         UpdateFormTask updateFormTask = new UpdateFormTask();
-
-        /*Timer timer = new Timer(true);
-        UpdateFormTask updateFormTask = new UpdateFormTask();
-        timer.scheduleAtFixedRate(
-                new TimerTask() {
-                    @Override
-                    public void run() {
-                        Platform.runLater(updateFormTask);
-                    }
-                },
-                TimeUnit.SECONDS.toMillis(0),
-                TimeUnit.SECONDS.toMillis(3)
-        );*/
 
         if (updaterThread == null) {
             Runnable updater = new Runnable() {
@@ -163,38 +149,6 @@ public class WaitingPlayersFormController implements DisplayingFormController {
             updaterThread.setDaemon(true);
             updaterThread.start();
         }
-
-        // TODO: 24.11.2018
-        /*
-        Регулярно (например, раз в 5 сек)
-        проверять состояние сессии на сервере и в случае изменения
-        обновлять интерфейс актуальными данными
-         */
-        /*Timeline timeline = new Timeline();
-
-        KeyFrame frame = new KeyFrame(UPDATE_INFO_INTERVAL, new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                if(updaterStopped) {
-                    timelineStop();
-                } else {
-                    updateInfo();
-
-                    if (totalSeconds <= 0) {
-                        timelineStop();
-                    }
-                }
-            }
-
-            private void timelineStop() {
-                timeline.stop();
-                timeline.getKeyFrames().clear();
-            }
-        });
-
-        timeline.getKeyFrames().add(frame);
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();*/
     }
 
     private class UpdateFormTask implements Runnable {
@@ -223,6 +177,11 @@ public class WaitingPlayersFormController implements DisplayingFormController {
                         }
                     }
                 }
+            } catch (SocketException e) {
+                updaterThread.interrupt();
+                stopCountdown();
+                stopUpdater();
+                PredefinedAlerts.connectionResetAlert();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -241,35 +200,6 @@ public class WaitingPlayersFormController implements DisplayingFormController {
         int minutes = totalSeconds / 60;
         minutesField.setText(Integer.toString(minutes));
         secondsField.setText(Integer.toString(totalSeconds - minutes * 60));
-    }
-
-    private void updateInfo() {
-        /*try {
-            SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
-            long seconds = java.time.Duration.between(
-                    sessionPackage.getSessionStartTime(),
-                    LocalDateTime.now()
-            ).getSeconds();
-            List<Player> players = sessionPackage.getPlayers();
-
-            if (players.size() == Restrictions.MAX_PLAYERS_COUNT) {
-                totalSeconds = 0;
-            } else {
-                totalSeconds = Restrictions.WAIT_TIME_LIMIT_SECONDS - (int) seconds;
-                for (int i = 0; i < avatarBlocks.length; i++) {
-                    if (i < players.size()) {
-                        Player player = players.get(i);
-                        avatarBlocks[i].setImage(new Image(player.getAvatar().getPath()));
-                        labelBlocks[i].setText(player.getName());
-                    } else {
-                        avatarBlocks[i].setImage(new Image(Avatar.getEmptyAvatar().getPath()));
-                        labelBlocks[i].setText("Логин");
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
     }
 
     private void playGame() {
