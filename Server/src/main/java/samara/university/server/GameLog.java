@@ -24,9 +24,9 @@ public class GameLog {
      * Генерация файла с журналом игры
      */
     public String export() {
-        StringBuilder builder = new StringBuilder().append(" ");
+        StringBuilder builder = new StringBuilder();
         for (String action : actions) {
-            builder.append(action).append("\n");
+            builder.append(action).append("\r\n");
         }
         return builder.toString();
         /*String dateStr = DateTimeFormatter.ofPattern("YYYY-MM-DD-HH-MM-SS").format(LocalDateTime.now());

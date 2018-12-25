@@ -112,6 +112,7 @@ public class Forms {
         }
         stage.setScene(new Scene(root));
         addStyle(stage);
+        stage.setResizable(false);
         formStages.putIfAbsent(formName, stage);
 
         return stage;
@@ -125,6 +126,7 @@ public class Forms {
         configureDisplayingForm(stage, fxmlLoader, formName);
         stage.setScene(new Scene(root));
         addStyle(stage);
+        stage.setResizable(false);
         formStages.putIfAbsent(formName, stage);
 
         return stage;

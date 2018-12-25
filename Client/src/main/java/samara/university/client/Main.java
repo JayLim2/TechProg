@@ -13,6 +13,7 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("/forms/Main.fxml"));
         primaryStage.setTitle("Игра \"Менеджмент\"");
         primaryStage.setScene(new Scene(root));
+        primaryStage.setResizable(false);
         primaryStage.show();
 
         Forms.registerForm("Main", primaryStage);

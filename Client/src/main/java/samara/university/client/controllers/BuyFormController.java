@@ -10,6 +10,7 @@ import samara.university.client.utils.PredefinedAlerts;
 import samara.university.client.utils.RequestSender;
 import samara.university.common.constants.Restrictions;
 import samara.university.common.entities.Player;
+import samara.university.common.packages.BankPackage;
 
 public class BuyFormController extends TradeFormController {
     @FXML
@@ -20,7 +21,11 @@ public class BuyFormController extends TradeFormController {
     public void initialize() {
         super.initialize();
         try {
-            int minResourcePrice = RequestSender.getRequestSender().bankInfo().getMinResourcePrice();
+            Player me = RequestSender.getRequestSender().me();
+            BankPackage bankPackage = RequestSender.getRequestSender().bankInfo();
+            int minResourcePrice = bankPackage.getMinResourcePrice();
+            int maxCountToBuy = Math.min(bankPackage.getReserveUnitsOfResources(), me.getMoney() / minResourcePrice);
+            countFactory.setMax(maxCountToBuy);
             priceFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(
                     minResourcePrice, Integer.MAX_VALUE, minResourcePrice, 50);
 
