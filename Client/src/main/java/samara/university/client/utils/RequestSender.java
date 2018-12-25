@@ -58,6 +58,7 @@ public class RequestSender {
     }
 
     public boolean checkLoginUniqueness(String name) throws IOException {
+        System.out.println("before connect");
         connect();
         System.out.println("PREPARE TO SEND");
         sendCommand(Command.CHECK_LOGIN_UNIQUENESS);
@@ -67,6 +68,7 @@ public class RequestSender {
         objectOutputStream.writeUTF(name);
         System.out.println("NAME!");
         objectOutputStream.flush();
+        System.out.println();
         return objectInputStream.readBoolean();
     }
 
@@ -79,15 +81,15 @@ public class RequestSender {
      */
     public boolean authPlayer(String name, int avatarId) throws IOException {
         connect();
-        System.out.println("PREPARE TO SEND");
+        //System.out.println("PREPARE TO SEND");
         sendCommand(Command.AUTH);
-        System.out.println("SENT!");
+        //System.out.println("SENT!");
         objectOutputStream.reset();
-        System.out.println("RESET!");
+        //System.out.println("RESET!");
         objectOutputStream.writeUTF(name);
-        System.out.println("NAME");
+        //System.out.println("NAME");
         objectOutputStream.writeInt(avatarId);
-        System.out.println("AVATAR ID");
+        //System.out.println("AVATAR ID");
         objectOutputStream.flush();
         return objectInputStream.readBoolean();
     }
@@ -209,6 +211,7 @@ public class RequestSender {
     public void exit() throws IOException {
         connect();
         sendCommand(Command.EXIT);
+        isConnected = false;
         //objectInputStream.readBoolean();
     }
 

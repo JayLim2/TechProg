@@ -197,13 +197,19 @@ public class Bank {
         Session session = Session.getSession();
         if (session.playersCount() == 1) {
             session.setWinner(session.getPlayers().get(0));
+            System.out.println("AAAAAA IM HERE!!!!!!");
             return true;
-        } else {
-            if (session.getTurn().getCurrentMonth() == Restrictions.MAX_MONTHS_COUNT) {
-                session.setWinner(session.getMaxPlayer(minResourcePrice, maxProductPrice));
-                return true;
-            }
         }
+
+        if (session.getTurn().getCurrentMonth() == Restrictions.MAX_MONTHS_COUNT) {
+            session.setWinner(session.getMaxPlayer(minResourcePrice, maxProductPrice));
+            System.out.println("EEEEEEEEEEEEe IM HERE!!!!!!");
+            return true;
+        }
+
+        System.out.println("55555 IM HERE!!!!!!");
+        System.out.println(session.getWinner());
+
         return false;
     }
 

@@ -2,6 +2,7 @@ package samara.university.client.controllers;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -52,7 +53,7 @@ public class WaitingPlayersFormController implements DisplayingFormController {
             avatarBlocks[k] = (ImageView) nodes.get(i++);
             labelBlocks[k] = (Text) nodes.get(i++);
         }
-        updateInfo();
+        //updateInfo();
         updateTimeFields();
         playCountdown();
         waitPlayers();
@@ -66,6 +67,10 @@ public class WaitingPlayersFormController implements DisplayingFormController {
     public void interruptAction(ActionEvent event) {
         try {
             RequestSender.getRequestSender().exit();
+            updaterThread.interrupt();
+            updaterThread = null;
+            //stopCountdown();
+            //stopUpdater();
             Forms.openForm("Main");
             Forms.closeForm("WaitingPlayers");
         } catch (IOException e) {
@@ -118,18 +123,54 @@ public class WaitingPlayersFormController implements DisplayingFormController {
         timeline.play();
     }
 
+    private Thread updaterThread = null;
+
     // FIXME: 02.12.2018 баг с отрисовкой времени на форме
     /**
      * Ожидание игроков
      */
     private void waitPlayers() {
+        UpdateFormTask updateFormTask = new UpdateFormTask();
+
+        /*Timer timer = new Timer(true);
+        UpdateFormTask updateFormTask = new UpdateFormTask();
+        timer.scheduleAtFixedRate(
+                new TimerTask() {
+                    @Override
+                    public void run() {
+                        Platform.runLater(updateFormTask);
+                    }
+                },
+                TimeUnit.SECONDS.toMillis(0),
+                TimeUnit.SECONDS.toMillis(3)
+        );*/
+
+        if (updaterThread == null) {
+            Runnable updater = new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        while (true) {
+                            Platform.runLater(updateFormTask);
+                            Thread.sleep(1000);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            updaterThread = new Thread(updater);
+            updaterThread.setDaemon(true);
+            updaterThread.start();
+        }
+
         // TODO: 24.11.2018
         /*
         Регулярно (например, раз в 5 сек)
         проверять состояние сессии на сервере и в случае изменения
         обновлять интерфейс актуальными данными
          */
-        Timeline timeline = new Timeline();
+        /*Timeline timeline = new Timeline();
 
         KeyFrame frame = new KeyFrame(UPDATE_INFO_INTERVAL, new EventHandler<ActionEvent>() {
             @Override
@@ -153,7 +194,39 @@ public class WaitingPlayersFormController implements DisplayingFormController {
 
         timeline.getKeyFrames().add(frame);
         timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
+        timeline.play();*/
+    }
+
+    private class UpdateFormTask implements Runnable {
+        @Override
+        public void run() {
+            try {
+                SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
+                long seconds = java.time.Duration.between(
+                        sessionPackage.getSessionStartTime(),
+                        LocalDateTime.now()
+                ).getSeconds();
+                List<Player> players = sessionPackage.getPlayers();
+
+                if (players.size() == Restrictions.MAX_PLAYERS_COUNT) {
+                    totalSeconds = 0;
+                } else {
+                    totalSeconds = Restrictions.WAIT_TIME_LIMIT_SECONDS - (int) seconds;
+                    for (int i = 0; i < avatarBlocks.length; i++) {
+                        if (i < players.size()) {
+                            Player player = players.get(i);
+                            avatarBlocks[i].setImage(new Image(player.getAvatar().getPath()));
+                            labelBlocks[i].setText(player.getName());
+                        } else {
+                            avatarBlocks[i].setImage(new Image(Avatar.getEmptyAvatar().getPath()));
+                            labelBlocks[i].setText("Логин");
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void resetTime() {
@@ -171,7 +244,7 @@ public class WaitingPlayersFormController implements DisplayingFormController {
     }
 
     private void updateInfo() {
-        try {
+        /*try {
             SessionPackage sessionPackage = RequestSender.getRequestSender().sessionInfo();
             long seconds = java.time.Duration.between(
                     sessionPackage.getSessionStartTime(),
@@ -196,10 +269,12 @@ public class WaitingPlayersFormController implements DisplayingFormController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     private void playGame() {
+        updaterThread.interrupt();
+        updaterThread = null;
         stopCountdown();
         stopUpdater();
         Forms.openForm("GameField");

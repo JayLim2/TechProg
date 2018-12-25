@@ -425,6 +425,7 @@ public class GameFieldFormController implements DisplayingFormController {
                     stopPhaseCountdown();
                     stopCyclicalUpdater();
                     gameFinished = true;
+                    System.out.println("\n\n\n GFFKGFSIJGSFKGJSFGJFSJFFKGFSKJFSKGJFSKGJFSKJFG\n\n");
                     return;
                 }
 

@@ -40,7 +40,8 @@ public class Forms {
 
     private static final List<String> displayingForms = Arrays.asList(
             "WaitingPlayers", "GameField",
-            "Production", "GameResults"
+            "Production", "GameResults",
+            "Login"
     );
 
     public static void openForm(String formName) {

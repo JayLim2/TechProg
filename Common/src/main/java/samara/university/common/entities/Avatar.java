@@ -19,6 +19,7 @@ import java.util.List;
  */
 public class Avatar implements Serializable {
     private static final List<Avatar> defaultAvatars = new ArrayList<>();
+    private static final int EMPTY_AVATAR_ID = 10;
     private String imagePath;
 
     private Avatar(String imagePath) {
@@ -35,7 +36,7 @@ public class Avatar implements Serializable {
     }
 
     public static Avatar getEmptyAvatar() {
-        return getDefaultAvatar(10);
+        return getDefaultAvatar(EMPTY_AVATAR_ID);
     }
 
     public static Avatar getDefaultAvatar(int id) {

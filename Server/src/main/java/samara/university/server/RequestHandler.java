@@ -110,10 +110,17 @@ public class RequestHandler {
         }
 
         public void checkLoginUniqueness() throws IOException {
+            //System.out.println(this);
             String name = objectInputStream.readUTF();
+            //System.out.println("name: " + name);
             objectOutputStream.reset();
+            //System.out.println("reset!");
             boolean is = session.isUniqueLogin(name);
+            //System.out.println(is);
+            //System.out.println();
             objectOutputStream.writeBoolean(is);
+            //System.out.println("written");
+            //System.out.println();
             objectOutputStream.flush();
         }
 
@@ -251,9 +258,12 @@ public class RequestHandler {
 
         private void getWinner() throws IOException {
             objectOutputStream.reset();
+            System.out.println(session);
             if (session.getWinner() == null) {
+                System.out.println("IS NULL_______");
                 session.getBank().tryDeclareWinner();
             }
+            System.out.println("session count: " + session.getPlayers().size());
             Player winner = session.getWinner();
             objectOutputStream.writeObject(winner);
             objectOutputStream.flush();

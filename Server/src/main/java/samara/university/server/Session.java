@@ -107,12 +107,13 @@ public class Session {
      */
     public synchronized boolean unregister(Player player) {
         players.remove(player);
+        return true;
         //Если остался один игрок - он объявляется победителем
-        if (players.size() == 1) {
+        /*if (players.size() == 1) {
             winner = players.iterator().next();
             return true;
         }
-        return false;
+        return false;*/
     }
 
     /**

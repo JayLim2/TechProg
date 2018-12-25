@@ -8,16 +8,18 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.WindowEvent;
 import samara.university.client.utils.Forms;
 import samara.university.client.utils.PredefinedAlerts;
 import samara.university.client.utils.RequestSender;
+import samara.university.common.entities.Avatar;
 
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-public class LoginFormController {
+public class LoginFormController implements DisplayingFormController {
     private static final int MIN_NAME_LENGTH = 3;
     private static final int MAX_NAME_LENGTH = 15;
 
@@ -45,6 +47,18 @@ public class LoginFormController {
         }
 
         loginInput.setText(new String(chars));
+
+        avatarId = 0;
+    }
+
+    @Override
+    public void showAction(WindowEvent event) {
+        initialize();
+    }
+
+    @Override
+    public void hideAction(WindowEvent event) {
+
     }
 
     public void startSearchAction() {
