@@ -35,11 +35,11 @@ public class Restrictions {
 
     public static final int BUILDING_FACTORY_PRICE = 5000;
 
-    public static final int BUILDING_FACTORY_MONTHS = 1;
+    public static final int BUILDING_FACTORY_MONTHS = 5;
 
     public static final int BUILDING_AUTOMATED_FACTORY_PRICE = 10000;
 
-    public static final int BUILDING_AUTOMATED_FACTORY_MONTHS = 1;
+    public static final int BUILDING_AUTOMATED_FACTORY_MONTHS = 7;
 
     public static final int AUTOMATION_FACTORY_PRICE = 7000;
 

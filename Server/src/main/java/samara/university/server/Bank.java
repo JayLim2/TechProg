@@ -629,11 +629,13 @@ public class Bank {
         int count;
         if (!type) {
             count = Math.min(bid.getCount(), reserveUnitsOfResources);
+            bid.setCount(count);
             player.setMoney(player.getMoney() - count * bid.getPrice());
             player.setUnitsOfResources(player.getUnitsOfResources() + count);
             reserveUnitsOfResources -= count;
         } else {
             count = Math.min(bid.getCount(), reserveUnitsOfProducts);
+            bid.setCount(count);
             player.setMoney(player.getMoney() + count * bid.getPrice());
             player.setUnitsOfProducts(player.getUnitsOfProducts() - count);
             reserveUnitsOfProducts -= count;
@@ -661,8 +663,8 @@ public class Bank {
         @Override
         public int compare(Bid o1, Bid o2) {
             int val = isDescending ?
-                    o2.getPrice() - o1.getPrice() :
-                    o1.getPrice() - o2.getPrice();
+                    o1.getPrice() - o2.getPrice() :
+                    o2.getPrice() - o1.getPrice();
             if (val == 0) {
                 val = Session.getSession().isSeniorPlayer(o1.getPlayer()) ? 1
                         : Session.getSession().isSeniorPlayer(o2.getPlayer()) ? -1
