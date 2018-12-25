@@ -63,11 +63,18 @@ public class Bank {
                         }
                         break;
                         case COMPLETE_BUILDING_FACTORY: {
+                            System.out.println("___ COMPLETE_BUILDING_FACTORY____");
                             if (action.isSign()) {
+                                player.setUnderConstructionAutomatedFactories(
+                                        player.getUnderConstructionAutomatedFactories() - action.getCount()
+                                );
                                 player.setWorkingAutomatedFactories(
                                         player.getWorkingAutomatedFactories() + action.getCount()
                                 );
                             } else {
+                                player.setUnderConstructionFactories(
+                                        player.getUnderConstructionFactories() - action.getCount()
+                                );
                                 player.setWorkingFactories(
                                         player.getWorkingFactories() + action.getCount()
                                 );
@@ -85,6 +92,9 @@ public class Bank {
                         case COMPLETE_AUTOMATION_FACTORY: {
                             player.setWorkingFactories(
                                     player.getWorkingFactories() - action.getCount()
+                            );
+                            player.setUnderConstructionAutomatedFactories(
+                                    player.getUnderConstructionAutomatedFactories() - action.getCount()
                             );
                             player.setWorkingAutomatedFactories(
                                     player.getWorkingAutomatedFactories() + action.getCount()
@@ -308,7 +318,7 @@ public class Bank {
 
         currentPhase = session.getTurn().getCurrentPhase();
 
-        if (currentPhase >= Restrictions.PRODUCTION_PHASE
+        if (currentPhase >= Restrictions.SEND_BID_RESOURCES_PHASE
                 && currentPhase <= Restrictions.MAX_PHASES_COUNT) {
             handlePlannedActions();
         }
@@ -390,26 +400,28 @@ public class Bank {
                 + player.getUnderConstructionFactories()
                 + player.getUnderConstructionAutomatedFactories();
         if (totalFactories < Restrictions.MAX_FACTORIES_COUNT) {
+            final int count = 1;
             if (isAutomated) {
                 player.setUnderConstructionAutomatedFactories(
-                        player.getUnderConstructionAutomatedFactories() + 1
+                        player.getUnderConstructionAutomatedFactories() + count
                 );
             } else {
                 player.setUnderConstructionFactories(
-                        player.getUnderConstructionFactories() + 1
+                        player.getUnderConstructionFactories() + count
                 );
             }
             player.setMoney(
                     player.getMoney() - (isAutomated ? Restrictions.BUILDING_AUTOMATED_FACTORY_PRICE : Restrictions.BUILDING_FACTORY_PRICE)
             );
+            int month = Session.getSession().getTurn().getCurrentMonth() + (isAutomated ? Restrictions.BUILDING_AUTOMATED_FACTORY_MONTHS : Restrictions.BUILDING_FACTORY_MONTHS);
             PlannedAction plannedAction = new PlannedAction(
                     PlannedAction.PlannedActionType.COMPLETE_BUILDING_FACTORY,
                     player,
-                    Session.getSession().getTurn().getCurrentMonth() + (isAutomated ? Restrictions.BUILDING_AUTOMATED_FACTORY_MONTHS : Restrictions.BUILDING_FACTORY_MONTHS),
-                    1
+                    month,
+                    Restrictions.SEND_BID_RESOURCES_PHASE
             );
             plannedAction.setSign(isAutomated);
-            plannedAction.setCount(1);
+            plannedAction.setCount(count);
 
             //Запись в лог
             String log = GameLog.Actions.logStartConstruction(isAutomated);
@@ -431,9 +443,14 @@ public class Bank {
      */
     public void automateExistingFactory(Player player) {
         if (player.getWorkingFactories() > 0) {
+            final int count = 1;
+
             //Заплатить первую часть стоимости
             player.setMoney(
                     player.getMoney() - Restrictions.AUTOMATION_FACTORY_PRICE / 2
+            );
+            player.setUnderConstructionAutomatedFactories(
+                    player.getUnderConstructionAutomatedFactories() + count
             );
 
             //Запись в лог
@@ -450,9 +467,9 @@ public class Bank {
                     PlannedAction.PlannedActionType.COMPLETE_AUTOMATION_FACTORY,
                     player,
                     Session.getSession().getTurn().getCurrentMonth() + Restrictions.AUTOMATION_FACTORY_MONTHS,
-                    1
+                    Restrictions.SEND_BID_RESOURCES_PHASE
             );
-            plannedAction.setCount(1);
+            plannedAction.setCount(count);
             plannedActions.add(plannedAction);
 
             //Оплата второй части суммы за автоматизацию (запланировать)
@@ -460,7 +477,7 @@ public class Bank {
                     PlannedAction.PlannedActionType.PAY_SECOND_PART_FOR_AUTOMATION,
                     player,
                     Session.getSession().getTurn().getCurrentMonth() + Restrictions.AUTOMATION_FACTORY_MONTHS - 1,
-                    1
+                    Restrictions.SEND_BID_RESOURCES_PHASE
             );
             plannedAction.setMoney(Restrictions.AUTOMATION_FACTORY_PRICE / 2);
             plannedActions.add(plannedAction);
@@ -576,10 +593,10 @@ public class Bank {
                 continue;
             }
             handleBid(bid, Restrictions.BUY_RESOURCES_BID);
-            if (bid.getCount() >= reserveUnitsOfResources) {
+            /*if (bid.getCount() >= reserveUnitsOfResources) {
                 bids.clear();
                 return;
-            }
+            }*/
         }
         bids.clear();
     }
@@ -599,10 +616,10 @@ public class Bank {
                 continue;
             }
             handleBid(bid, Restrictions.SELL_PRODUCTS_BID);
-            if (bid.getCount() >= reserveUnitsOfProducts) {
+            /*if (bid.getCount() >= reserveUnitsOfProducts) {
                 bids.clear();
                 return;
-            }
+            }*/
         }
         bids.clear();
     }
