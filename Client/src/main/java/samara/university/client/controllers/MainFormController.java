@@ -3,6 +3,7 @@ package samara.university.client.controllers;
 import javafx.event.ActionEvent;
 import samara.university.client.utils.Forms;
 import samara.university.client.utils.PredefinedAlerts;
+import samara.university.client.utils.RequestSender;
 
 import java.awt.*;
 import java.io.File;
@@ -15,8 +16,12 @@ public class MainFormController {
      * @param event события нажатия на кнопку
      */
     public void startGameAction(ActionEvent event) {
-        Forms.openForm("Login");
-        Forms.closeForm("Main");
+        if (RequestSender.getRequestSender().tryConnectRequest()) {
+            Forms.openForm("Login");
+            Forms.closeForm("Main");
+        } else {
+            PredefinedAlerts.errorAlert("Сервер не найден.");
+        }
     }
 
     /**
@@ -29,7 +34,7 @@ public class MainFormController {
             URI uri = new File("help/help.html").toURI();
             Desktop.getDesktop().browse(uri);
         } catch (Exception e) {
-            PredefinedAlerts.errorAlert("Пакет со справочной системой поврежден или не найден.");
+            PredefinedAlerts.helpNotFound();
         }
     }
 

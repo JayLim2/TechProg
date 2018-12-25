@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
@@ -24,7 +25,10 @@ import samara.university.common.entities.Player;
 import samara.university.common.packages.BankPackage;
 import samara.university.common.packages.SessionPackage;
 
+import java.awt.*;
+import java.io.File;
 import java.net.SocketException;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -510,10 +514,6 @@ public class GameFieldFormController implements DisplayingFormController {
         }
     }
 
-    private void updateSeniorMarker() {
-
-    }
-
     public void showBuyResourcesForm(ActionEvent event) {
         Forms.openFormAsModal("BuyUnitsOfResources");
     }
@@ -535,7 +535,12 @@ public class GameFieldFormController implements DisplayingFormController {
     }
 
     public void showHelpForm(ActionEvent event) {
-
+        try {
+            URI uri = new File("help/help.html").toURI();
+            Desktop.getDesktop().browse(uri);
+        } catch (Exception e) {
+            PredefinedAlerts.helpNotFound();
+        }
     }
 
     public void nextPhase(ActionEvent event) {
@@ -555,19 +560,21 @@ public class GameFieldFormController implements DisplayingFormController {
 
     public void interruptGameForMe(ActionEvent event) {
         //Прерывает игру и выводит игрока из сессии
-        try {
-            RequestSender.getRequestSender().exit();
-        } catch (SocketException e) {
-            PredefinedAlerts.connectionResetAlert();
-            System.exit(-1);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (PredefinedAlerts.confirmAlert("Вы действительно хотите выйти из игры?")) {
+            try {
+                RequestSender.getRequestSender().exit();
+            } catch (SocketException e) {
+                PredefinedAlerts.connectionResetAlert();
+                System.exit(-1);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            updaterThread.interrupt();
+            countdown.stop();
+            updater.stop();
+            Forms.closeForm("GameField");
+            Forms.openForm("GameOver");
         }
-        updaterThread.interrupt();
-        countdown.stop();
-        updater.stop();
-        Forms.closeForm("GameField");
-        Forms.openForm("GameOver");
     }
 
     /**

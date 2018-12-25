@@ -52,6 +52,11 @@ public class RequestSender {
         }
     }
 
+    public boolean tryConnectRequest() {
+        connect();
+        return isConnected;
+    }
+
     public void startGame() throws IOException {
         connect();
         sendCommand(Command.START_GAME);
