@@ -66,6 +66,7 @@ public class GameResultsFormController implements DisplayingFormController {
             }
         } catch (SocketException e) {
             PredefinedAlerts.connectionResetAlert();
+            System.exit(-1);
         } catch (Exception e) {
             e.printStackTrace();
         }

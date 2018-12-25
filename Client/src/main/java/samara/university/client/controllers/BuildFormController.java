@@ -30,6 +30,7 @@ public class BuildFormController implements DisplayingFormController {
             me = RequestSender.getRequestSender().me();
         } catch (SocketException e) {
             PredefinedAlerts.connectionResetAlert();
+            System.exit(-1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -83,6 +84,7 @@ public class BuildFormController implements DisplayingFormController {
             }
         } catch (SocketException e) {
             PredefinedAlerts.connectionResetAlert();
+            System.exit(-1);
         } catch (Exception e) {
             e.printStackTrace();
         }

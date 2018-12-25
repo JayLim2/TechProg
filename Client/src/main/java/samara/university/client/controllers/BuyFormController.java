@@ -35,6 +35,7 @@ public class BuyFormController extends TradeFormController {
             spinnerPrice.setValueFactory(priceFactory);
         } catch (SocketException e) {
             PredefinedAlerts.connectionResetAlert();
+            System.exit(-1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -68,6 +69,7 @@ public class BuyFormController extends TradeFormController {
             }
         } catch (SocketException e) {
             PredefinedAlerts.connectionResetAlert();
+            System.exit(-1);
         } catch (Exception e) {
             e.printStackTrace();
         }

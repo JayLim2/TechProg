@@ -45,6 +45,7 @@ public class LoanFormController implements DisplayingFormController {
             labelMonth.setText(Integer.toString(RequestSender.getRequestSender().sessionInfo().getCurrentMonth() + Restrictions.LOAN_MONTHS));
         } catch (SocketException e) {
             PredefinedAlerts.connectionResetAlert();
+            System.exit(-1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -67,6 +68,7 @@ public class LoanFormController implements DisplayingFormController {
             close();
         } catch (SocketException e) {
             PredefinedAlerts.connectionResetAlert();
+            System.exit(-1);
         } catch (Exception e) {
             e.printStackTrace();
         }

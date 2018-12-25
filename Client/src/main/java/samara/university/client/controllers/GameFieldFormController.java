@@ -142,6 +142,7 @@ public class GameFieldFormController implements DisplayingFormController {
             cyclicalUpdater();
         } catch (SocketException e) {
             PredefinedAlerts.connectionResetAlert();
+            System.exit(-1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -221,6 +222,7 @@ public class GameFieldFormController implements DisplayingFormController {
             }
         } catch (SocketException e) {
             PredefinedAlerts.connectionResetAlert();
+            System.exit(-1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -279,6 +281,7 @@ public class GameFieldFormController implements DisplayingFormController {
             labelBankProductsMaxPrice.setText(Integer.toString(bankPackage.getMaxProductPrice()));
         } catch (SocketException e) {
             PredefinedAlerts.connectionResetAlert();
+            System.exit(-1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -304,6 +307,7 @@ public class GameFieldFormController implements DisplayingFormController {
             //phaseCountdown();
         } catch (SocketException e) {
             PredefinedAlerts.connectionResetAlert();
+            System.exit(-1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -430,6 +434,7 @@ public class GameFieldFormController implements DisplayingFormController {
                 stopPhaseCountdown();
                 stopCyclicalUpdater();
                 PredefinedAlerts.connectionResetAlert();
+                System.exit(-1);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -463,6 +468,7 @@ public class GameFieldFormController implements DisplayingFormController {
             updateMenuVisibility(phase, buttonNextPhase.isDisabled());
         } catch (SocketException e) {
             PredefinedAlerts.connectionResetAlert();
+            System.exit(-1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -541,6 +547,7 @@ public class GameFieldFormController implements DisplayingFormController {
             fillAllProfiles(sessionPackage);
         } catch (SocketException e) {
             PredefinedAlerts.connectionResetAlert();
+            System.exit(-1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -552,6 +559,7 @@ public class GameFieldFormController implements DisplayingFormController {
             RequestSender.getRequestSender().exit();
         } catch (SocketException e) {
             PredefinedAlerts.connectionResetAlert();
+            System.exit(-1);
         } catch (Exception e) {
             e.printStackTrace();
         }

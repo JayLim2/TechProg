@@ -81,8 +81,8 @@ public class LoginFormController implements DisplayingFormController {
                     errorMsgLabel.setVisible(true);
                 }
             } catch (SocketException e) {
-                //PredefinedAlerts.connectionResetAlert();
-                PredefinedAlerts.errorAlert("AAAAAA");
+                PredefinedAlerts.connectionResetAlert();
+                System.exit(-1);
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -45,6 +45,7 @@ public class ProductionFormController implements DisplayingFormController {
             me = RequestSender.getRequestSender().me();
         } catch (SocketException e) {
             PredefinedAlerts.connectionResetAlert();
+            System.exit(-1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -71,6 +72,7 @@ public class ProductionFormController implements DisplayingFormController {
                 RequestSender.getRequestSender().startProduction(me, totalProductsCount, totalProductsCost);
             } catch (SocketException e) {
                 PredefinedAlerts.connectionResetAlert();
+                System.exit(-1);
             } catch (IOException e) {
                 e.printStackTrace();
             }

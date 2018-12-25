@@ -73,6 +73,7 @@ public class WaitingPlayersFormController implements DisplayingFormController {
             Forms.closeForm("WaitingPlayers");
         } catch (SocketException e) {
             PredefinedAlerts.connectionResetAlert();
+            System.exit(-1);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -182,6 +183,7 @@ public class WaitingPlayersFormController implements DisplayingFormController {
                 stopCountdown();
                 stopUpdater();
                 PredefinedAlerts.connectionResetAlert();
+                System.exit(-1);
             } catch (Exception e) {
                 e.printStackTrace();
             }
