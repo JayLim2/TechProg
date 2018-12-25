@@ -37,4 +37,11 @@ public class PredefinedAlerts {
         ).showAndWait();
         return buttonType.isPresent();
     }
+
+    public static void messageAlert(String message) {
+        new Alert(
+                Alert.AlertType.INFORMATION,
+                message
+        ).showAndWait();
+    }
 }

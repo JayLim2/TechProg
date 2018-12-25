@@ -60,8 +60,10 @@ public class GameResultsFormController implements DisplayingFormController {
                     PrintWriter out = new PrintWriter(new FileWriter(file));
                     out.print(gamelog);
                     out.close();
+                    PredefinedAlerts.messageAlert("Журнал сохранен!");
                 } catch (IOException e) {
                     e.printStackTrace();
+                    PredefinedAlerts.errorAlert("Ошибка сохранения журнала игры.");
                 }
             }
         } catch (SocketException e) {
