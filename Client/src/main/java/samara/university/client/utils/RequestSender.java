@@ -9,6 +9,7 @@ import samara.university.common.packages.SessionPackage;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -40,7 +41,11 @@ public class RequestSender {
     public void connect() {
         if (!isConnected) {
             try {
-                socket = new Socket(InetAddress.getLocalHost(), SERVER_PORT);
+                socket = new Socket(
+                        //InetAddress.getLocalHost(),
+                        Inet4Address.getByName("25.31.133.74"),
+                        SERVER_PORT
+                );
                 objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
                 objectInputStream = new ObjectInputStream(socket.getInputStream());
                 isConnected = true;
