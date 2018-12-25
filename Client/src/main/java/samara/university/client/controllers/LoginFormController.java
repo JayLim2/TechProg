@@ -63,7 +63,7 @@ public class LoginFormController implements DisplayingFormController {
     }
 
     public void startSearchAction() {
-        String login = loginInput.getText();
+        String login = loginInput.getText().trim();
         if (login.length() >= MIN_NAME_LENGTH && login.length() <= MAX_NAME_LENGTH) {
             try {
                 boolean isUniqueLogin = RequestSender.getRequestSender().checkLoginUniqueness(login);
